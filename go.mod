@@ -1,8 +1,5 @@
-module github.com/yyh-gl/go-api-server-by-ddd
+module github.com/yyh-gl/hobigon-golang-api-server
 
 go 1.12
 
-require (
-	github.com/julienschmidt/httprouter v1.2.0
-	github.com/yyh-gl/api-server-with-go-kit-and-ddd v0.0.0-20190613051013-e6441d74b5f3 // indirect
-)
+require github.com/yyh-gl/go-api-server-by-ddd v0.0.0-20190613151629-950bb352b92b // indirect
