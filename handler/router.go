@@ -9,7 +9,8 @@ var Router *httprouter.Router
 func init() {
 	router := httprouter.New()
 
-	router.GET("/books", BookIndex)
+	router.GET("/api/v1/books", BookIndex)
+	router.POST("/api/v1/tasks", TaskHandler)
 
 	Router = router
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yyh-gl/go-api-server-by-ddd/handler"
+	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 )
 
 func main() {
