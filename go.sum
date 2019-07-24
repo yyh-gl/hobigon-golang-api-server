@@ -1,5 +1,9 @@
+github.com/adlio/trello v1.0.0 h1:7Mp6DnNXBHBAdhfcutftFDnX7K/G9yEtScAEplJzu+0=
+github.com/adlio/trello v1.0.0/go.mod h1:l2068AhUuUuQ9Vsb95ECMueHThYyAj4e85lWPmr2/LE=
 github.com/julienschmidt/httprouter v1.2.0 h1:TDTW5Yz1mjftljbcKqRcrYhd4XeOoI98t+9HbQbYf7g=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/yyh-gl/api-server-with-go-kit-and-ddd v0.0.0-20190613051013-e6441d74b5f3/go.mod h1:5/A/GsPTvDGQ4p8sacI1lNBVLh2UYtE6Qo5fy3GIbYo=
 github.com/yyh-gl/go-api-server-by-ddd v0.0.0-20190613151629-950bb352b92b h1:bvXKSHH0On4/7HyCI02YsMtByZNr4SsLs5X30WRiml8=
 github.com/yyh-gl/go-api-server-by-ddd v0.0.0-20190613151629-950bb352b92b/go.mod h1:SWHM4G+voTTMbtNcFM8gqeRP3VXHyeCEOI4VGxUrd/c=
