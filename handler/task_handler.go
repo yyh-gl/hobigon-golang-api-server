@@ -15,12 +15,14 @@ type response struct {
 	TaskList []*model.Task
 }
 
-func TaskHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	ctx := context.Background()
+func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// TODO: コンテキストの設定方法・場所のベストプラクティスが分かり次第修正
+	ctx := r.Context()
+	ctx = context.WithValue(ctx, "params", ps)
 
 	taskApi := api.NewTaskRepository()
-	taskList := taskApi.GetTodayTasks(ctx)
-	
+	taskList, _ := taskApi.GetTodayTasks(ctx)
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: taskList}); err != nil {
 		// TODO: エラーハンドリングをきちんとする
