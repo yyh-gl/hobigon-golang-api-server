@@ -7,5 +7,5 @@ import (
 )
 
 type TaskRepository interface {
-	GetTodayTasks(context.Context) ([]*model.Task, error)
+	GetBoardByID(context.Context) (*model.Board, error)
 }

@@ -21,10 +21,10 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ctx = context.WithValue(ctx, "params", ps)
 
 	taskApi := api.NewTaskRepository()
-	taskList, _ := taskApi.GetTodayTasks(ctx)
+	_, _ = taskApi.GetBoardByID(ctx)
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: taskList}); err != nil {
+	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: nil}); err != nil {
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return
