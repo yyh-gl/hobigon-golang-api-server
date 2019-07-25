@@ -20,13 +20,24 @@ func NewTaskRepository() repository.TaskRepository {
 	return &taskRepository{
 		ApiKey:   os.Getenv("TRELLO_API_KEY"),
 		ApiToken: os.Getenv("TRELLO_API_TOKEN"),
-		MainBoardID: os.Getenv("MAIN_BOARD_ID"),
 	}
 }
 
-func (tr taskRepository) GetBoardByID(ctx context.Context) (board *model.Board, err error) {
+func (tr taskRepository) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
 	client := trello.NewClient(tr.ApiKey, tr.ApiToken)
-	trelloBoard, err := client.GetBoard(tr.MainBoardID, trello.Defaults())
+	board, err = client.GetBoard(boardID, trello.Defaults())
+	if err != nil {
+		// TODO: ロガーに差し替え
+		fmt.Println("v===== ERROR =====v")
+		fmt.Println(err)
+		fmt.Println("^===== ERROR =====^")
+		return nil, err
+	}
+	return board, nil
+}
+
+func (tr taskRepository) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
+	board, err := tr.getBoard(ctx, boardID)
 	if err != nil {
 		// TODO: ロガーに差し替え
 		fmt.Println("v===== ERROR =====v")
@@ -35,7 +46,28 @@ func (tr taskRepository) GetBoardByID(ctx context.Context) (board *model.Board, 
 		return nil, err
 	}
 
-	board = model.ConvertToBoardModel(*trelloBoard)
+	lists, err = board.GetLists(trello.Defaults())
+	if err != nil {
+		// TODO: ロガーに差し替え
+		fmt.Println("v===== ERROR =====v")
+		fmt.Println(err)
+		fmt.Println("^===== ERROR =====^")
+		return nil, err
+	}
 
-	return board, nil
+	return lists, nil
+}
+
+func (tr taskRepository) GetTasksFromList(ctx context.Context, list trello.List) (tasks []*model.Task, err error) {
+	trelloTasks, err := list.GetCards(trello.Defaults())
+	if err != nil {
+		// TODO: ロガーに差し替え
+		fmt.Println("v===== ERROR =====v")
+		fmt.Println(err)
+		fmt.Println("^===== ERROR =====^")
+		return nil, err
+	}
+
+	tasks = model.ConvertToTasksModel(trelloTasks)
+	return tasks, nil
 }
