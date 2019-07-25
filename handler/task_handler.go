@@ -34,6 +34,7 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	var tasks []*model.Task
 	for _, list := range lists {
+		// TODO: 汎用的にする
 		if list.Name == "ToDo(Private)" {
 			tasks, err = taskApi.GetTasksFromList(ctx, *list)
 			if err != nil {
