@@ -24,17 +24,24 @@ type List struct {
 type Task struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
-	Due         *time.Time `json:"due"`
+	Due         time.Time  `json:"due"`
+}
+
+func (t Task) getJSTDue(utcDue time.Time) (jstDue time.Time) {
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	jstDue = utcDue.In(jst)
+	return jstDue
 }
 
 func ConvertToTasksModel(trelloCards []*trello.Card) (tasks []*Task) {
 	for _, card := range trelloCards {
-		task := Task{
-			Title: card.Name,
-			Description: card.Desc,
-			Due: card.Due,
+		task := new(Task)
+		task.Title       = card.Name
+		task.Description = card.Desc
+		if card.Due != nil {
+			task.Due = task.getJSTDue(*card.Due)
 		}
-		tasks = append(tasks, &task)
+		tasks = append(tasks, task)
 	}
 	return tasks
 }
