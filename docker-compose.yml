@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  api:
+    build:
+      context: "."
+      dockerfile: "./docker/api/Dockerfile"
+      target: build
+    ports:
+      - '3000:3000'
+    volumes:
+      - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
+    command: ["sh", "-c", "realize start --run"]
+    environment:
+      APP_ENV: "production"
+      GO111MODULE: "on"
+      MYSQL_HOST: "mysql"
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: "hobigon"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "mysql"
+    env_file:
+      - .secret_env
+    networks:
+      - hobigonapi
+  db:
+    image: mysql:5.7.22
+    ports:
+      - '13306:3306'
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    container_name: mysql
+    networks:
+      - hobigonapi
+
+networks:
+  hobigonapi:
+    driver: bridge
