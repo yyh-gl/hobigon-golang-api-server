@@ -23,36 +23,40 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ctx = context.WithValue(ctx, "params", ps)
 
 	taskGateway := gateway.NewtaskGateway()
-	lists, err := taskGateway.GetListsByBoardID(ctx, os.Getenv("MAIN_BOARD_ID"))
-	if err != nil {
-		// TODO: ロガーに差し替え
-		fmt.Println("v===== ERROR =====v")
-		fmt.Println(err)
-		fmt.Println("^===== ERROR =====^")
-		return
-	}
 
 	var todayTasks []model.Task
-	for _, list := range lists {
-		// TODO: 今後必要があれば動的に変更できる仕組みを追加
-		if list.Name ==  "ToDo" || list.Name == "WIP" {
-			taskList, err := taskGateway.GetTasksFromList(ctx, *list)
-			if err != nil {
-				// TODO: ロガーに差し替え
-				fmt.Println("v===== ERROR =====v")
-				fmt.Println(err)
-				fmt.Println("^===== ERROR =====^")
-				return
-			}
+	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
+	for _, boardID := range boardIDList {
+		lists, err := taskGateway.GetListsByBoardID(ctx, boardID)
+		if err != nil {
+			// TODO: ロガーに差し替え
+			fmt.Println("v===== ERROR =====v")
+			fmt.Println(err)
+			fmt.Println("^===== ERROR =====^")
+			return
+		}
 
-			switch list.Name {
-			case "ToDo":
-				// TODOリストからは今日のタスクのみ出力
-				tasks := taskList.GetTodayTasks()
-				todayTasks = append(todayTasks, tasks...)
-			case "WIP":
-				// WIPリストにあるタスクは全て出力
-				todayTasks = append(todayTasks, taskList.Tasks...)
+		for _, list := range lists {
+			// TODO: 今後必要があれば動的に変更できる仕組みを追加
+			if list.Name ==  "TODO" || list.Name == "WIP" {
+				taskList, err := taskGateway.GetTasksFromList(ctx, *list)
+				if err != nil {
+					// TODO: ロガーに差し替え
+					fmt.Println("v===== ERROR =====v")
+					fmt.Println(err)
+					fmt.Println("^===== ERROR =====^")
+					return
+				}
+
+				switch list.Name {
+				case "TODO":
+					// TODOリストからは今日のタスクのみ出力
+					tasks := taskList.GetTodayTasks()
+					todayTasks = append(todayTasks, tasks...)
+				case "WIP":
+					// WIPリストにあるタスクは全て出力
+					todayTasks = append(todayTasks, taskList.Tasks...)
+				}
 			}
 		}
 	}
