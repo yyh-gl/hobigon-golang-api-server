@@ -16,6 +16,7 @@ type taskRepository struct {
 	MainBoardID string
 }
 
+// 場所ここ？ + gateway にかえる
 func NewTaskRepository() repository.TaskRepository {
 	return &taskRepository{
 		ApiKey:   os.Getenv("TRELLO_API_KEY"),
@@ -68,6 +69,19 @@ func (tr taskRepository) GetTasksFromList(ctx context.Context, list trello.List)
 		return nil, err
 	}
 
-	tasks = model.ConvertToTasksModel(trelloTasks)
+	tasks = convertToTasksModel(trelloTasks)
 	return tasks, nil
+}
+
+func convertToTasksModel(trelloCards []*trello.Card) (tasks []*model.Task) {
+	for _, card := range trelloCards {
+		task := new(model.Task)
+		task.Title       = card.Name
+		task.Description = card.Desc
+		if card.Due != nil {
+			task.Due = task.GetJSTDue(*card.Due)
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks
 }

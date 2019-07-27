@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/adlio/trello"
 	"time"
 )
 
@@ -27,21 +26,8 @@ type Task struct {
 	Due         time.Time  `json:"due"`
 }
 
-func (t Task) getJSTDue(utcDue time.Time) (jstDue time.Time) {
+func (t Task) GetJSTDue(utcDue time.Time) (jstDue time.Time) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	jstDue = utcDue.In(jst)
 	return jstDue
-}
-
-func ConvertToTasksModel(trelloCards []*trello.Card) (tasks []*Task) {
-	for _, card := range trelloCards {
-		task := new(Task)
-		task.Title       = card.Name
-		task.Description = card.Desc
-		if card.Due != nil {
-			task.Due = task.getJSTDue(*card.Due)
-		}
-		tasks = append(tasks, task)
-	}
-	return tasks
 }
