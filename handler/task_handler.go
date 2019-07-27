@@ -14,7 +14,7 @@ import (
 
 type response struct {
 	Success  string
-	TaskList []*model.Task
+	TaskList []model.Task
 }
 
 func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -32,7 +32,7 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 
-	var tasks []*model.Task
+	var tasks []model.Task
 	for _, list := range lists {
 		// TODO: 汎用的にする
 		if list.Name == "ToDo(Private)" {

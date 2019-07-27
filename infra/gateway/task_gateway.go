@@ -59,7 +59,7 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 	return lists, nil
 }
 
-func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (tasks []*model.Task, err error) {
+func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (tasks []model.Task, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		// TODO: ロガーに差し替え
@@ -73,7 +73,7 @@ func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 	return tasks, nil
 }
 
-func convertToTasksModel(trelloCards []*trello.Card) (tasks []*model.Task) {
+func convertToTasksModel(trelloCards []*trello.Card) (tasks []model.Task) {
 	for _, card := range trelloCards {
 		task := new(model.Task)
 		task.Title       = card.Name
@@ -81,7 +81,7 @@ func convertToTasksModel(trelloCards []*trello.Card) (tasks []*model.Task) {
 		if card.Due != nil {
 			task.Due = task.GetJSTDue(*card.Due)
 		}
-		tasks = append(tasks, task)
+		tasks = append(tasks, *task)
 	}
 	return tasks
 }
