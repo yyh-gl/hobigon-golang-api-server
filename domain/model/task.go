@@ -26,8 +26,26 @@ type Task struct {
 	Due         time.Time  `json:"due"`
 }
 
+type TaskList struct {
+	Tasks []Task
+}
+
 func (t Task) GetJSTDue(utcDue time.Time) (jstDue time.Time) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	jstDue = utcDue.In(jst)
 	return jstDue
+}
+
+func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	today := time.Now()
+	today = time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, jst)
+	tomorrow := time.Date(today.Year(), today.Month(), today.AddDate(0, 0, 1).Day(), 23, 59, 59, 0, jst)
+
+	for _, task := range tl.Tasks {
+		if (task.Due.Equal(today) || task.Due.After(today)) && task.Due.Before(tomorrow) {
+			todayTasks = append(todayTasks, task)
+		}
+	}
+	return todayTasks
 }

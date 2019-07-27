@@ -22,8 +22,8 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "params", ps)
 
-	taskApi := gateway.NewtaskGateway()
-	lists, err := taskApi.GetListsByBoardID(ctx, os.Getenv("MAIN_BOARD_ID"))
+	taskGateway := gateway.NewtaskGateway()
+	lists, err := taskGateway.GetListsByBoardID(ctx, os.Getenv("MAIN_BOARD_ID"))
 	if err != nil {
 		// TODO: ロガーに差し替え
 		fmt.Println("v===== ERROR =====v")
@@ -32,11 +32,11 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 
-	var tasks []model.Task
+	var taskList model.TaskList
 	for _, list := range lists {
 		// TODO: 汎用的にする
-		if list.Name == "ToDo(Private)" {
-			tasks, err = taskApi.GetTasksFromList(ctx, *list)
+		if list.Name == "WIP" {
+			taskList, err = taskGateway.GetTasksFromList(ctx, *list)
 			if err != nil {
 				// TODO: ロガーに差し替え
 				fmt.Println("v===== ERROR =====v")
@@ -47,8 +47,11 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	}
 
+	// 今日のタスクを抽出
+	todayTasks := taskList.GetTodayTasks()
+
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: tasks}); err != nil {
+	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: todayTasks}); err != nil {
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return
