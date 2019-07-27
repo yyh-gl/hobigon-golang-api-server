@@ -13,8 +13,8 @@ import (
 )
 
 type response struct {
-	Success  string
-	TaskList []model.Task
+	TaskList        []model.Task `json:"task_list"`
+	DueOverTaskList []model.Task `json:"due_over_task_list"`
 }
 
 func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -25,6 +25,8 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	taskGateway := gateway.NewtaskGateway()
 
 	var todayTasks []model.Task
+	var dueOverTasks []model.Task
+	// TODO: ハンドラーにロジックもっちゃっているのを直したみ
 	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
 	for _, boardID := range boardIDList {
 		lists, err := taskGateway.GetListsByBoardID(ctx, boardID)
@@ -39,7 +41,9 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		for _, list := range lists {
 			// TODO: 今後必要があれば動的に変更できる仕組みを追加
 			if list.Name ==  "TODO" || list.Name == "WIP" {
-				taskList, err := taskGateway.GetTasksFromList(ctx, *list)
+				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(ctx, *list)
+				if list.Name == "WIP" {
+				}
 				if err != nil {
 					// TODO: ロガーに差し替え
 					fmt.Println("v===== ERROR =====v")
@@ -57,12 +61,20 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 					// WIPリストにあるタスクは全て出力
 					todayTasks = append(todayTasks, taskList.Tasks...)
 				}
+
+				// 期限切れタスクは問答無用で通知
+				dueOverTasks = append(dueOverTasks, dueOverTaskList.Tasks...)
 			}
 		}
 	}
 
+	res := response{
+		TaskList: todayTasks,
+		DueOverTaskList: dueOverTasks,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: todayTasks}); err != nil {
+	if err := json.NewEncoder(w).Encode(res); err != nil {
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return

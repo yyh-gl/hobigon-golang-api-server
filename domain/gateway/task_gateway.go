@@ -9,5 +9,5 @@ import (
 
 type TaskGateway interface {
 	GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error)
-	GetTasksFromList(ctx context.Context, list trello.List) (model.TaskList, error)
+	GetTasksFromList(ctx context.Context, list trello.List) (model.TaskList, model.TaskList, error)
 }

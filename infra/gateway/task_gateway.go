@@ -59,18 +59,26 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 	return lists, nil
 }
 
-func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, err error) {
+func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		// TODO: ロガーに差し替え
 		fmt.Println("v===== ERROR =====v")
 		fmt.Println(err)
 		fmt.Println("^===== ERROR =====^")
-		return model.TaskList{}, err
+		return model.TaskList{}, model.TaskList{}, err
 	}
 
-	taskList = convertToTasksModel(trelloTasks)
-	return taskList, nil
+	allTask := convertToTasksModel(trelloTasks)
+
+	for _, task := range allTask.Tasks {
+		if task.Due != nil && task.IsDueOver() {
+			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, task)
+		} else {
+			taskList.Tasks = append(taskList.Tasks, task)
+		}
+	}
+	return taskList, dueOverTaskList, nil
 }
 
 func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
