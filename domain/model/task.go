@@ -23,17 +23,17 @@ type List struct {
 type Task struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
-	Due         time.Time  `json:"due"`
+	Due         *time.Time `json:"due"`
 }
 
 type TaskList struct {
 	Tasks []Task
 }
 
-func (t Task) GetJSTDue(utcDue time.Time) (jstDue time.Time) {
+func (t Task) GetJSTDue(utcDue *time.Time) *time.Time {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
-	jstDue = utcDue.In(jst)
-	return jstDue
+	jstDue := utcDue.In(jst)
+	return &jstDue
 }
 
 func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
@@ -43,7 +43,8 @@ func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
 	tomorrow := time.Date(today.Year(), today.Month(), today.AddDate(0, 0, 1).Day(), 23, 59, 59, 0, jst)
 
 	for _, task := range tl.Tasks {
-		if (task.Due.Equal(today) || task.Due.After(today)) && task.Due.Before(tomorrow) {
+		// task.Due が NULL でなく、今日 または 今日以前 のタスクを抽出
+		if task.Due != nil && (task.Due.Before(today) || (task.Due.After(today) && task.Due.Before(tomorrow))) {
 			todayTasks = append(todayTasks, task)
 		}
 	}

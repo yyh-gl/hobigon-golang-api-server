@@ -32,11 +32,11 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 
-	var taskList model.TaskList
+	var todayTasks []model.Task
 	for _, list := range lists {
-		// TODO: 汎用的にする
-		if list.Name == "WIP" {
-			taskList, err = taskGateway.GetTasksFromList(ctx, *list)
+		// TODO: 今後必要があれば動的に変更できる仕組みを追加
+		if list.Name ==  "ToDo" || list.Name == "WIP" {
+			taskList, err := taskGateway.GetTasksFromList(ctx, *list)
 			if err != nil {
 				// TODO: ロガーに差し替え
 				fmt.Println("v===== ERROR =====v")
@@ -44,11 +44,18 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				fmt.Println("^===== ERROR =====^")
 				return
 			}
+
+			switch list.Name {
+			case "ToDo":
+				// TODOリストからは今日のタスクのみ出力
+				tasks := taskList.GetTodayTasks()
+				todayTasks = append(todayTasks, tasks...)
+			case "WIP":
+				// WIPリストにあるタスクは全て出力
+				todayTasks = append(todayTasks, taskList.Tasks...)
+			}
 		}
 	}
-
-	// 今日のタスクを抽出
-	todayTasks := taskList.GetTodayTasks()
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response{ Success: "ok", TaskList: todayTasks}); err != nil {

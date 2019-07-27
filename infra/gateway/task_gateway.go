@@ -79,7 +79,7 @@ func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 		task.Title       = card.Name
 		task.Description = card.Desc
 		if card.Due != nil {
-			task.Due = task.GetJSTDue(*card.Due)
+			task.Due = task.GetJSTDue(card.Due)
 		}
 		taskList.Tasks = append(taskList.Tasks, *task)
 	}
