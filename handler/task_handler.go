@@ -9,7 +9,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/api"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 )
 
 type response struct {
@@ -22,7 +22,7 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "params", ps)
 
-	taskApi := api.NewTaskRepository()
+	taskApi := gateway.NewtaskGateway()
 	lists, err := taskApi.GetListsByBoardID(ctx, os.Getenv("MAIN_BOARD_ID"))
 	if err != nil {
 		// TODO: ロガーに差し替え

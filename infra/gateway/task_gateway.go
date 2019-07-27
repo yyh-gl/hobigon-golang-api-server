@@ -1,4 +1,4 @@
-package api
+package gateway
 
 import (
 	"context"
@@ -6,25 +6,25 @@ import (
 	"os"
 
 	"github.com/adlio/trello"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
-type taskRepository struct {
+type taskGateway struct {
 	ApiKey   string
 	ApiToken string
 	MainBoardID string
 }
 
-// 場所ここ？ + gateway にかえる
-func NewTaskRepository() repository.TaskRepository {
-	return &taskRepository{
+// TODO: 場所ここ？
+func NewtaskGateway() gateway.TaskGateway {
+	return &taskGateway{
 		ApiKey:   os.Getenv("TRELLO_API_KEY"),
 		ApiToken: os.Getenv("TRELLO_API_TOKEN"),
 	}
 }
 
-func (tr taskRepository) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
+func (tr taskGateway) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
 	client := trello.NewClient(tr.ApiKey, tr.ApiToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
@@ -37,7 +37,7 @@ func (tr taskRepository) getBoard(ctx context.Context, boardID string) (board *t
 	return board, nil
 }
 
-func (tr taskRepository) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
+func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
 	board, err := tr.getBoard(ctx, boardID)
 	if err != nil {
 		// TODO: ロガーに差し替え
@@ -59,7 +59,7 @@ func (tr taskRepository) GetListsByBoardID(ctx context.Context, boardID string) 
 	return lists, nil
 }
 
-func (tr taskRepository) GetTasksFromList(ctx context.Context, list trello.List) (tasks []*model.Task, err error) {
+func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (tasks []*model.Task, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		// TODO: ロガーに差し替え
