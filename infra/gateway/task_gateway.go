@@ -17,7 +17,7 @@ type taskGateway struct {
 }
 
 // TODO: 場所ここ？
-func NewtaskGateway() gateway.TaskGateway {
+func NewTaskGateway() gateway.TaskGateway {
 	return &taskGateway{
 		ApiKey:   os.Getenv("TRELLO_API_KEY"),
 		ApiToken: os.Getenv("TRELLO_API_TOKEN"),

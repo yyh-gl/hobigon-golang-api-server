@@ -22,7 +22,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "params", ps)
 
-	taskGateway := gateway.NewtaskGateway()
+	taskGateway := gateway.NewTaskGateway()
 
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
