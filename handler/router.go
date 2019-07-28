@@ -9,7 +9,7 @@ var Router *httprouter.Router
 func init() {
 	router := httprouter.New()
 
-	router.POST("/api/v1/tasks", TaskHandler)
+	router.POST("/api/v1/tasks", NotifyTaskHandler)
 
 	Router = router
 }

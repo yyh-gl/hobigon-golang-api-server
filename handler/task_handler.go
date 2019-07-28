@@ -17,7 +17,7 @@ type response struct {
 	DueOverTaskList []model.Task `json:"due_over_task_list"`
 }
 
-func TaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// TODO: コンテキストの設定方法・場所のベストプラクティスが分かり次第修正
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "params", ps)
