@@ -47,6 +47,7 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 		return nil, err
 	}
 
+	// TODO: ここで todo と wip だけにしちゃう
 	lists, err = board.GetLists(trello.Defaults())
 	if err != nil {
 		// TODO: ロガーに差し替え
@@ -54,6 +55,11 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 		fmt.Println(err)
 		fmt.Println("^===== ERROR =====^")
 		return nil, err
+	}
+
+	// Board情報付与
+	for _, list := range lists {
+		list.Board = board
 	}
 
 	return lists, nil
@@ -72,6 +78,9 @@ func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 	allTask := convertToTasksModel(trelloTasks)
 
 	for _, task := range allTask.Tasks {
+		task.Board = list.Board.Name
+		task.List  = list.Name
+
 		if task.Due != nil && task.IsDueOver() {
 			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, task)
 		} else {

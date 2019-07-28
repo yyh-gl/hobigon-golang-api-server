@@ -24,6 +24,8 @@ type Task struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Due         *time.Time `json:"due"`
+	Board       string     `json:"board"`
+	List        string     `json:"list"`
 }
 
 type TaskList struct {

@@ -22,7 +22,8 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "params", ps)
 
-	taskGateway := gateway.NewTaskGateway()
+	taskGateway  := gateway.NewTaskGateway()
+	slackGateway := gateway.NewSlackGateway()
 
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
@@ -42,8 +43,6 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 			// TODO: 今後必要があれば動的に変更できる仕組みを追加
 			if list.Name ==  "TODO" || list.Name == "WIP" {
 				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(ctx, *list)
-				if list.Name == "WIP" {
-				}
 				if err != nil {
 					// TODO: ロガーに差し替え
 					fmt.Println("v===== ERROR =====v")
@@ -66,6 +65,15 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 				dueOverTasks = append(dueOverTasks, dueOverTaskList.Tasks...)
 			}
 		}
+	}
+
+	err := slackGateway.SendTask(todayTasks, dueOverTasks)
+	if err != nil {
+		// TODO: ロガーに差し替え
+		fmt.Println("v===== ERROR =====v")
+		fmt.Println(err)
+		fmt.Println("^===== ERROR =====^")
+		return
 	}
 
 	res := response{
