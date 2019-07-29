@@ -1,4 +1,4 @@
-logs
+logs/*.log
 docker
 dist
 .secret_env
