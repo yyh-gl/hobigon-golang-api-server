@@ -95,6 +95,7 @@ func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 		task := new(model.Task)
 		task.Title       = card.Name
 		task.Description = card.Desc
+		task.ShortURL    = card.ShortURL
 		if card.Due != nil {
 			task.Due = task.GetJSTDue(card.Due)
 		}
