@@ -1,11 +1,12 @@
 package gateway
 
 import (
+	"context"
 	"fmt"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
 type slackGateway struct {}
@@ -35,7 +36,7 @@ func (s slackGateway) send(data model.Slack) (err []error) {
 	return nil
 }
 
-func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
+func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
 	data := model.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",

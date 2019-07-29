@@ -67,7 +67,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 		}
 	}
 
-	err := slackGateway.SendTask(todayTasks, dueOverTasks)
+	err := slackGateway.SendTask(ctx, todayTasks, dueOverTasks)
 	if err != nil {
 		// TODO: ロガーに差し替え
 		fmt.Println("v===== ERROR =====v")
