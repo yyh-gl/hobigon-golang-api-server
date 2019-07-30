@@ -2,7 +2,7 @@ package gateway
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
@@ -16,7 +16,9 @@ func NewSlackGateway() gateway.SlackGateway {
 	return &slackGateway{}
 }
 
-func (s slackGateway) send(data model.Slack) (err []error) {
+func (s slackGateway) send(ctx context.Context, data model.Slack) (err []error) {
+	logger := ctx.Value("logger").(log.Logger)
+
 	payload := slack.Payload{
 		Username: data.Username,
 		Channel: data.Channel,
@@ -26,10 +28,7 @@ func (s slackGateway) send(data model.Slack) (err []error) {
 	webHookURL := data.GetWebHookURL()
 	err = slack.Send(webHookURL, "", payload)
 	if err != nil {
-		// TODO: ロガーに差し替え
-		fmt.Println("v===== ERROR =====v")
-		fmt.Println(err)
-		fmt.Println("^===== ERROR =====^")
+		logger.Println(err)
 		return err
 	}
 
@@ -44,6 +43,6 @@ func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, due
 
 	data.Text = data.CreateTaskMessage(todayTasks, dueOverTasks)
 
-	s.send(data)
+	s.send(ctx, data)
 	return err
 }

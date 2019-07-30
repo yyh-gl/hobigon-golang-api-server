@@ -1,13 +1,11 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 )
@@ -17,10 +15,9 @@ type response struct {
 	DueOverTaskList []model.Task `json:"due_over_task_list"`
 }
 
-func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// TODO: コンテキストの設定方法・場所のベストプラクティスが分かり次第修正
+func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	ctx = context.WithValue(ctx, "params", ps)
+	logger := ctx.Value("logger").(log.Logger)
 
 	taskGateway  := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()
@@ -32,10 +29,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	for _, boardID := range boardIDList {
 		lists, err := taskGateway.GetListsByBoardID(ctx, boardID)
 		if err != nil {
-			// TODO: ロガーに差し替え
-			fmt.Println("v===== ERROR =====v")
-			fmt.Println(err)
-			fmt.Println("^===== ERROR =====^")
+			logger.Println(err)
 			return
 		}
 
@@ -44,10 +38,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 			if list.Name ==  "TODO" || list.Name == "WIP" {
 				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(ctx, *list)
 				if err != nil {
-					// TODO: ロガーに差し替え
-					fmt.Println("v===== ERROR =====v")
-					fmt.Println(err)
-					fmt.Println("^===== ERROR =====^")
+					logger.Println(err)
 					return
 				}
 
@@ -69,10 +60,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 
 	err := slackGateway.SendTask(ctx, todayTasks, dueOverTasks)
 	if err != nil {
-		// TODO: ロガーに差し替え
-		fmt.Println("v===== ERROR =====v")
-		fmt.Println(err)
-		fmt.Println("^===== ERROR =====^")
+		logger.Println(err)
 		return
 	}
 
@@ -83,6 +71,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
+		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return

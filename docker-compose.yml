@@ -13,8 +13,8 @@ services:
     environment:
       APP_ENV: "production"
       GO111MODULE: "on"
-      MYSQL_HOST: "mysql"
-      MYSQL_PORT: "13306"
+      MYSQL_HOST: "db"
+      MYSQL_PORT: "3306"
       MYSQL_DATABASE: "hobigon"
       MYSQL_USER: "root"
       MYSQL_PASSWORD: "mysql"
