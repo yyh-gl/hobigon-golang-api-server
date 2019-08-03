@@ -36,6 +36,7 @@ func main() {
 	// ルーティング設定
 	r := httprouter.New()
 	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
+	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
@@ -66,14 +67,11 @@ func getGormConnect() *gorm.DB {
 	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
 	DATABASE := os.Getenv("MYSQL_DATABASE")
 
-	CONNECT := USER+":"+PASSWORD+"@"+PROTOCOL+"/"+DATABASE
+	// ?parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
+	CONNECT := USER+":"+PASSWORD+"@"+PROTOCOL+"/"+DATABASE+"?parseTime=true"
 
 	db,err := gorm.Open(DBMS, CONNECT)
 	if err != nil {
-		fmt.Println("========================")
-		fmt.Println(CONNECT)
-		fmt.Println(err)
-		fmt.Println("========================")
 		panic(err.Error())
 	}
 	return db

@@ -20,8 +20,6 @@ services:
       MYSQL_PASSWORD: "mysql"
     env_file:
       - .secret_env
-    networks:
-      - hobigonapi
     depends_on:
       - db
   db:
@@ -33,9 +31,3 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: mysql
     container_name: mysql
-    networks:
-      - hobigonapi
-
-networks:
-  hobigonapi:
-    driver: bridge
