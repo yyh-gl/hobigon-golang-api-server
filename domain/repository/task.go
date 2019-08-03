@@ -8,4 +8,5 @@ import (
 type BlogRepository interface {
 	Create(ctx context.Context, blog model.Blog) (model.Blog, error)
 	SelectByTitle(ctx context.Context, title string) (model.Blog, error)
+	Update(ctx context.Context, blog model.Blog) (model.Blog, error)
 }

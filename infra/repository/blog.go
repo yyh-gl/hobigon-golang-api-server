@@ -34,3 +34,12 @@ func (bp blogRepository) SelectByTitle(ctx context.Context, title string) (blog 
 	}
 	return blog, nil
 }
+
+func (bp blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
+	db := ctx.Value("db").(*gorm.DB)
+	err := db.Save(&blog).Error
+	if err != nil {
+		return model.Blog{}, err
+	}
+	return blog, nil
+}
