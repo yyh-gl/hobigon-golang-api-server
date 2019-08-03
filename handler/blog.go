@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -136,10 +135,6 @@ func PutBlogHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-
-	fmt.Println("========================")
-	fmt.Println(blog.Title)
-	fmt.Println("========================")
 
 	// Count をプラス1
 	addedCount := *blog.Count + 1
