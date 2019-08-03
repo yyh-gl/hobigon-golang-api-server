@@ -1,17 +1,14 @@
 package model
 
-import (
-	"time"
-)
+import "time"
 
 type Blog struct {
-	// TODO: gorm.Model を使用する
-	ID        uint `json:"id,omitempty",gorm:"primary_key"`
-	Title     string `json:"title,omitempty",gorm:"title"`
-	Count     *int64  `json:"count,omitempty"gorm:"count"`
-	CreatedAt *time.Time `json:"created_at,omitempty"gorm:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"gorm:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"gorm:"deleted_at",sql:"index"`
+	ID        uint       `json:"id,omitempty",gorm:"primary_key;AUTO_INCREMENT"`
+	Title     string     `json:"title,omitempty",gorm:"title;unique;not null"`
+	Count     *int64     `json:"count,omitempty"gorm:"count;default:0;not null"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty",sql:"index"`
 }
 
 func (b Blog) TableName() string {

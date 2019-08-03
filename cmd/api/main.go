@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"io"
 	"log"
 	"net/http"
@@ -36,6 +37,7 @@ func main() {
 	// ルーティング設定
 	r := httprouter.New()
 	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
+	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
 	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
 
 	fmt.Println("========================")
@@ -68,11 +70,15 @@ func getGormConnect() *gorm.DB {
 	DATABASE := os.Getenv("MYSQL_DATABASE")
 
 	// ?parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := USER+":"+PASSWORD+"@"+PROTOCOL+"/"+DATABASE+"?parseTime=true"
+	CONNECT := USER+":"+PASSWORD+"@"+PROTOCOL+"/"+DATABASE+"?parseTime=true&loc=Asia%2FTokyo"
 
 	db,err := gorm.Open(DBMS, CONNECT)
 	if err != nil {
 		panic(err.Error())
 	}
+
+	// マイグレーション実行
+	db.AutoMigrate(&model.Blog{})
+
 	return db
 }
