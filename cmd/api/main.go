@@ -75,6 +75,7 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		r = r.WithContext(ctx)
 
 		// 共通ヘッダー設定
+		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
 		h.ServeHTTP(w, r)
