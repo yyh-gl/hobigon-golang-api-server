@@ -3,16 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 	"io"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/julienschmidt/httprouter"
-	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 )
 
 func main() {
@@ -20,9 +19,10 @@ func main() {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
 	// ログ出力先を設定
-	logfile, err := os.OpenFile("./logs/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	logPath := os.Getenv("LOG_PATH")
+	logfile, err := os.OpenFile(logPath + "/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		panic("cannnot open ./logs/app.log:" + err.Error())
+		panic("cannnot open " + logPath + "/app.log:" + err.Error())
 	}
 	defer logfile.Close()
 
