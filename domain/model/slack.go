@@ -67,6 +67,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		} else {
 			body += "\n:small_orange_diamond:【M" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
 		}
+		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
 		if task.Due == nil {
 			body += "    :alarm_clock: `なるはや`\n\n"
@@ -96,6 +97,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		} else {
 			body += "\n:small_orange_diamond:【T" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
 		}
+		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
 		if task.Due == nil {
 			body += "    :alarm_clock: `なるはや`\n\n"
@@ -125,6 +127,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		} else {
 			body += "\n:small_orange_diamond:【W" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
 		}
+		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
 		if task.Due == nil {
 			body += "    :alarm_clock: `なるはや`\n\n"
