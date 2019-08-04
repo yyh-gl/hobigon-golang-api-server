@@ -49,7 +49,7 @@ func main() {
 	logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
-func corsHandler(w http.ResponseWriter, r *http.Request) {
+func corsHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
 	w.Header().Set("Access-Control-Allow-Methods", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
@@ -58,6 +58,7 @@ func corsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Headers", "Accept")
 	w.Header().Add("Access-Control-Allow-Headers", "Accept-Language")
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 }
 
 func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
@@ -79,12 +80,6 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		logger.Println(r.Method)
 		logger.Println(r.Method)
 		logger.Println(r.Method)
-
-		if r.Method == "OPTIONS" {
-			logger.Println("hogehoge")
-			w.WriteHeader(http.StatusOK)
-			return
-		}
 
 		h.ServeHTTP(w, r)
 	}
