@@ -66,6 +66,7 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(204)
+			log.Println("OPTIONS")
 			return
 		}
 
