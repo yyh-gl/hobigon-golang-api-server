@@ -62,10 +62,10 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 
 		// 共通ヘッダー設定
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:1313")
-		w.Header().Set( "Access-Control-Allow-Methods","GET, OPTIONS" )
 		h.ServeHTTP(w, r)
 	}
 }
