@@ -74,7 +74,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost")
 	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
