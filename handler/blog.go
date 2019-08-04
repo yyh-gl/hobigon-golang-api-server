@@ -14,10 +14,6 @@ type CreateBlogRequest struct {
 	Title string `json:"title"`
 }
 
-type CreateBlogResponse struct {
-	Blog model.Blog `json:"blog"`
-}
-
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(log.Logger)
@@ -51,21 +47,13 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := CreateBlogResponse{
-		Blog: blog,
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
+	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-}
-
-type GetBlogResponse struct {
-	Blog model.Blog `json:"blog"`
 }
 
 func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,12 +72,8 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := GetBlogResponse{
-		Blog: blog,
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
+	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
@@ -99,10 +83,6 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 type PutBlogRequest struct {
 	Title string `json:"title"`
-}
-
-type PutBlogResponse struct {
-	Blog model.Blog `json:"blog"`
 }
 
 func PutBlogHandler(w http.ResponseWriter, r *http.Request) {
@@ -147,12 +127,8 @@ func PutBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := PutBlogResponse{
-		Blog: blog,
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
+	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
