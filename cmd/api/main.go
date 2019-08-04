@@ -64,6 +64,7 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
+		log.Println("BEFORE")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(204)
 			log.Println("OPTIONS")
