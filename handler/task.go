@@ -69,7 +69,6 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 		DueOverTaskList: dueOverTasks,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
