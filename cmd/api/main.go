@@ -36,7 +36,7 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	//r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
+	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
 	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
@@ -49,13 +49,13 @@ func main() {
 	logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
-//func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-//	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
-//	w.Header().Set("Access-Control-Allow-Methods", "POST")
-//	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-//	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-//	w.WriteHeader(http.StatusOK)
-//}
+func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
+	w.Header().Add("Access-Control-Allow-Methods", "POST")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+}
 
 func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 	// DB設定
