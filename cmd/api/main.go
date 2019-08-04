@@ -42,7 +42,7 @@ func main() {
 	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
 
 	fmt.Println("========================")
-	fmt.Println("hoge")
+	fmt.Println(logPath + "/app.log")
 	fmt.Println("========================")
 
 	fmt.Println("========================")
