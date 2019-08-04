@@ -65,7 +65,7 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
 		if r.Method == "OPTIONS" {
-			w.Write([]byte("allowed"))
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 
