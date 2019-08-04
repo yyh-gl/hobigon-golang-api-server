@@ -43,7 +43,7 @@ func main() {
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
-	fmt.Println(" ↳ Log File -> " + logPath + "/app.log")
+	fmt.Println(" ↳  Log File -> " + logPath + "/app.log")
 	fmt.Println("========================")
 	logger.Fatal(http.ListenAndServe(":3000", r))
 }
@@ -53,6 +53,8 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 	db := getGormConnect()
 	// TODO: 動作チェック
 	//defer db.Close()
+
+	logger.Println("123")
 
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := r.Context()
@@ -65,10 +67,10 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
+		logger.Println("foofofo")
+
 		if r.Method == "OPTIONS" {
-			fmt.Println("========================")
-			fmt.Println("OPTIONS")
-			fmt.Println("========================")
+			logger.Println("hogehoge")
 			w.WriteHeader(http.StatusOK)
 			return
 		}
