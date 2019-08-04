@@ -39,7 +39,7 @@ func main() {
 	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
 	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
-	r.PUT("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.PutBlogHandler), *logger))
+	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")

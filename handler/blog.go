@@ -81,11 +81,11 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type PutBlogRequest struct {
+type LikeBlogRequest struct {
 	Title string `json:"title"`
 }
 
-func PutBlogHandler(w http.ResponseWriter, r *http.Request) {
+func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(log.Logger)
 
@@ -100,15 +100,15 @@ func PutBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var putBlogRequest PutBlogRequest
-	err = json.Unmarshal(body, &putBlogRequest)
+	var likeBlogRequest LikeBlogRequest
+	err = json.Unmarshal(body, &likeBlogRequest)
 	if err != nil {
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
 
-	blog, err := blogRepository.SelectByTitle(ctx, putBlogRequest.Title)
+	blog, err := blogRepository.SelectByTitle(ctx, likeBlogRequest.Title)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
