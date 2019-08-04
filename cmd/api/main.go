@@ -42,6 +42,10 @@ func main() {
 	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
 
 	fmt.Println("========================")
+	fmt.Println("hoge")
+	fmt.Println("========================")
+
+	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
 	fmt.Println("========================")
 	logger.Fatal(http.ListenAndServe(":3000", r))
@@ -65,6 +69,9 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
 		if r.Method == "OPTIONS" {
+			fmt.Println("========================")
+			fmt.Println("OPTIONS")
+			fmt.Println("========================")
 			w.WriteHeader(http.StatusOK)
 			return
 		}
