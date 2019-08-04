@@ -42,11 +42,8 @@ func main() {
 	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
 
 	fmt.Println("========================")
-	fmt.Println(logPath + "/app.log")
-	fmt.Println("========================")
-
-	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
+	fmt.Println(" ↳ Log File -> " + logPath + "/app.log")
 	fmt.Println("========================")
 	logger.Fatal(http.ListenAndServe(":3000", r))
 }
