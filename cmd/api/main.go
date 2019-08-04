@@ -74,7 +74,6 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		r = r.WithContext(ctx)
 
 		// 共通ヘッダー設定
-		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
 		logger.Println(r.Method)
