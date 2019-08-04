@@ -63,6 +63,12 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 		// 共通ヘッダー設定
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(204)
+			return
+		}
+
 		h.ServeHTTP(w, r)
 	}
 }
