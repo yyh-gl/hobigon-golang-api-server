@@ -41,6 +41,7 @@ func main() {
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
 	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
 	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
+	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler), *logger))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
@@ -95,6 +96,7 @@ func getGormConnect() *gorm.DB {
 
 	// マイグレーション実行
 	db.AutoMigrate(&model.Blog{})
+	db.AutoMigrate(&model.Birthday{})
 
 	return db
 }

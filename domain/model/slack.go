@@ -17,6 +17,8 @@ func (s Slack) GetWebHookURL() (webHookURL string) {
 		webHookURL = os.Getenv("WEBHOOK_URL_TO_00")
 	case "51_tech_blog":
 		webHookURL = os.Getenv("WEBHOOK_URL_TO_51")
+	case "2019新卒技術_雑談":
+		webHookURL = os.Getenv("WEBHOOK_URL_TO_SHINSOTSU")
 	}
 	return webHookURL
 }

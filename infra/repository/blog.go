@@ -17,6 +17,7 @@ func NewBlogRepository() repository.BlogRepository {
 func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err := db.Create(&blog).Error
+
 	if err != nil {
 		return model.Blog{}, err
 	}
