@@ -46,7 +46,8 @@ func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, due
 func (s slackGateway) SendBirthday(ctx context.Context, birthday model.Birthday) (err error) {
 	data := model.Slack{
 		Username: "聖母マリア様",
-		Channel:  "2019新卒技術_雑談",
+		//Channel:  "2019新卒技術_雑談",
+		Channel:  "51_tech_blog",
 	}
 
 	data.Text = birthday.CreateBirthdayMessage()
