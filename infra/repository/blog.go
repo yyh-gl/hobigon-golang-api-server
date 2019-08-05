@@ -14,7 +14,7 @@ func NewBlogRepository() repository.BlogRepository {
 	return &blogRepository{}
 }
 
-func (bp blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
+func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err := db.Create(&blog).Error
 	if err != nil {
@@ -23,7 +23,7 @@ func (bp blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blo
 	return blog, nil
 }
 
-func (bp blogRepository) SelectByTitle(ctx context.Context, title string) (blog model.Blog, err error) {
+func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog model.Blog, err error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err = db.First(&blog, "title=?", title).Error
 	if err != nil {
@@ -35,7 +35,7 @@ func (bp blogRepository) SelectByTitle(ctx context.Context, title string) (blog 
 	return blog, nil
 }
 
-func (bp blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
+func (br blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err := db.Save(&blog).Error
 	if err != nil {
