@@ -1,9 +1,12 @@
 
 # Hobigon サーバ
 
-[Rails 版](https://github.com/yyh-gl/hobigon-rails-api-server)はリソース食いなので、Golang 版に移行
+**自宅APIサーバ**
 
-# 実装予定機能
+-> [Railsで作ったもの](https://github.com/yyh-gl/hobigon-rails-api-server)をGolangで書き直したもの
 
-- タスク通知
-- ブログいいね
+# 実装機能
+
+- 今日のタスク通知
+- [ブログ](https://yyh-gl.github.io/tech-blog/)いいね
+- 誕生日通知くん
