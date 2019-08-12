@@ -60,7 +60,7 @@ func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 	// DB設定
 	db := getGormConnect()
-	// TODO: 動作チェック
+	// TODO: wrapHandlerから db.Close() を返すようにして main 内で実行するように修正
 	//defer db.Close()
 
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
