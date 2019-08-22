@@ -2,12 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/jinzhu/gorm"
+	"github.com/julienschmidt/httprouter"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
 type CreateBlogRequest struct {
@@ -58,16 +59,20 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(log.Logger)
-
-	q := r.URL.Query()
-	title := q.Get("title")
+	ps := ctx.Value("params").(httprouter.Params)
 
 	blogRepository := repository.NewBlogRepository()
-	blog, err := blogRepository.SelectByTitle(ctx, title)
+
+	blog, err := blogRepository.SelectByTitle(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			http.Error(w, "Record Not Found", http.StatusNotFound)
+		default:
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -79,38 +84,23 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type LikeBlogRequest struct {
-	Title string `json:"title"`
-}
-
 func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(log.Logger)
+	ps := ctx.Value("params").(httprouter.Params)
 
 	blogRepository := repository.NewBlogRepository()
 
-	// TODO: デコード処理を共通化
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
-		return
-	}
-
-	var likeBlogRequest LikeBlogRequest
-	err = json.Unmarshal(body, &likeBlogRequest)
-	if err != nil {
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
-		return
-	}
-
-	blog, err := blogRepository.SelectByTitle(ctx, likeBlogRequest.Title)
+	blog, err := blogRepository.SelectByTitle(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			http.Error(w, "Record Not Found", http.StatusNotFound)
+		default:
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 

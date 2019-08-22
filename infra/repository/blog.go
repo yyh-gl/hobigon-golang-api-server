@@ -28,9 +28,6 @@ func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog 
 	db := ctx.Value("db").(*gorm.DB)
 	err = db.First(&blog, "title=?", title).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return model.Blog{}, nil
-		}
 		return model.Blog{}, err
 	}
 	return blog, nil

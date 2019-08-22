@@ -39,8 +39,8 @@ func main() {
 	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
-	r.GET("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
-	r.POST("/api/v1/blogs/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
+	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
+	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
 	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler), *logger))
 
 	fmt.Println("========================")
