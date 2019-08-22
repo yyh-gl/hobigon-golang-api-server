@@ -51,7 +51,8 @@ func main() {
 }
 
 func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+	//w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(http.StatusOK)
