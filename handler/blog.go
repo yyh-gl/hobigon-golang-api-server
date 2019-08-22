@@ -84,6 +84,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TODO: いいねされたときの通知機能をつける
 func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(log.Logger)
