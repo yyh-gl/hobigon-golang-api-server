@@ -14,60 +14,54 @@ import (
 	"os"
 )
 
+type server struct {
+	router *httprouter.Router
+	logger *log.Logger
+	db     *gorm.DB
+}
+
+func initDependencies() server {
+	return server{
+		router: httprouter.New(),
+		logger: getLogger(),
+		db:     getGormConnect(),
+	}
+}
+
 func main() {
-	// ロガー設定
-	logger := log.New(os.Stderr, "", log.LstdFlags)
-
-	// ログ出力先を設定
-	logPath := os.Getenv("LOG_PATH")
-	logfile, err := os.OpenFile(logPath + "/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic("cannnot open " + logPath + "/app.log:" + err.Error())
-	}
-	defer logfile.Close()
-
-	env := os.Getenv("APP_ENV")
-	switch env {
-	case "production":
-		logger.SetOutput(logfile)
-	default:
-		logger.SetOutput(io.MultiWriter(logfile, os.Stdout))
-	}
+	s := initDependencies()
+	defer s.db.Close()
 
 	// ルーティング設定
-	r := httprouter.New()
-	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
-	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), *logger))
-	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), *logger))
-	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), *logger))
-	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), *logger))
-	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler), *logger))
+	s.router.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
+	s.router.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), s))
+	s.router.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), s))
+	s.router.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), s))
+	s.router.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), s))
+	s.router.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler), s))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
-	fmt.Println(" ↳  Log File -> " + logPath + "/app.log")
+	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/app.log")
 	fmt.Println("========================")
-	logger.Fatal(http.ListenAndServe(":3000", r))
+	s.logger.Print("Server Start")
+	s.logger.Fatal(http.ListenAndServe(":3000", s.router))
 }
 
 func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+	//w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
-	// DB設定
-	db := getGormConnect()
-	// TODO: wrapHandlerから db.Close() を返すようにして main 内で実行するように修正
-	//defer db.Close()
-
+func wrapHandler(h http.Handler, s server) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "params", ps)
-		ctx = context.WithValue(ctx, "logger", logger)
-		ctx = context.WithValue(ctx, "db", db)
+		ctx = context.WithValue(ctx, "logger", *s.logger)
+		ctx = context.WithValue(ctx, "db", s.db)
 		r = r.WithContext(ctx)
 
 		// 共通ヘッダー設定
@@ -77,6 +71,27 @@ func wrapHandler(h http.Handler, logger log.Logger) httprouter.Handle {
 
 		h.ServeHTTP(w, r)
 	}
+}
+
+func getLogger() *log.Logger {
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+
+	// ログ出力先を設定
+	logPath := os.Getenv("LOG_PATH")
+	logfile, err := os.OpenFile(logPath + "/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		panic("cannnot open " + logPath + "/app.log:" + err.Error())
+	}
+
+	env := os.Getenv("APP_ENV")
+	switch env {
+	case "production":
+		logger.SetOutput(logfile)
+	default:
+		logger.SetOutput(io.MultiWriter(logfile, os.Stdout))
+	}
+
+	return logger
 }
 
 func getGormConnect() *gorm.DB {
