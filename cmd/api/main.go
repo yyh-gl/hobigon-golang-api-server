@@ -66,6 +66,7 @@ func wrapHandler(h http.Handler, s server) httprouter.Handle {
 
 		// 共通ヘッダー設定
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+		//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
