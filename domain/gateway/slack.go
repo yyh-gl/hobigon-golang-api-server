@@ -8,4 +8,5 @@ import (
 type SlackGateway interface {
 	SendTask(ctx context.Context, todayTasks []model.Task, dueOverTasks []model.Task) error
 	SendBirthday(ctx context.Context, birthday model.Birthday) error
+	SendLikeNotify(ctx context.Context, blog model.Blog) error
 }

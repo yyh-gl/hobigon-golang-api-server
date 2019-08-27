@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
@@ -50,6 +51,17 @@ func (s slackGateway) SendBirthday(ctx context.Context, birthday model.Birthday)
 	}
 
 	data.Text = birthday.CreateBirthdayMessage()
+
+	s.send(ctx, data)
+	return err
+}
+
+func (s slackGateway) SendLikeNotify(ctx context.Context, blog model.Blog) (err error) {
+	data := model.Slack{
+		Username: "くりぼー",
+		Channel:  "51_tech_blog",
+		Text: "【" + blog.Title + "】いいね！（Total: " + strconv.Itoa(*blog.Count) + "）",
+	}
 
 	s.send(ctx, data)
 	return err

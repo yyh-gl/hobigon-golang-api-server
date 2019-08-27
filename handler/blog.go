@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 	"io/ioutil"
 	"log"
@@ -91,6 +92,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ps := ctx.Value("params").(httprouter.Params)
 
 	blogRepository := repository.NewBlogRepository()
+	slackGateway := gateway.NewSlackGateway()
 
 	blog, err := blogRepository.SelectByTitle(ctx, ps.ByName("title"))
 	if err != nil {
@@ -109,6 +111,15 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	addedCount := *blog.Count + 1
 	blog.Count = &addedCount
 	blog, err = blogRepository.Update(ctx, blog)
+	if err != nil {
+		logger.Println(err)
+		// TODO: エラーハンドリングをきちんとする
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+
+	// Slack に通知
+	err = slackGateway.SendLikeNotify(ctx, blog)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
