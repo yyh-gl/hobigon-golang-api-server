@@ -10,7 +10,7 @@ help: ## この文章を表示します。
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 build: ## apiサーバをbuildします
-	GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${LDFLAGS} -o dist/api ./cmd/api
+	GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build ${LDFLAGS} -o cmd/api/bin/api-server cmd/api/main.go
 
 mod: ## packageをdownloadします
 	go mod download

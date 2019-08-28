@@ -33,5 +33,5 @@ schema:
       ignored_paths:
         - .git
         - .idea
-        - hoge.realize.yaml
+        - .realize.yaml
         - vendor
