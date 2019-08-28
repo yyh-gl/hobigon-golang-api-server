@@ -17,7 +17,7 @@ type getTasksResponse struct {
 
 func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(log.Logger)
+	logger := ctx.Value("logger").(*log.Logger)
 
 	taskGateway  := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()

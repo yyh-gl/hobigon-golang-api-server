@@ -60,7 +60,7 @@ func wrapHandler(h http.Handler, s server) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "params", ps)
-		ctx = context.WithValue(ctx, "logger", *s.logger)
+		ctx = context.WithValue(ctx, "logger", s.logger)
 		ctx = context.WithValue(ctx, "db", s.db)
 		r = r.WithContext(ctx)
 

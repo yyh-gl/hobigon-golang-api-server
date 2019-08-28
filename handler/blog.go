@@ -18,7 +18,7 @@ type CreateBlogRequest struct {
 
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(log.Logger)
+	logger := ctx.Value("logger").(*log.Logger)
 
 	blogRepository := repository.NewBlogRepository()
 
@@ -59,7 +59,7 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(log.Logger)
+	logger := ctx.Value("logger").(*log.Logger)
 	ps := ctx.Value("params").(httprouter.Params)
 
 	blogRepository := repository.NewBlogRepository()
@@ -88,7 +88,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 // TODO: いいねされたときの通知機能をつける
 func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(log.Logger)
+	logger := ctx.Value("logger").(*log.Logger)
 	ps := ctx.Value("params").(httprouter.Params)
 
 	blogRepository := repository.NewBlogRepository()

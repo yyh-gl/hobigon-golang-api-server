@@ -17,7 +17,7 @@ type NotifyBirthdayRequest struct {
 
 func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(log.Logger)
+	logger := ctx.Value("logger").(*log.Logger)
 
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
