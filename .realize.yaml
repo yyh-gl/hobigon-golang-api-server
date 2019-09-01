@@ -24,7 +24,7 @@ schema:
         method: make build
       run:
         status: true
-        method: ./dist/api
+        method: ./cmd/api/bin/api-server
     watcher:
       extensions:
         - go
@@ -34,4 +34,8 @@ schema:
         - .git
         - .idea
         - .realize.yaml
-        - vendor
+        - docker-compose.yml
+        - logs
+        - Makefile
+        - README.md
+        - docker
