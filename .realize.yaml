@@ -33,9 +33,5 @@ schema:
       ignored_paths:
         - .git
         - .idea
-        - .realize.yaml
-        - docker-compose.yml
         - logs
-        - Makefile
-        - README.md
         - docker
