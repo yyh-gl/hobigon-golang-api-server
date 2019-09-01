@@ -64,6 +64,10 @@ func wrapHandler(h http.Handler, s server) httprouter.Handle {
 		ctx = context.WithValue(ctx, "db", s.db)
 		r = r.WithContext(ctx)
 
+		// リクエスト内容をログ出力
+		// TODO: Body の内容を記録
+		s.logger.Print(r.Method + " " + r.URL.String())
+
 		// 共通ヘッダー設定
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
 		//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
