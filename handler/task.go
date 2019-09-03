@@ -72,7 +72,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }

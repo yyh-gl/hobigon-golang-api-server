@@ -26,16 +26,18 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	var createBlogRequest CreateBlogRequest
 	err = json.Unmarshal(body, &createBlogRequest)
 	if err != nil {
+		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -45,14 +47,14 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }
@@ -80,7 +82,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }
@@ -114,7 +116,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -123,14 +125,14 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(blog); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }

@@ -37,7 +37,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -45,7 +45,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -54,7 +54,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logger.Println(err)
 			// TODO: エラーハンドリングをきちんとする
-			http.Error(w, "Internal Server Error", 500)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -62,7 +62,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(birthday); err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", 500)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }
