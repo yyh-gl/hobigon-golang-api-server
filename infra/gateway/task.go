@@ -9,22 +9,21 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
+// TODO: 場所ここ？
 type taskGateway struct {
-	ApiKey   string
-	ApiToken string
-	MainBoardID string
+	APIKey   string
+	APIToken string
 }
 
-// TODO: 場所ここ？
 func NewTaskGateway() gateway.TaskGateway {
 	return &taskGateway{
-		ApiKey:   os.Getenv("TRELLO_API_KEY"),
-		ApiToken: os.Getenv("TRELLO_API_TOKEN"),
+		APIKey:   os.Getenv("TRELLO_API_KEY"),
+		APIToken: os.Getenv("TRELLO_API_TOKEN"),
 	}
 }
 
 func (tr taskGateway) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
-	client := trello.NewClient(tr.ApiKey, tr.ApiToken)
+	client := trello.NewClient(tr.APIKey, tr.APIToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
 		return nil, err
