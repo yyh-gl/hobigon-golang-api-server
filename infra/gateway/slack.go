@@ -9,7 +9,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
-type slackGateway struct {}
+type slackGateway struct{}
 
 func NewSlackGateway() gateway.SlackGateway {
 	return &slackGateway{}
@@ -19,8 +19,8 @@ func (s slackGateway) send(ctx context.Context, data model.Slack) (err []error) 
 	// TODO: ドメイン層への依存をなくす
 	payload := slack.Payload{
 		Username: data.Username,
-		Channel: data.Channel,
-		Text: data.Text,
+		Channel:  data.Channel,
+		Text:     data.Text,
 	}
 
 	webHookURL := data.GetWebHookURL()
@@ -63,7 +63,7 @@ func (s slackGateway) SendLikeNotify(ctx context.Context, blog model.Blog) (err 
 	data := model.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
-		Text: "【" + blog.Title + "】いいね！（Total: " + strconv.Itoa(*blog.Count) + "）",
+		Text:     "【" + blog.Title + "】いいね！（Total: " + strconv.Itoa(*blog.Count) + "）",
 	}
 
 	s.send(ctx, data)

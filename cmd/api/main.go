@@ -3,15 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler"
-	"io"
-	"log"
-	"net/http"
-	"os"
 )
 
 type server struct {
@@ -83,7 +84,7 @@ func getLogger() *log.Logger {
 
 	// ログ出力先を設定
 	logPath := os.Getenv("LOG_PATH")
-	logfile, err := os.OpenFile(logPath + "/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	logfile, err := os.OpenFile(logPath+"/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic("cannnot open " + logPath + "/app.log:" + err.Error())
 	}
@@ -100,16 +101,16 @@ func getLogger() *log.Logger {
 }
 
 func getGormConnect() *gorm.DB {
-	DBMS     := "mysql"
-	USER     := os.Getenv("MYSQL_USER")
+	DBMS := "mysql"
+	USER := os.Getenv("MYSQL_USER")
 	PASSWORD := os.Getenv("MYSQL_PASSWORD")
 	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
 	DATABASE := os.Getenv("MYSQL_DATABASE")
 
 	// ?parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := USER+":"+PASSWORD+"@"+PROTOCOL+"/"+DATABASE+"?parseTime=true&loc=Asia%2FTokyo"
+	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?parseTime=true&loc=Asia%2FTokyo"
 
-	db,err := gorm.Open(DBMS, CONNECT)
+	db, err := gorm.Open(DBMS, CONNECT)
 	if err != nil {
 		panic(err.Error())
 	}

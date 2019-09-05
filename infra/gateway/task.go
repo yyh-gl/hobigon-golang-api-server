@@ -61,7 +61,7 @@ func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 
 	for _, task := range allTask.Tasks {
 		task.Board = list.Board.Name
-		task.List  = list.Name
+		task.List = list.Name
 
 		if task.Due != nil && task.IsDueOver() {
 			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, task)
@@ -76,9 +76,9 @@ func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 	for _, card := range trelloCards {
 		task := new(model.Task)
-		task.Title       = card.Name
+		task.Title = card.Name
 		task.Description = card.Desc
-		task.ShortURL    = card.ShortURL
+		task.ShortURL = card.ShortURL
 		if card.Due != nil {
 			task.Due = task.GetJSTDue(card.Due)
 		}

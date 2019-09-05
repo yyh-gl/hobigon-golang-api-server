@@ -2,8 +2,8 @@ package gateway
 
 import (
 	"context"
-	"github.com/adlio/trello"
 
+	"github.com/adlio/trello"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 

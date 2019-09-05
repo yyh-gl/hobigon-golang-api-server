@@ -2,12 +2,13 @@ package repository
 
 import (
 	"context"
+
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
-type blogRepository struct {}
+type blogRepository struct{}
 
 func NewBlogRepository() repository.BlogRepository {
 	return &blogRepository{}

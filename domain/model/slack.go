@@ -6,9 +6,9 @@ import (
 )
 
 type Slack struct {
-	Username   string
-	Channel    string
-	Text       string
+	Username string
+	Channel  string
+	Text     string
 }
 
 func (s Slack) GetWebHookURL() (webHookURL string) {
@@ -53,7 +53,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 	}
 
 	header := ":pencil2::pencil2::pencil2: 今日のタスク :pencil2::pencil2::pencil2:\n\n"
-	header += "           :mega: 総タスク数 " + strconv.Itoa(len(todayTasks) + len(dueOverTasks)) + " 個 :mega:\n"
+	header += "           :mega: 総タスク数 " + strconv.Itoa(len(todayTasks)+len(dueOverTasks)) + " 個 :mega:\n"
 	header += "   :space_invader: → 期限切れタスク数" + strconv.Itoa(len(dueOverTasks)) + "個 :space_invader:\n\n"
 
 	body := ""
@@ -65,9 +65,9 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 	index := 1
 	for _, task := range mainTodayTasks {
 		if task.IsTodayTask() {
-			body += "\n:cubimal_chick:【M" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:cubimal_chick:【M" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		} else {
-			body += "\n:small_orange_diamond:【M" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:small_orange_diamond:【M" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		}
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
@@ -77,7 +77,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 			body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
 		}
 
-		index += 1
+		index++
 	}
 
 	for _, task := range mainDueOverTasks {
@@ -85,7 +85,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 		body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
 
-		index += 1
+		index++
 	}
 
 	// Techボードのタスクをメッセージ化
@@ -95,9 +95,9 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 	index = 1
 	for _, task := range techTodayTasks {
 		if task.IsTodayTask() {
-			body += "\n:cubimal_chick:【T" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:cubimal_chick:【T" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		} else {
-			body += "\n:small_orange_diamond:【T" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:small_orange_diamond:【T" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		}
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
@@ -107,7 +107,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 			body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
 		}
 
-		index += 1
+		index++
 	}
 
 	for _, task := range techDueOverTasks {
@@ -115,7 +115,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 		body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
 
-		index += 1
+		index++
 	}
 
 	// Workボードのタスクをメッセージ化
@@ -125,9 +125,9 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 	index = 1
 	for _, task := range workTodayTasks {
 		if task.IsTodayTask() {
-			body += "\n:cubimal_chick:【W" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:cubimal_chick:【W" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		} else {
-			body += "\n:small_orange_diamond:【W" + strconv.Itoa(index) +"】 *_" + task.Title + "_*\n"
+			body += "\n:small_orange_diamond:【W" + strconv.Itoa(index) + "】 *_" + task.Title + "_*\n"
 		}
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 
@@ -137,7 +137,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 			body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
 		}
 
-		index += 1
+		index++
 	}
 
 	for _, task := range workDueOverTasks {
@@ -145,7 +145,7 @@ func (s Slack) CreateTaskMessage(todayTasks []Task, dueOverTasks []Task) string 
 		body += "    :curly_loop: _" + task.ShortURL + " _\n"
 		body += "    :alarm_clock: `" + task.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
 
-		index += 1
+		index++
 	}
 
 	return header + body

@@ -19,7 +19,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := ctx.Value("logger").(*log.Logger)
 
-	taskGateway  := gateway.NewTaskGateway()
+	taskGateway := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()
 
 	var todayTasks []model.Task
@@ -35,7 +35,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 		for _, list := range lists {
 			// TODO: 今後必要があれば動的に変更できる仕組みを追加
-			if list.Name ==  "TODO" || list.Name == "WIP" {
+			if list.Name == "TODO" || list.Name == "WIP" {
 				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(ctx, *list)
 				if err != nil {
 					logger.Println(err)
@@ -65,7 +65,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := getTasksResponse{
-		TaskList: todayTasks,
+		TaskList:        todayTasks,
 		DueOverTaskList: dueOverTasks,
 	}
 
