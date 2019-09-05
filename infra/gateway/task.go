@@ -9,7 +9,6 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
-// TODO: 場所ここ？
 type taskGateway struct {
 	APIKey   string
 	APIToken string
@@ -51,6 +50,7 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 	return lists, nil
 }
 
+// TODO: ドメイン層への依存をなくす
 func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
@@ -72,6 +72,7 @@ func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 	return taskList, dueOverTaskList, nil
 }
 
+// TODO: ドメイン層への依存をなくす
 func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 	for _, card := range trelloCards {
 		task := new(model.Task)
