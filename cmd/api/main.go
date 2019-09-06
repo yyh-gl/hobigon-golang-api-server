@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"log"
@@ -11,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/julienschmidt/httprouter"
+	"github.com/yyh-gl/hobigon-golang-api-server/context"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 )
@@ -60,9 +60,9 @@ func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 func wrapHandler(h http.Handler, s server) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "params", ps)
-		ctx = context.WithValue(ctx, "logger", s.logger)
-		ctx = context.WithValue(ctx, "db", s.db)
+		ctx = context.InjectRequestParams(ctx, ps)
+		ctx = context.InjectLogger(ctx, s.logger)
+		ctx = context.InjectDB(ctx, s.db)
 		r = r.WithContext(ctx)
 
 		// リクエスト内容をログ出力

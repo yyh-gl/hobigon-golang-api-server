@@ -8,6 +8,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/julienschmidt/httprouter"
+	"github.com/yyh-gl/hobigon-golang-api-server/context"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
@@ -19,7 +20,13 @@ type CreateBlogRequest struct {
 
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := ctx.Value("logger").(*log.Logger)
+	logger, err := context.FetchLogger(ctx)
+	if err != nil {
+		// TODO: ロギングどうしよ
+		// TODO: エラーハンドリングをきちんとする
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 	blogRepository := repository.NewBlogRepository()
 
