@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// TODO: ドメイン貧血症を治す
 type Slack struct {
 	Username string
 	Channel  string

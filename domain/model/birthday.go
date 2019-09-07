@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// TODO: ドメイン貧血症を治す
 type Birthday struct {
 	ID        uint       `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT"`
 	Name      string     `json:"name,omitempty" gorm:"name;not null"`

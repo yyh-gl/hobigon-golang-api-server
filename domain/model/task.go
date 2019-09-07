@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// TODO: ドメイン貧血症を治す
 type Board struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`

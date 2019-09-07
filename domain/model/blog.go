@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// TODO: ドメイン貧血症を治す
 type Blog struct {
 	ID        uint       `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT"`
 	Title     string     `json:"title,omitempty" gorm:"title;unique;not null"`
