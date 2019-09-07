@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
+	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )

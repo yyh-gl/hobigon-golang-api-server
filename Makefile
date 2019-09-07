@@ -17,3 +17,6 @@ deploy: ## ビルド後にデプロイ
 
 mod: ## package をダウンロード
 	go mod download
+
+lint: ## Lint
+	golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
