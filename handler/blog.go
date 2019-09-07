@@ -3,12 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
-	"github.com/jinzhu/gorm"
-	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
+
+	"github.com/jinzhu/gorm"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
@@ -19,16 +19,9 @@ type CreateBlogRequest struct {
 }
 
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	logger, err := context.FetchLogger(ctx)
-	if err != nil {
-		// TODO: ロギングどうしよ
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	logger := app.Logger
 
-	blogRepository := repository.NewBlogRepository()
+	blogRepository := repository.NewBlogRepository(app.DB)
 
 	// TODO: デコード処理を共通化
 	defer r.Body.Close()
@@ -51,7 +44,7 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 	var blog model.Blog
 	blog.Title = createBlogRequest.Title
-	blog, err = blogRepository.Create(ctx, blog)
+	blog, err = blogRepository.Create(blog)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
@@ -59,7 +52,8 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(blog); err != nil {
+	err = json.NewEncoder(w).Encode(blog)
+	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -68,13 +62,14 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
+	logger := app.Logger
+
 	ctx := r.Context()
-	logger := ctx.Value("logger").(*log.Logger)
-	ps := ctx.Value("params").(httprouter.Params)
+	ps := context.FetchRequestParams(ctx)
 
-	blogRepository := repository.NewBlogRepository()
+	blogRepository := repository.NewBlogRepository(app.DB)
 
-	blog, err := blogRepository.SelectByTitle(ctx, ps.ByName("title"))
+	blog, err := blogRepository.SelectByTitle(ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
@@ -97,14 +92,15 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 // TODO: いいねされたときの通知機能をつける
 func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	logger := ctx.Value("logger").(*log.Logger)
-	ps := ctx.Value("params").(httprouter.Params)
+	logger := app.Logger
 
-	blogRepository := repository.NewBlogRepository()
+	ctx := r.Context()
+	ps := context.FetchRequestParams(ctx)
+
+	blogRepository := repository.NewBlogRepository(app.DB)
 	slackGateway := gateway.NewSlackGateway()
 
-	blog, err := blogRepository.SelectByTitle(ctx, ps.ByName("title"))
+	blog, err := blogRepository.SelectByTitle(ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
@@ -120,7 +116,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	// Count をプラス1
 	addedCount := *blog.Count + 1
 	blog.Count = &addedCount
-	blog, err = blogRepository.Update(ctx, blog)
+	blog, err = blogRepository.Update(blog)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする

@@ -1,41 +1,39 @@
 package repository
 
 import (
-	"context"
-
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
-type blogRepository struct{}
-
-func NewBlogRepository() repository.BlogRepository {
-	return &blogRepository{}
+type blogRepository struct {
+	db *gorm.DB
 }
 
-func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
-	db := ctx.Value("db").(*gorm.DB)
-	err := db.Create(&blog).Error
+func NewBlogRepository(db *gorm.DB) repository.BlogRepository {
+	return &blogRepository{
+		db: db,
+	}
+}
 
+func (br blogRepository) Create(blog model.Blog) (model.Blog, error) {
+	err := br.db.Create(&blog).Error
 	if err != nil {
 		return model.Blog{}, err
 	}
 	return blog, nil
 }
 
-func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog model.Blog, err error) {
-	db := ctx.Value("db").(*gorm.DB)
-	err = db.First(&blog, "title=?", title).Error
+func (br blogRepository) SelectByTitle(title string) (blog model.Blog, err error) {
+	err = br.db.First(&blog, "title=?", title).Error
 	if err != nil {
 		return model.Blog{}, err
 	}
 	return blog, nil
 }
 
-func (br blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
-	db := ctx.Value("db").(*gorm.DB)
-	err := db.Save(&blog).Error
+func (br blogRepository) Update(blog model.Blog) (model.Blog, error) {
+	err := br.db.Save(&blog).Error
 	if err != nil {
 		return model.Blog{}, err
 	}

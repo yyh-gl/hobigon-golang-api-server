@@ -2,51 +2,36 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"net/http"
 	"os"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 )
 
-type server struct {
-	router *httprouter.Router
-	logger *log.Logger
-	db     *gorm.DB
-}
-
-func initDependencies() server {
-	return server{
-		router: httprouter.New(),
-		logger: getLogger(),
-		db:     getGormConnect(),
-	}
-}
-
 func main() {
-	s := initDependencies()
-	defer s.db.Close()
+	// システム共通で使用するものを用意
+	//  -> logger, DB
+	app.Init()
 
 	// ルーティング設定
-	s.router.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
-	s.router.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler), s))
-	s.router.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler), s))
-	s.router.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler), s))
-	s.router.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler), s))
-	s.router.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler), s))
+	r := httprouter.New()
+	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
+	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler)))
+	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler)))
+	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler)))
+	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler)))
+	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler)))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
 	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/app.log")
 	fmt.Println("========================")
-	s.logger.Print("Server Start")
-	s.logger.Fatal(http.ListenAndServe(":3000", s.router))
+	app.Logger.Print("Server Start")
+	app.Logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
 func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -57,17 +42,15 @@ func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func wrapHandler(h http.Handler, s server) httprouter.Handle {
+func wrapHandler(h http.Handler) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := r.Context()
 		ctx = context.InjectRequestParams(ctx, ps)
-		ctx = context.InjectLogger(ctx, s.logger)
-		ctx = context.InjectDB(ctx, s.db)
 		r = r.WithContext(ctx)
 
 		// リクエスト内容をログ出力
 		// TODO: Body の内容を記録
-		s.logger.Print(r.Method + " " + r.URL.String())
+		app.Logger.Print(r.Method + " " + r.URL.String())
 
 		// 共通ヘッダー設定
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
@@ -77,47 +60,4 @@ func wrapHandler(h http.Handler, s server) httprouter.Handle {
 
 		h.ServeHTTP(w, r)
 	}
-}
-
-func getLogger() *log.Logger {
-	logger := log.New(os.Stderr, "", log.LstdFlags)
-
-	// ログ出力先を設定
-	logPath := os.Getenv("LOG_PATH")
-	logfile, err := os.OpenFile(logPath+"/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic("cannnot open " + logPath + "/app.log:" + err.Error())
-	}
-
-	env := os.Getenv("APP_ENV")
-	switch env {
-	case "production":
-		logger.SetOutput(logfile)
-	default:
-		logger.SetOutput(io.MultiWriter(logfile, os.Stdout))
-	}
-
-	return logger
-}
-
-func getGormConnect() *gorm.DB {
-	DBMS := "mysql"
-	USER := os.Getenv("MYSQL_USER")
-	PASSWORD := os.Getenv("MYSQL_PASSWORD")
-	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
-	DATABASE := os.Getenv("MYSQL_DATABASE")
-
-	// ?parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?parseTime=true&loc=Asia%2FTokyo"
-
-	db, err := gorm.Open(DBMS, CONNECT)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// マイグレーション実行
-	db.AutoMigrate(&model.Blog{})
-	db.AutoMigrate(&model.Birthday{})
-
-	return db
 }
