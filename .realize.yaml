@@ -24,7 +24,7 @@ schema:
         method: make build
       run:
         status: true
-        method: ./cmd/api/bin/api-server
+        method: ./docker/api/bin/api-server
     watcher:
       extensions:
         - go
