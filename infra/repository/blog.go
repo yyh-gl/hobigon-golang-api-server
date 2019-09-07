@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
@@ -10,9 +11,9 @@ type blogRepository struct {
 	db *gorm.DB
 }
 
-func NewBlogRepository(db *gorm.DB) repository.BlogRepository {
+func NewBlogRepository() repository.BlogRepository {
 	return &blogRepository{
-		db: db,
+		db: app.DB,
 	}
 }
 

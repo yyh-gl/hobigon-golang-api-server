@@ -21,7 +21,7 @@ type CreateBlogRequest struct {
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
-	blogRepository := repository.NewBlogRepository(app.DB)
+	blogRepository := repository.NewBlogRepository()
 
 	// TODO: デコード処理を共通化
 	defer r.Body.Close()
@@ -67,7 +67,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ps := context.FetchRequestParams(ctx)
 
-	blogRepository := repository.NewBlogRepository(app.DB)
+	blogRepository := repository.NewBlogRepository()
 
 	blog, err := blogRepository.SelectByTitle(ps.ByName("title"))
 	if err != nil {
@@ -97,7 +97,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ps := context.FetchRequestParams(ctx)
 
-	blogRepository := repository.NewBlogRepository(app.DB)
+	blogRepository := repository.NewBlogRepository()
 	slackGateway := gateway.NewSlackGateway()
 
 	blog, err := blogRepository.SelectByTitle(ps.ByName("title"))

@@ -3,10 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
@@ -17,13 +17,14 @@ type NotifyBirthdayRequest struct {
 }
 
 func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
+	logger := app.Logger
+
 	ctx := r.Context()
-	logger := ctx.Value("logger").(*log.Logger)
 
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
 
-	// TODO: デコード処理を共通化
+	// TODO: body から受け取る必要なくない？
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -42,7 +43,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	birthday, err := birthdayRepository.SelectByDate(ctx, notifyBirthdayRequest.Date)
+	birthday, err := birthdayRepository.SelectByDate(notifyBirthdayRequest.Date)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
