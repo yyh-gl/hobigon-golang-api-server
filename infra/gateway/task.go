@@ -1,7 +1,6 @@
 package gateway
 
 import (
-	"context"
 	"os"
 
 	"github.com/adlio/trello"
@@ -21,7 +20,7 @@ func NewTaskGateway() gateway.TaskGateway {
 	}
 }
 
-func (tr taskGateway) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
+func (tr taskGateway) getBoard(boardID string) (board *trello.Board, err error) {
 	client := trello.NewClient(tr.APIKey, tr.APIToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
@@ -30,8 +29,8 @@ func (tr taskGateway) getBoard(ctx context.Context, boardID string) (board *trel
 	return board, nil
 }
 
-func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
-	board, err := tr.getBoard(ctx, boardID)
+func (tr taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, err error) {
+	board, err := tr.getBoard(boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +49,7 @@ func (tr taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 	return lists, nil
 }
 
-func (tr taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
+func (tr taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		return model.TaskList{}, model.TaskList{}, err

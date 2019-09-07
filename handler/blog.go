@@ -125,7 +125,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Slack に通知
-	err = slackGateway.SendLikeNotify(ctx, blog)
+	err = slackGateway.SendLikeNotify(blog)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする

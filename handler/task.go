@@ -2,9 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
@@ -16,8 +17,7 @@ type getTasksResponse struct {
 }
 
 func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	logger := ctx.Value("logger").(*log.Logger)
+	logger := app.Logger
 
 	taskGateway := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()
@@ -27,7 +27,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: ハンドラーにロジックもっちゃっているのを直したみ
 	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
 	for _, boardID := range boardIDList {
-		lists, err := taskGateway.GetListsByBoardID(ctx, boardID)
+		lists, err := taskGateway.GetListsByBoardID(boardID)
 		if err != nil {
 			logger.Println(err)
 			return
@@ -36,7 +36,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 		for _, list := range lists {
 			// TODO: 今後必要があれば動的に変更できる仕組みを追加
 			if list.Name == "TODO" || list.Name == "WIP" {
-				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(ctx, *list)
+				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(*list)
 				if err != nil {
 					logger.Println(err)
 					return
@@ -58,7 +58,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := slackGateway.SendTask(ctx, todayTasks, dueOverTasks)
+	err := slackGateway.SendTask(todayTasks, dueOverTasks)
 	if err != nil {
 		logger.Println(err)
 		return

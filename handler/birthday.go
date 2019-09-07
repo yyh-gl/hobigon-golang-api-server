@@ -19,8 +19,6 @@ type NotifyBirthdayRequest struct {
 func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
-	ctx := r.Context()
-
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
 
@@ -52,7 +50,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if birthday.IsToday() {
-		err = slackGateway.SendBirthday(ctx, birthday)
+		err = slackGateway.SendBirthday(birthday)
 		if err != nil {
 			logger.Println(err)
 			// TODO: エラーハンドリングをきちんとする
