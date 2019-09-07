@@ -14,7 +14,6 @@ func NewBlogRepository() repository.BlogRepository {
 	return &blogRepository{}
 }
 
-// TODO: ドメイン層への依存をなくす
 func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err := db.Create(&blog).Error
@@ -25,7 +24,6 @@ func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blo
 	return blog, nil
 }
 
-// TODO: ドメイン層への依存をなくす
 func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog model.Blog, err error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err = db.First(&blog, "title=?", title).Error
@@ -35,7 +33,6 @@ func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog 
 	return blog, nil
 }
 
-// TODO: ドメイン層への依存をなくす
 func (br blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	db := ctx.Value("db").(*gorm.DB)
 	err := db.Save(&blog).Error

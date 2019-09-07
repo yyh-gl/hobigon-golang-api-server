@@ -16,7 +16,6 @@ func NewSlackGateway() gateway.SlackGateway {
 }
 
 func (s slackGateway) send(ctx context.Context, data model.Slack) (err []error) {
-	// TODO: ドメイン層への依存をなくす
 	payload := slack.Payload{
 		Username: data.Username,
 		Channel:  data.Channel,
@@ -33,7 +32,6 @@ func (s slackGateway) send(ctx context.Context, data model.Slack) (err []error) 
 }
 
 func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
-	// TODO: ドメイン層への依存をなくす
 	data := model.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",
@@ -46,7 +44,6 @@ func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, due
 }
 
 func (s slackGateway) SendBirthday(ctx context.Context, birthday model.Birthday) (err error) {
-	// TODO: ドメイン層への依存をなくす
 	data := model.Slack{
 		Username: "聖母マリア様",
 		Channel:  "2019新卒技術_雑談",
@@ -59,7 +56,6 @@ func (s slackGateway) SendBirthday(ctx context.Context, birthday model.Birthday)
 }
 
 func (s slackGateway) SendLikeNotify(ctx context.Context, blog model.Blog) (err error) {
-	// TODO: ドメイン層への依存をなくす
 	data := model.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
