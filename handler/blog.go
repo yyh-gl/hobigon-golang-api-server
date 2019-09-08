@@ -14,11 +14,11 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
-type CreateBlogRequest struct {
-	Title string `json:"title"`
-}
-
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
+	type request struct {
+		Title string `json:"title"`
+	}
+
 	logger := app.Logger
 
 	blogRepository := repository.NewBlogRepository()
@@ -33,8 +33,8 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var createBlogRequest CreateBlogRequest
-	err = json.Unmarshal(body, &createBlogRequest)
+	var req request
+	err = json.Unmarshal(body, &req)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
@@ -43,7 +43,7 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var blog model.Blog
-	blog.Title = createBlogRequest.Title
+	blog.Title = req.Title
 	blog, err = blogRepository.Create(blog)
 	if err != nil {
 		logger.Println(err)

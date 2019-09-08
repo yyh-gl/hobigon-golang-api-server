@@ -11,12 +11,12 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 )
 
-type getTasksResponse struct {
-	TaskList        []model.Task `json:"task_list"`
-	DueOverTaskList []model.Task `json:"due_over_task_list"`
-}
-
 func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
+	type response struct {
+		TaskList        []model.Task `json:"task_list"`
+		DueOverTaskList []model.Task `json:"due_over_task_list"`
+	}
+
 	logger := app.Logger
 
 	taskGateway := gateway.NewTaskGateway()
@@ -64,7 +64,7 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := getTasksResponse{
+	res := response{
 		TaskList:        todayTasks,
 		DueOverTaskList: dueOverTasks,
 	}
