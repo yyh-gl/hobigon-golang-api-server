@@ -50,6 +50,7 @@ func (tr taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, e
 }
 
 // TODO: WIP 外にあるやつで期限が今日のものを WIP に移動させる機能 追加
+//  本機能を実装するには自前で model.Task 用の PUT 処理を実装する必要あり
 func (tr taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
