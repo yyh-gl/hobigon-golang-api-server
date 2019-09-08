@@ -49,6 +49,7 @@ func (tr taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, e
 	return lists, nil
 }
 
+// TODO: WIP 外にあるやつで期限が今日のものを WIP に移動させる機能 追加
 func (tr taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {

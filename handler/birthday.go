@@ -12,11 +12,11 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
-type NotifyBirthdayRequest struct {
-	Date string `json:"date"`
-}
-
 func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
+	type request struct {
+		Date string `json:"date"`
+	}
+
 	logger := app.Logger
 
 	birthdayRepository := repository.NewBirthdayRepository()
@@ -32,8 +32,8 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var notifyBirthdayRequest NotifyBirthdayRequest
-	err = json.Unmarshal(body, &notifyBirthdayRequest)
+	var req request
+	err = json.Unmarshal(body, &req)
 	if err != nil {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
@@ -41,7 +41,7 @@ func NotifyBirthdayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	birthday, err := birthdayRepository.SelectByDate(notifyBirthdayRequest.Date)
+	birthday, err := birthdayRepository.SelectByDate(req.Date)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logger.Println(err)
 		// TODO: エラーハンドリングをきちんとする
