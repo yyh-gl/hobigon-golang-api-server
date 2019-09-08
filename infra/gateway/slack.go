@@ -3,6 +3,8 @@ package gateway
 import (
 	"strconv"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
@@ -43,9 +45,18 @@ func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Tas
 }
 
 func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
-	data := model.Slack{
-		Username: "聖母マリア様",
-		Channel:  "2019新卒技術_雑談",
+	var data model.Slack
+	switch {
+	case app.IsPrd():
+		data = model.Slack{
+			Username: "聖母マリア様",
+			Channel:  "2019新卒技術_雑談",
+		}
+	default:
+		data = model.Slack{
+			Username: "まりお",
+			Channel:  "00_today_tasks",
+		}
 	}
 
 	data.Text = birthday.CreateBirthdayMessage()

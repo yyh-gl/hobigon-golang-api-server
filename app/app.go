@@ -63,3 +63,7 @@ func getGormConnect() *gorm.DB {
 
 	return db
 }
+
+func IsPrd() bool {
+	return os.Getenv("APP_ENV") == "production"
+}
