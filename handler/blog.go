@@ -23,6 +23,12 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	blogRepository := repository.NewBlogRepository()
 
 	req, err := decodeRequest(r, request{})
+	if err != nil {
+		logger.Println(err)
+		// TODO: エラーハンドリングをきちんとする
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 	defer r.Body.Close()
 
 	blog := model.Blog{
