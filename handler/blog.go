@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
@@ -23,27 +22,12 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 	blogRepository := repository.NewBlogRepository()
 
-	// TODO: デコード処理を共通化
+	req, err := decodeRequest(r, request{})
 	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.Println(err)
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
 
-	var req request
-	err = json.Unmarshal(body, &req)
-	if err != nil {
-		logger.Println(err)
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	blog := model.Blog{
+		Title: req["title"].(string),
 	}
-
-	var blog model.Blog
-	blog.Title = req.Title
 	blog, err = blogRepository.Create(blog)
 	if err != nil {
 		logger.Println(err)
