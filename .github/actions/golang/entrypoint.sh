@@ -14,5 +14,6 @@ if [[ "$1" == "lint" ]]; then
     echo "# Running GolangCI-Lint... #"
     echo "############################"
     golangci-lint --version
+    echo
     golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
 fi
