@@ -22,12 +22,13 @@ type List struct {
 }
 
 type Task struct {
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Due         *time.Time `json:"due"`
-	Board       string     `json:"board"`
-	List        string     `json:"list"`
-	ShortURL    string     `json:"short_url"`
+	Title         string      `json:"title"`
+	Description   string      `json:"description"`
+	Due           *time.Time  `json:"due"`
+	Board         string      `json:"board"`
+	List          string      `json:"list"`
+	ShortURL      string      `json:"short_url"`
+	OriginalModel interface{} `json:"-"`
 }
 
 type TaskList struct {

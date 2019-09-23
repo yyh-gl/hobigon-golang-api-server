@@ -58,7 +58,22 @@ func NotifyTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := slackGateway.SendTask(todayTasks, dueOverTasks)
+	// 今日のタスクを WIP リストに移動
+	err := taskGateway.MoveToWIP(todayTasks)
+	if err != nil {
+		logger.Println(err)
+		return
+	}
+
+	// 期限切れのタスクを WIP リストに移動
+	err = taskGateway.MoveToWIP(dueOverTasks)
+	if err != nil {
+		logger.Println(err)
+		return
+	}
+
+	// 今日および期限切れのタスクを Slack に通知
+	err = slackGateway.SendTask(todayTasks, dueOverTasks)
 	if err != nil {
 		logger.Println(err)
 		return

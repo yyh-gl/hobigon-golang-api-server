@@ -8,4 +8,5 @@ import (
 type TaskGateway interface {
 	GetListsByBoardID(boardID string) (lists []*trello.List, err error)
 	GetTasksFromList(list trello.List) (model.TaskList, model.TaskList, error)
+	MoveToWIP(tasks []model.Task) (err error)
 }

@@ -20,8 +20,8 @@ func NewTaskGateway() gateway.TaskGateway {
 	}
 }
 
-func (tr taskGateway) getBoard(boardID string) (board *trello.Board, err error) {
-	client := trello.NewClient(tr.APIKey, tr.APIToken)
+func (tg taskGateway) getBoard(boardID string) (board *trello.Board, err error) {
+	client := trello.NewClient(tg.APIKey, tg.APIToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
 		return nil, err
@@ -29,8 +29,8 @@ func (tr taskGateway) getBoard(boardID string) (board *trello.Board, err error) 
 	return board, nil
 }
 
-func (tr taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, err error) {
-	board, err := tr.getBoard(boardID)
+func (tg taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, err error) {
+	board, err := tg.getBoard(boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +49,7 @@ func (tr taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, e
 	return lists, nil
 }
 
-// TODO: WIP 外にあるやつで期限が今日のものを WIP に移動させる機能 追加
-//  本機能を実装するには自前で model.Task 用の PUT 処理を実装する必要あり
-func (tr taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
+func (tg taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		return model.TaskList{}, model.TaskList{}, err
@@ -63,6 +61,7 @@ func (tr taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskLis
 		task.Board = list.Board.Name
 		task.List = list.Name
 
+		// 期限切れタスクを抽出
 		if task.Due != nil && task.IsDueOver() {
 			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, task)
 		} else {
@@ -81,7 +80,30 @@ func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 		if card.Due != nil {
 			task.Due = task.GetJSTDue(card.Due)
 		}
+		task.OriginalModel = card
 		taskList.Tasks = append(taskList.Tasks, *task)
 	}
 	return taskList
+}
+
+func (tg taskGateway) MoveToWIP(tasks []model.Task) (err error) {
+	for _, task := range tasks {
+		var wipListID string
+		switch task.Board {
+		case "Main":
+			wipListID = os.Getenv("MAIN_WIP_LIST_ID")
+		case "Tech":
+			wipListID = os.Getenv("TECH_WIP_LIST_ID")
+		case "Work":
+			wipListID = os.Getenv("WORK_WIP_LIST_ID")
+		}
+
+		card := task.OriginalModel.(*trello.Card)
+		err = card.MoveToList(wipListID, trello.Defaults())
+		if err != nil {
+			// TODO: DB操作ではないので、途中で失敗した場合ロールバックできない問題を考える
+			return err
+		}
+	}
+	return nil
 }
