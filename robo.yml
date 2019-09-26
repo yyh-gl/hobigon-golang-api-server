@@ -1,0 +1,7 @@
+variables:
+  PROJECT: hobigon
+
+analysis-app-log:
+  summary: app.log 解析
+  command: |
+    ruby `pwd`/batch/analysisAppLog.rb
