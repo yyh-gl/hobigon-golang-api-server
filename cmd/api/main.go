@@ -55,7 +55,7 @@ func wrapHandler(h http.Handler) httprouter.Handle {
 
 		// リクエスト内容をログ出力
 		// TODO: Body の内容を記録
-		app.Logger.Print(r.Method + " " + r.URL.String())
+		app.Logger.Print("[AccessLog] " + r.Method + " " + r.URL.String())
 
 		// 共通ヘッダー設定
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
