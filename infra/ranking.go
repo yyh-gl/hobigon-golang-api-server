@@ -2,8 +2,9 @@ package infra
 
 import (
 	"bufio"
+	"fmt"
 	"os"
-	"strconv"
+	"sort"
 	"strings"
 )
 
@@ -46,16 +47,45 @@ func GetAccessRanking() (ranking string, err error) {
 	}
 
 	// アクセス数が多い順にソート
-	//sort.Slice(accessCountPerEndpoint, func(i, j int) bool {
-	//	return accessCountPerEndpoint[i].Price < foods[j].Price
-	//})
+	listForSort := requestList{}
+	for endpoint, count := range accessCountPerEndpoint {
+		e := request{endpoint, count}
+		listForSort = append(listForSort, e)
+	}
+	sort.Sort(listForSort)
 
 	rankingStr := "\nアクセスランキング"
 	rank := 1
-	for request, count := range accessCountPerEndpoint {
-		rankingStr += "\n" + strconv.Itoa(rank) + "位 " + strconv.Itoa(count) + "回： " + request
+	for r, count := range listForSort {
+		fmt.Println("========================")
+		fmt.Println(r)
+		fmt.Println(count)
+		fmt.Println("========================")
+		//rankingStr += "\n" + strconv.Itoa(rank) + "位 " + strconv.Itoa(count) + "回： " + request
 		rank++
 	}
 
 	return rankingStr, nil
+}
+
+// ソート用の構造体およびメソッドを用意
+type request struct {
+	endpoint string
+	count    int
+}
+type requestList []request
+
+func (rl requestList) Len() int {
+	return len(rl)
+}
+
+func (rl requestList) Swap(i, j int) {
+	rl[i], rl[j] = rl[j], rl[i]
+}
+
+func (rl requestList) Less(i, j int) bool {
+	if rl[i].endpoint == rl[j].endpoint {
+		return rl[i].count > rl[j].count
+	}
+	return rl[i].endpoint > rl[j].endpoint
 }
