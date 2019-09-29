@@ -87,5 +87,6 @@ func (rl requestList) Less(i, j int) bool {
 	if rl[i].endpoint == rl[j].endpoint {
 		return rl[i].count > rl[j].count
 	}
+
 	return rl[i].endpoint > rl[j].endpoint
 }
