@@ -19,13 +19,13 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
-	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler)))
+	r.OPTIONS("/*path", corsHandler)                                                  // CORS用の pre-flight 設定
+	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler))) // Slack 通知のために POST メソッド
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler)))
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler)))
-	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler)))
-	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(handler.GetAccessRanking)))
+	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler))) // Slack 通知のために POST メソッド
+	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(handler.GetAccessRanking)))      // Slack 通知のために POST メソッド
 
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(handler.GetHeaderHandler)))
