@@ -75,3 +75,15 @@ func (s slackGateway) SendLikeNotify(blog model.Blog) (err error) {
 	s.send(data)
 	return err
 }
+
+// ランキングを Slack に通知する関数
+func (s slackGateway) SendRanking(ranking string) (err error) {
+	data := model.Slack{
+		Username: "くりぼー",
+		Channel:  "51_tech_blog",
+		Text:     ranking,
+	}
+
+	s.send(data)
+	return err
+}

@@ -2,13 +2,15 @@ package infra
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
-func GetAccessRanking() (ranking string, err error) {
+func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3
@@ -20,7 +22,7 @@ func GetAccessRanking() (ranking string, err error) {
 	// app.log からアクセス記録を解析
 	fp, err := os.Open(os.Getenv("LOG_PATH") + "/app.log")
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	defer fp.Close()
 
@@ -43,50 +45,25 @@ func GetAccessRanking() (ranking string, err error) {
 		}
 	}
 	if err = scanner.Err(); err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	// アクセス数が多い順にソート
-	listForSort := requestList{}
+	accessList = model.AccessList{}
 	for endpoint, count := range accessCountPerEndpoint {
-		e := request{endpoint, count}
-		listForSort = append(listForSort, e)
+		e := model.Access{
+			Endpoint: endpoint,
+			Count:    count,
+		}
+		accessList = append(accessList, e)
 	}
-	sort.Sort(listForSort)
+	sort.Sort(accessList)
 
-	rankingStr := "\nアクセスランキング"
-	rank := 1
-	for r, count := range listForSort {
-		fmt.Println("========================")
-		fmt.Println(r)
-		fmt.Println(count)
-		fmt.Println("========================")
-		//rankingStr += "\n" + strconv.Itoa(rank) + "位 " + strconv.Itoa(count) + "回： " + request
-		rank++
+	// Slack通知用のメッセージを作成
+	rankingMsg = "\n【アクセスランキング】"
+	for i, req := range accessList {
+		rankingMsg += "\n" + strconv.Itoa(i+1) + "位 " + strconv.Itoa(req.Count) + "回： " + req.Endpoint
 	}
 
-	return rankingStr, nil
-}
-
-// ソート用の構造体およびメソッドを用意
-type request struct {
-	endpoint string
-	count    int
-}
-type requestList []request
-
-func (rl requestList) Len() int {
-	return len(rl)
-}
-
-func (rl requestList) Swap(i, j int) {
-	rl[i], rl[j] = rl[j], rl[i]
-}
-
-func (rl requestList) Less(i, j int) bool {
-	if rl[i].endpoint == rl[j].endpoint {
-		return rl[i].count > rl[j].count
-	}
-
-	return rl[i].endpoint > rl[j].endpoint
+	return rankingMsg, accessList, nil
 }
