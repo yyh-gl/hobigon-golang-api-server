@@ -3,6 +3,7 @@ package model
 import "time"
 
 // TODO: ドメイン貧血症を治す
+// TODO: JSON のキー名をここにドメイン知識として持ってよいのか検討
 type Blog struct {
 	ID        uint       `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT"`
 	Title     string     `json:"title,omitempty" gorm:"title;unique;not null"`

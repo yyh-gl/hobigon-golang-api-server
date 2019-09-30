@@ -25,6 +25,7 @@ func main() {
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler)))
 	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler)))
+	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(handler.GetAccessRanking)))
 
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(handler.GetHeaderHandler)))

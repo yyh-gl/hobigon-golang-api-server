@@ -1,0 +1,7 @@
+variables:
+  PROJECT: hobigon
+
+get-access-ranking:
+  summary: アクセスランキング取得
+  command: |
+    echo "robo タスク未対応（現在、実装中🚧）"
