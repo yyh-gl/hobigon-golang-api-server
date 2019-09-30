@@ -5,6 +5,7 @@ import (
 )
 
 // TODO: ドメイン貧血症を治す
+// TODO: JSON のキー名をここにドメイン知識として持ってよいのか検討
 type Board struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`

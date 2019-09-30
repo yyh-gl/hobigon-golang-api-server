@@ -5,6 +5,7 @@ import (
 )
 
 // TODO: ドメイン貧血症を治す
+// TODO: JSON のキー名をここにドメイン知識として持ってよいのか検討
 type Birthday struct {
 	ID        uint       `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT"`
 	Name      string     `json:"name,omitempty" gorm:"name;not null"`
