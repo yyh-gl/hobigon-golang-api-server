@@ -16,8 +16,9 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 		IndexMethod     = 3
 		IndexEndpoint   = 4
 		AccessLogPrefix = "[AccessLog]"
-		IgnoreEndpoint  = "/api/v1/rankings/access"
 	)
+
+	var IgnoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks"}
 
 	// app.log からアクセス記録を解析
 	fp, err := os.Open(os.Getenv("LOG_PATH") + "/app.log")
@@ -33,7 +34,7 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 		req := scanner.Text()
 		reqSlice := strings.Split(req, " ")
 
-		if reqSlice[IndexPrefix] == AccessLogPrefix && reqSlice[IndexEndpoint] != IgnoreEndpoint {
+		if reqSlice[IndexPrefix] == AccessLogPrefix && !isContain(IgnoreEndpoints, reqSlice[IndexEndpoint]) {
 			key := reqSlice[IndexMethod] + "_" + reqSlice[IndexEndpoint]
 
 			_, exist := accessCountPerEndpoint[key]
@@ -66,4 +67,13 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	}
 
 	return rankingMsg, accessList, nil
+}
+
+func isContain(arr []string, str string) bool {
+	for _, v := range arr {
+		if str == v {
+			return true
+		}
+	}
+	return false
 }
