@@ -63,7 +63,7 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	// Slack 通知用のメッセージを作成
 	rankingMsg = "\n【アクセスランキング】"
 	for i, req := range accessList {
-		// Slack への通知は10位まで表示
+		// Slack 通知では10位まで表示
 		if i >= 10 {
 			break
 		}
