@@ -60,9 +60,14 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	}
 	sort.Sort(accessList)
 
-	// Slack通知用のメッセージを作成
+	// Slack 通知用のメッセージを作成
 	rankingMsg = "\n【アクセスランキング】"
 	for i, req := range accessList {
+		// Slack への通知は10位まで表示
+		if i >= 10 {
+			break
+		}
+
 		rankingMsg += "\n" + strconv.Itoa(i+1) + "位 " + strconv.Itoa(req.Count) + "回： " + req.Endpoint
 	}
 
