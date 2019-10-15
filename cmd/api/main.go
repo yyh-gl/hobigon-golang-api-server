@@ -24,6 +24,8 @@ func main() {
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler)))
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler)))
+
+	// TODO: /api/vi/notifications/slack/birthday?date=today みたいなエンドポイントに変更する
 	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler))) // Slack 通知のために POST メソッド
 	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(handler.GetAccessRanking)))      // Slack 通知のために POST メソッド
 
