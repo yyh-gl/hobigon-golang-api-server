@@ -1,4 +1,4 @@
-package handler
+package usecase
 
 import (
 	"encoding/json"
