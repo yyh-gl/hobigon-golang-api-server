@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra"
+
 	"github.com/pkg/errors"
 
 	"github.com/jinzhu/gorm"
@@ -26,8 +28,28 @@ func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	if birthday.IsToday() {
 		err = slackGateway.SendBirthday(birthday)
 		if err != nil {
-			return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
+			return errors.Wrap(err, "slackGateway.SendBirthday()内でのエラー")
 		}
+	}
+
+	return nil
+}
+
+func NotifyAccessRankingUseCase(ctx context.Context) error {
+	slackGateway := gateway.NewSlackGateway()
+
+	// アクセスランキングの結果を取得
+	// TODO: エクセルに出力して解析とかしたい
+	// TODO: アウトプット再検討
+	rankingMsg, _, err := infra.GetAccessRanking()
+	if err != nil {
+		return errors.Wrap(err, "infra.GetAccessRanking()内でのエラー")
+	}
+
+	// アクセスランキングの結果を Slack に通知
+	err = slackGateway.SendRanking(rankingMsg)
+	if err != nil {
+		return errors.Wrap(err, "slackGateway.SendRanking()内でのエラー")
 	}
 
 	return nil
