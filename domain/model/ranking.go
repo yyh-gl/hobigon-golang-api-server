@@ -3,8 +3,8 @@ package model
 // アクセスランキング用の構造体
 // TODO: JSON タグをドメインモデルではなく、ハンドラー層に定義した構造体に定義するように修正する
 type Access struct {
-	Endpoint string `json:"endpoint"`
-	Count    int    `json:"count"`
+	Endpoint string
+	Count    int
 }
 
 type AccessList []Access
