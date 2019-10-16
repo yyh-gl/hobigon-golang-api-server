@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/handler"
 )
 
 func main() {
@@ -19,19 +20,19 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.OPTIONS("/*path", corsHandler)                                                  // CORS用の pre-flight 設定
-	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(handler.NotifyTaskHandler))) // Slack 通知のために POST メソッド
-	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(handler.CreateBlogHandler)))
-	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(handler.GetBlogHandler)))
-	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(handler.LikeBlogHandler)))
+	r.OPTIONS("/*path", corsHandler)                                               // CORS用の pre-flight 設定
+	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(rest.NotifyTaskHandler))) // Slack 通知のために POST メソッド
+	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(rest.CreateBlogHandler)))
+	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(rest.GetBlogHandler)))
+	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(rest.LikeBlogHandler)))
 
 	// TODO: /api/vi/notifications/slack/birthdays/today, /api/vi/notifications/slack/rankings/access みたいなエンドポイントに変更する
-	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(handler.NotifyBirthdayHandler))) // Slack 通知のために POST メソッド
-	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(handler.GetAccessRanking)))      // Slack 通知のために POST メソッド
+	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyBirthdayHandler))) // Slack 通知のために POST メソッド
+	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(rest.GetAccessRanking)))      // Slack 通知のために POST メソッド
 
 	// 技術検証用ルーティング設定
-	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(handler.GetHeaderHandler)))
-	//r.GET("/api/v1/footer", wrapHandler(http.HandlerFunc(handler.GetFooterHandler)))
+	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
+	//r.GET("/api/v1/footer", wrapHandler(http.HandlerFunc(rest.GetFooterHandler)))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
