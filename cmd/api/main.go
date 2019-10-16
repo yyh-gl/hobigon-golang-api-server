@@ -30,6 +30,11 @@ func main() {
 	r.POST("/api/v1/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyBirthdayHandler))) // Slack 通知のために POST メソッド
 	r.POST("/api/v1/rankings/access", wrapHandler(http.HandlerFunc(rest.GetAccessRanking)))      // Slack 通知のために POST メソッド
 
+	// 通知系API
+	//  -> Slack への通知は POST メソッドのみ対応
+	r.POST("/api/vi/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayBirthdayToSlackHandler)))
+	r.POST("/api/vi/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(rest.NotifyAccessRankingHandler)))
+
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
 	//r.GET("/api/v1/footer", wrapHandler(http.HandlerFunc(rest.GetFooterHandler)))

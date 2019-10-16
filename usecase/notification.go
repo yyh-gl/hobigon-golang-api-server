@@ -1,0 +1,34 @@
+package usecase
+
+import (
+	"context"
+	"time"
+
+	"github.com/pkg/errors"
+
+	"github.com/jinzhu/gorm"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
+)
+
+// NotifyTodayBirthdayToSlackHandler は今日誕生日の人を Slack に通知
+func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
+	birthdayRepository := repository.NewBirthdayRepository()
+	slackGateway := gateway.NewSlackGateway()
+
+	today := time.Now().Format("0102")
+	birthday, err := birthdayRepository.SelectByDate(today)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
+	}
+
+	// TODO: ドメインサービスとして再定義しなおす
+	if birthday.IsToday() {
+		err = slackGateway.SendBirthday(birthday)
+		if err != nil {
+			return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
+		}
+	}
+
+	return nil
+}
