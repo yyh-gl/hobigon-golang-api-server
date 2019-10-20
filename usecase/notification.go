@@ -24,7 +24,7 @@ func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 		return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
 	}
 
-	// TODO: ドメインサービスとして再定義しなおす
+	// TODO: ドメインサービスとして定義しなおす
 	if birthday.IsToday() {
 		if err = slackGateway.SendBirthday(birthday); err != nil {
 			return errors.Wrap(err, "slackGateway.SendBirthday()内でのエラー")
