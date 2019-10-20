@@ -13,7 +13,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
-// NotifyTodayBirthdayToSlackHandler は今日誕生日の人を Slack に通知
+// NotifyTodayBirthdayToSlackUseCase は今日誕生日の人を Slack に通知
 func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
@@ -34,6 +34,7 @@ func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	return nil
 }
 
+// NotifyAccessRankingUseCase はアクセスランキングを Slack に通知
 func NotifyAccessRankingUseCase(ctx context.Context) error {
 	slackGateway := gateway.NewSlackGateway()
 
