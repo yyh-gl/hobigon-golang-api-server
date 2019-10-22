@@ -11,13 +11,15 @@ type notificationService struct {
 	slackGateway gateway.SlackGateway
 }
 
-func NewNotificationService(slackGateway gateway.SlackGateway) service.NotificationService {
+// NewNotificationService は NotificationService のインスタンスを生成
+func NewNotificationService(slackGateway gateway.SlackGateway, taskGateway gateway.TaskGateway) service.NotificationService {
 	return &notificationService{
 		slackGateway: slackGateway,
 	}
 }
 
-func (n notificationService) SendBirthdayToSlack(birthday model.Birthday) (err error) {
+// SendBirthdayToSlack は今日の誕生日
+func (n notificationService) SendTodayBirthdayToSlack(birthday model.Birthday) (err error) {
 	// 今日が誕生日であった場合にのみ Slack に通知
 	if birthday.IsToday() {
 		if err = n.slackGateway.SendBirthday(birthday); err != nil {

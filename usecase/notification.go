@@ -2,7 +2,10 @@ package usecase
 
 import (
 	"context"
+	"os"
 	"time"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
 
@@ -15,11 +18,68 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
+// NotifyTodayTasksToSlackUseCase は今日のタスク一覧を Slack に通知
+func NotifyTodayTasksToSlackUseCase(ctx context.Context) error {
+	taskGateway := gateway.NewTaskGateway()
+	slackGateway := gateway.NewSlackGateway()
+
+	// TODO: ビジネスロジックを結構持ってしまっているのでドメインモデルに落とし込んでいく
+	var todayTasks []model.Task
+	var dueOverTasks []model.Task
+	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
+	for _, boardID := range boardIDList {
+		lists, err := taskGateway.GetListsByBoardID(boardID)
+		if err != nil {
+			return errors.Wrap(err, "taskGateway.GetListsByBoardID()内でのエラー")
+		}
+
+		for _, list := range lists {
+			// TODO: 今後必要があれば動的に変更できる仕組みを追加
+			if list.Name == "TODO" || list.Name == "WIP" {
+				taskList, dueOverTaskList, err := taskGateway.GetTasksFromList(*list)
+				if err != nil {
+					return errors.Wrap(err, "taskGateway.GetTasksFromList()内でのエラー")
+				}
+
+				switch list.Name {
+				case "TODO":
+					// TODOリストからは今日のタスクのみ出力
+					tasks := taskList.GetTodayTasks()
+					todayTasks = append(todayTasks, tasks...)
+				case "WIP":
+					// WIPリストにあるタスクは全て出力
+					todayTasks = append(todayTasks, taskList.Tasks...)
+				}
+
+				// 期限切れタスクは問答無用で通知
+				dueOverTasks = append(dueOverTasks, dueOverTaskList.Tasks...)
+			}
+		}
+	}
+
+	// 今日のタスクを WIP リストに移動
+	if err := taskGateway.MoveToWIP(todayTasks); err != nil {
+		return errors.Wrap(err, "taskGateway.MoveToWIP(todayTasks)内でのエラー")
+	}
+
+	// 期限切れのタスクを WIP リストに移動
+	if err := taskGateway.MoveToWIP(dueOverTasks); err != nil {
+		return errors.Wrap(err, "taskGateway.MoveToWIP(dueOverTasks)内でのエラー")
+	}
+
+	// 今日および期限切れのタスクを Slack に通知
+	if err := slackGateway.SendTask(todayTasks, dueOverTasks); err != nil {
+		return errors.Wrap(err, "slackGateway.SendTask()内でのエラー")
+	}
+
+	return nil
+}
+
 // NotifyTodayBirthdayToSlackUseCase は今日誕生日の人を Slack に通知
 func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
-	notificationService := service.NewNotificationService(slackGateway)
+	notificationService := service.NewNotificationService(slackGateway, nil)
 
 	// 今日の誕生日情報を取得
 	today := time.Now().Format("0102")
@@ -29,9 +89,9 @@ func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	}
 
 	// 誕生日情報を Slack に通知
-	err = notificationService.SendBirthdayToSlack(birthday)
+	err = notificationService.SendTodayBirthdayToSlack(birthday)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return errors.Wrap(err, "notificationService.SendBirthdayToSlack()内でのエラー")
+		return errors.Wrap(err, "notificationService.SendTodayBirthdayToSlack()内でのエラー")
 	}
 
 	return nil

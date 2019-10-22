@@ -6,5 +6,5 @@ import (
 
 // NotificationService は通知サービスのインターフェース
 type NotificationService interface {
-	SendBirthdayToSlack(model.Birthday) error
+	SendTodayBirthdayToSlack(model.Birthday) error
 }
