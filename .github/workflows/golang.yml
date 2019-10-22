@@ -2,13 +2,18 @@ name: Workflow for Golang
 on: [push]
 
 jobs:
-   test:
-      name: Test
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v1
-        - name: Lint
-          uses: ./.github/actions/golang
-        - name: Test
-          run: go test ./...
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Lint
+        uses: ./.github/actions/golang
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        uses: go test ./...
+    
