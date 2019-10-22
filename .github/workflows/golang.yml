@@ -6,6 +6,8 @@ jobs:
       name: Test
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout
+          run: actions/checkout
         - name: Lint
           uses: ./.github/actions/golang
         - name: Test
