@@ -2,5 +2,5 @@ name: 'Golang Lint and Test Action'
 description: 'Lint and Test for Golang'
 author: 'yyh-gl'
 runs:
-  using: 'Dockerfile'
-  main: 'entrypoint.sh'
+  using: 'docker'
+  image: 'Dockerfile'
