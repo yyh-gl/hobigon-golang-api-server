@@ -15,5 +15,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test
-        uses: go test ./...
+        run: go test ./...
     
