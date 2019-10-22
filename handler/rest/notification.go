@@ -9,23 +9,23 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
-type response struct {
-	IsSuccess bool   `json:"is_success"`
-	Error     string `json:"error,omitempty"`
+type notificationResponse struct {
+	OK    bool   `json:"ok"`
+	Error string `json:"error,omitempty"`
 }
 
 // NotifyTodayTaskToSlackHandler は今日のタスク一覧を Slack に通知
 func NotifyTodayTasksToSlackHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
-	res := response{
-		IsSuccess: true,
+	res := notificationResponse{
+		OK: true,
 	}
 
 	if err := usecase.NotifyTodayTasksToSlackUseCase(r.Context()); err != nil {
 		logger.Println(err)
 
-		res.IsSuccess = false
+		res.OK = false
 		res.Error = err.Error()
 	}
 
@@ -40,14 +40,14 @@ func NotifyTodayTasksToSlackHandler(w http.ResponseWriter, r *http.Request) {
 func NotifyTodayBirthdayToSlackHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
-	res := response{
-		IsSuccess: true,
+	res := notificationResponse{
+		OK: true,
 	}
 
 	if err := usecase.NotifyTodayBirthdayToSlackUseCase(r.Context()); err != nil {
 		logger.Println(err)
 
-		res.IsSuccess = false
+		res.OK = false
 		res.Error = err.Error()
 	}
 
@@ -63,14 +63,14 @@ func NotifyTodayBirthdayToSlackHandler(w http.ResponseWriter, r *http.Request) {
 func NotifyAccessRankingToSlackHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
-	res := response{
-		IsSuccess: true,
+	res := notificationResponse{
+		OK: true,
 	}
 
 	if err := usecase.NotifyAccessRankingUseCase(r.Context()); err != nil {
 		logger.Println(err)
 
-		res.IsSuccess = false
+		res.OK = false
 		res.Error = err.Error()
 	}
 

@@ -21,6 +21,8 @@ func main() {
 	// ルーティング設定
 	r := httprouter.New()
 	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
+
+	// ブログ関連のAPI
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(rest.CreateBlogHandler)))
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(rest.GetBlogHandler)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(rest.LikeBlogHandler)))
