@@ -3,51 +3,81 @@ package rest
 import (
 	"encoding/json"
 	"net/http"
+	"time"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
+	logger := app.Logger
+
 	type request struct {
 		Title string `json:"title"`
 	}
 
-	logger := app.Logger
+	type blog struct {
+		ID        uint       `json:"id,omitempty"`
+		Title     string     `json:"title,omitempty"`
+		Count     *int       `json:"count,omitempty"`
+		CreatedAt *time.Time `json:"created_at,omitempty"`
+		UpdatedAt *time.Time `json:"updated_at,omitempty"`
+		DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	}
 
-	blogRepository := repository.NewBlogRepository()
+	type response struct {
+		IsSuccess bool   `json:"is_success"`
+		Error     string `json:"error,omitempty"`
+		Blog      *blog  `json:"blog,omitempty"`
+	}
+
+	res := response{
+		IsSuccess: true,
+	}
 
 	req, err := decodeRequest(r, request{})
 	if err != nil {
 		logger.Println(err)
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+
+		res.IsSuccess = false
+		res.Error = err.Error()
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	defer r.Body.Close()
 
-	blog := model.Blog{
-		Title: req["title"].(string),
-	}
-	blog, err = blogRepository.Create(blog)
-	if err != nil {
-		logger.Println(err)
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	var b *model.Blog
+	if res.IsSuccess {
+		params := usecase.CreateBlogParams{
+			Title: req["title"].(string),
+		}
+		b, err = usecase.CreateBlogUseCase(r.Context(), params)
+		if err != nil {
+			res.IsSuccess = false
+			res.Error = err.Error()
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		if b != nil {
+			blogRes := blog(*b)
+			res.Blog = &blogRes
+		}
 	}
 
-	err = json.NewEncoder(w).Encode(blog)
+	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
 		logger.Println(err)
-		// TODO: エラーハンドリングをきちんとする
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+
+		res.IsSuccess = false
+		res.Error = err.Error()
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
