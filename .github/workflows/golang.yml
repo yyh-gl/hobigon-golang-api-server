@@ -7,7 +7,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
-          run: actions/checkout
+          uses: actions/checkout@v1
+        - uses: ./
         - name: Lint
           uses: ./.github/actions/golang
         - name: Test
