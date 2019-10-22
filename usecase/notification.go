@@ -23,9 +23,10 @@ func NotifyTodayTasksToSlackUseCase(ctx context.Context) error {
 	taskGateway := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()
 
-	// TODO: ビジネスロジックを結構持ってしまっているのでドメインモデルに落とし込んでいく
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
+
+	// TODO: ビジネスロジックを結構持ってしまっているのでドメインモデルに落とし込んでいく
 	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
 	for _, boardID := range boardIDList {
 		lists, err := taskGateway.GetListsByBoardID(boardID)
