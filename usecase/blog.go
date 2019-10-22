@@ -9,6 +9,11 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
+//////////////////////////////////////////////////
+// CreateBlog
+//////////////////////////////////////////////////
+
+// CreateBlogParams はブログデータ作成に必要なパラメータを受け取るための構造体
 type CreateBlogParams struct {
 	Title string
 }

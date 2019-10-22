@@ -17,6 +17,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
+// CreateBlogHandler はブログデータを新規に作成
 func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
@@ -81,6 +82,7 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateBlogHandler はブログデータを新規に作成
 func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
