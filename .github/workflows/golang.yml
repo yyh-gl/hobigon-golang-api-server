@@ -1,0 +1,12 @@
+name: Workflow for Golang
+on: [push]
+
+jobs:
+   test:
+      name: Test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Lint
+          run: ./.github/actions/golang
+        - name: Test
+          run: go test ./...
