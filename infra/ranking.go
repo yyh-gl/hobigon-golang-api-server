@@ -10,6 +10,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
+// GetAccessRanking はアクセスランキングを取得
 func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
 	const (
 		IndexPrefix     = 2

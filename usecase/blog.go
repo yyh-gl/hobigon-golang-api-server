@@ -3,11 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
-
 	"github.com/pkg/errors"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
