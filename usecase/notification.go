@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/infra"
 
 	"github.com/pkg/errors"
@@ -17,18 +19,19 @@ import (
 func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	birthdayRepository := repository.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
+	notificationService := service.NewNotificationService(slackGateway)
 
+	// 今日の誕生日情報を取得
 	today := time.Now().Format("0102")
 	birthday, err := birthdayRepository.SelectByDate(today)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
 	}
 
-	// TODO: ドメインサービスとして定義しなおす
-	if birthday.IsToday() {
-		if err = slackGateway.SendBirthday(birthday); err != nil {
-			return errors.Wrap(err, "slackGateway.SendBirthday()内でのエラー")
-		}
+	// 誕生日情報を Slack に通知
+	err = notificationService.SendBirthdayToSlack(birthday)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return errors.Wrap(err, "notificationService.SendBirthdayToSlack()内でのエラー")
 	}
 
 	return nil

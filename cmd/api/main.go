@@ -20,16 +20,16 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.OPTIONS("/*path", corsHandler)                                               // CORS用の pre-flight 設定
-	r.POST("/api/v1/tasks", wrapHandler(http.HandlerFunc(rest.NotifyTaskHandler))) // Slack 通知のために POST メソッド
+	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(rest.CreateBlogHandler)))
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(rest.GetBlogHandler)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(rest.LikeBlogHandler)))
 
 	// 通知系API
 	//  -> Slack への通知は POST メソッドのみ対応
-	r.POST("/api/vi/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayBirthdayToSlackHandler)))
-	r.POST("/api/vi/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(rest.NotifyAccessRankingHandler)))
+	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(rest.NotifyTaskHandler)))
+	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayBirthdayToSlackHandler)))
+	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(rest.NotifyAccessRankingToSlackHandler)))
 
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
