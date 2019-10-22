@@ -26,7 +26,6 @@ func main() {
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(rest.LikeBlogHandler)))
 
 	// 通知系API
-	//  -> Slack への通知は POST メソッドのみ対応
 	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayTasksToSlackHandler)))
 	// TODO: 誕生日の人が複数いたときに対応
 	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayBirthdayToSlackHandler)))
