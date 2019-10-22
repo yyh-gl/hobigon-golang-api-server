@@ -9,7 +9,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Lint
-        uses: ./.github/actions/golang
+        uses: ./.github/actions/golang-test
   test:
     name: Test
     runs-on: ubuntu-latest
