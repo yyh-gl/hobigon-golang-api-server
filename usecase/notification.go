@@ -18,6 +18,10 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 )
 
+//////////////////////////////////////////////////
+// NotifyTodayTasksToSlackUseCase
+//////////////////////////////////////////////////
+
 // NotifyTodayTasksToSlackUseCase は今日のタスク一覧を Slack に通知
 func NotifyTodayTasksToSlackUseCase(ctx context.Context) error {
 	taskGateway := gateway.NewTaskGateway()
@@ -76,6 +80,10 @@ func NotifyTodayTasksToSlackUseCase(ctx context.Context) error {
 	return nil
 }
 
+//////////////////////////////////////////////////
+// NotifyTodayBirthdayToSlackUseCase
+//////////////////////////////////////////////////
+
 // NotifyTodayBirthdayToSlackUseCase は今日誕生日の人を Slack に通知
 func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 	birthdayRepository := repository.NewBirthdayRepository()
@@ -97,6 +105,10 @@ func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
 
 	return nil
 }
+
+//////////////////////////////////////////////////
+// NotifyAccessRankingUseCase
+//////////////////////////////////////////////////
 
 // NotifyAccessRankingUseCase はアクセスランキングを Slack に通知
 func NotifyAccessRankingUseCase(ctx context.Context) error {
