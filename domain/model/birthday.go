@@ -6,14 +6,15 @@ import (
 
 // TODO: ドメイン貧血症を治す
 // TODO: JSON タグをドメインモデルではなく、ハンドラー層に定義した構造体に定義するように修正する
+// TODO: gorm タグを削除
 type Birthday struct {
-	ID        uint       `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT"`
-	Name      string     `json:"name,omitempty" gorm:"name;not null"`
-	Date      string     `json:"date,omitempty" gorm:"date;not null"`
-	WishList  string     `json:"wish_list,omitempty" gorm:"wish_list"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty" sql:"index"`
+	ID        uint   `gorm:"primary_key;AUTO_INCREMENT"`
+	Name      string `gorm:"name;not null"`
+	Date      string `gorm:"date;not null"`
+	WishList  string `gorm:"wish_list"`
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	DeletedAt *time.Time
 }
 
 func (b Birthday) TableName() string {
