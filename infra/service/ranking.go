@@ -1,4 +1,4 @@
-package infra
+package service
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
-// GetAccessRanking はアクセスランキングを取得
+// GetAccessRanking はアクセスランキングを取得する関数
 func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
 	const (
 		IndexPrefix     = 2
@@ -19,7 +19,8 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 		AccessLogPrefix = "[AccessLog]"
 	)
 
-	var IgnoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks"}
+	// TODO: /api/v1/blogs/*/like というように正規表現で ignore 指定できるようにする
+	var IgnoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks", "/api/v1/blogs/good_api/like"}
 
 	// app.log からアクセス記録を解析
 	fp, err := os.Open(os.Getenv("LOG_PATH") + "/app.log")
@@ -75,6 +76,7 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	return rankingMsg, accessList, nil
 }
 
+// isContain は文字列の配列に指定文字列が存在するか確認する関数
 func isContain(arr []string, str string) bool {
 	for _, v := range arr {
 		if str == v {

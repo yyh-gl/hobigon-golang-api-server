@@ -8,7 +8,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
@@ -113,7 +112,7 @@ func NotifyAccessRankingUseCase(ctx context.Context) error {
 	// アクセスランキングの結果を取得
 	// TODO: エクセルに出力して解析とかしたい
 	// TODO: アウトプット再検討
-	rankingMsg, _, err := infra.GetAccessRanking()
+	rankingMsg, _, err := service.GetAccessRanking()
 	if err != nil {
 		return errors.Wrap(err, "infra.GetAccessRanking()内でのエラー")
 	}
