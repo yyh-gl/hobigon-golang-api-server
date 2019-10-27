@@ -1,5 +1,32 @@
 variables:
-  PROJECT: hobigon
+  work_dir: ~/workspaces/Go/src/github.com/yyh-gl/hobigon-golang-api-server
+  git:
+    commit: $(git rev-parse HEAD)
+    branch: $(git rev-parse --abbrev-ref HEAD)
+
+api-build-local:
+  summary: |
+    APIサーバをローカルかつLinux用にビルド
+      -> 引数をひとつ渡すことが可能（-x：ビルドログを出力）
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build $1 -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go
+
+api-build-prod:
+  summary: |
+    APIサーバをProductionかつLinux用にビルド
+      -> 引数をひとつ渡すことが可能（-x：ビルドログを出力）
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build $1 -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go
+
+deploy:
+  summary: ProductionかつLinux用にビルドしてからデプロイ（masterにPUSH）
+  command: |
+    robo api-build-prod
+    git add ./cmd/api/bin/api-server
+    git commit -m "[`date +'%Y/%m/%d %H:%M:%S'`] 最新版デプロイ"
+    git push origin master
+
+lint:
+  summary: Docker経由でLint実行
+  command: docker-compose exec -T api golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
 
 get-access-ranking:
   summary: アクセスランキング取得
