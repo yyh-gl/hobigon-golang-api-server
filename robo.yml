@@ -24,6 +24,7 @@ deploy:
   summary: ProductionかつLinux用にビルドしてからデプロイ（masterにPUSH）
   command: |
     robo api-build-prod
+    robo cli-build-prod
     git add ./cmd/api/bin/api-server ./cmd/cli/bin/hobi
     git commit -m "[`date +'%Y/%m/%d %H:%M:%S'`] 最新版デプロイ"
     git push origin master
