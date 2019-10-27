@@ -5,16 +5,20 @@ variables:
     branch: $(git rev-parse --abbrev-ref HEAD)
 
 api-build-local:
-  summary: |
-    APIサーバをローカルかつLinux用にビルド
-      -> 引数をひとつ渡すことが可能（-x：ビルドログを出力）
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build $1 -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go
+  summary: APIサーバをローカルかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go
 
 api-build-prod:
-  summary: |
-    APIサーバをProductionかつLinux用にビルド
-      -> 引数をひとつ渡すことが可能（-x：ビルドログを出力）
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build $1 -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go
+  summary: APIサーバをProductionかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go
+
+cli-build-local:
+  summary: CLIをローカルかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/cli/bin/api-server ./cmd/cli/main.go
+
+cli-build-prod:
+  summary: CLIをProductionかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/api-server ./cmd/cli/main.go
 
 deploy:
   summary: ProductionかつLinux用にビルドしてからデプロイ（masterにPUSH）
@@ -30,5 +34,4 @@ lint:
 
 get-access-ranking:
   summary: アクセスランキング取得
-  command: |
-    echo "robo タスク未対応（現在、実装中🚧）"
+  command: echo "robo タスク未対応（現在、実装中🚧）"

@@ -16,12 +16,14 @@ settings:
     force: false
     interval: 0s
 schema:
-  - name: api
+  - name: app
     path: .
     commands:
       install:
         status: true
-        method: robo api-build-local
+        method: |
+          robo api-build-local
+          robo cli-build-local
       run:
         status: true
         method: ./docker/api/bin/api-server
