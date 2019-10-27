@@ -44,7 +44,7 @@ func getLogger(filename string) *log.Logger {
 	logPath := os.Getenv("LOG_PATH")
 	logfile, err := os.OpenFile(logPath+"/"+filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		panic("cannnot open " + logPath + "/" + filename + err.Error())
+		panic("cannnot open " + logPath + "/" + filename + ": " + err.Error())
 	}
 
 	env := os.Getenv("APP_ENV")
