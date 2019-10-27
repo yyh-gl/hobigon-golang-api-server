@@ -1,5 +1,5 @@
 logs/*.log
 docker/mysql
-docker/api/bin
+docker/**/bin
 dist
 .secret_env
