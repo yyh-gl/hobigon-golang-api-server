@@ -43,7 +43,3 @@ deploy:
 lint:
   summary: Docker経由でLint実行
   command: docker-compose exec -T api golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
-
-get-access-ranking:
-  summary: アクセスランキング取得
-  command: echo "robo タスク未対応（現在、実装中🚧）"
