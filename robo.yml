@@ -14,11 +14,11 @@ api-build-prod:
 
 cli-build-local:
   summary: CLIをローカルかつLinux用にビルド
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/cli/bin/api-server ./cmd/cli/main.go
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/cli/bin/hobi ./cmd/cli/main.go
 
 cli-build-prod:
   summary: CLIをProductionかつLinux用にビルド
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/api-server ./cmd/cli/main.go
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/hobi ./cmd/cli/main.go
 
 deploy:
   summary: ProductionかつLinux用にビルドしてからデプロイ（masterにPUSH）
