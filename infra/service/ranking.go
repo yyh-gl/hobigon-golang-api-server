@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
@@ -23,7 +24,7 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	var IgnoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks", "/api/v1/blogs/good_api/like"}
 
 	// app.log からアクセス記録を解析
-	fp, err := os.Open(os.Getenv("LOG_PATH") + "/app.log")
+	fp, err := os.Open(os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 	if err != nil {
 		return "", nil, err
 	}

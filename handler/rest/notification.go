@@ -58,7 +58,6 @@ func NotifyTodayBirthdayToSlackHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // NotifyAccessRankingHandler はアクセスランキングを Slack に通知
-// TODO: robo タスクとしても実行できるようにしたい
 func NotifyAccessRankingToSlackHandler(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 

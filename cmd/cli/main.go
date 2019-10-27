@@ -1,36 +1,54 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	myCLI "github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
 )
 
 func main() {
-	app := cli.NewApp()
+	// システム共通で使用するものを用意
+	//  -> logger, DB
+	app.Init(app.CLiLogFilename)
 
-	app.Name = "sampleApp"
-	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.1"
+	logger := app.Logger
 
-	app.Action = func(context *cli.Context) error {
-		if context.Bool("cat") {
-			fmt.Println(context.Args().Get(0) + "だにゃん♡")
-		} else {
-			fmt.Println(context.Args().Get(0))
-		}
-		return nil
-	}
+	cliApp := cli.NewApp()
 
-	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "cat, c",
-			Usage: "Echo with cat",
+	cliApp.Name = "Hobigon CLI"
+	cliApp.Usage = "This app can execute some commands in Hobigon."
+	cliApp.Version = "0.0.1"
+
+	// コマンドオプションを設定
+	cliApp.Flags = []cli.Flag{}
+
+	// コマンドを設定
+	cliApp.Commands = []cli.Command{
+		{
+			Name:    "notify-today-tasks",
+			Aliases: []string{"ntt"},
+			Usage:   "Notify the today's tasks to Slack",
+			Action:  myCLI.NotifyTodayTasksToSlackHandler,
+		},
+		{
+			Name:    "notify-today-birthday",
+			Aliases: []string{"ntb"},
+			Usage:   "Notify the today's birthday to Slack",
+			Action:  myCLI.NotifyTodayBirthdayToSlackHandler,
+		},
+		{
+			Name:    "notify-access-ranking",
+			Aliases: []string{"nar"},
+			Usage:   "Notify the access ranking to Slack",
+			Action:  myCLI.NotifyAccessRankingToSlackHandler,
 		},
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		panic("app.Run内でのエラー")
+	logger.Print("[CLI-ExecuteLog] $ hobi " + os.Args[1])
+
+	if err := cliApp.Run(os.Args); err != nil {
+		panic("cliApp.Run内でのエラー")
 	}
 }

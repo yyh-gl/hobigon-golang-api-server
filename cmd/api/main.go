@@ -14,7 +14,7 @@ import (
 func main() {
 	// システム共通で使用するものを用意
 	//  -> logger, DB
-	app.Init()
+	app.Init(app.APILogFilename)
 
 	// ルーティング設定
 	r := httprouter.New()
@@ -37,7 +37,7 @@ func main() {
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
-	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/app.log")
+	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 	fmt.Println("========================")
 	app.Logger.Print("Server Start")
 	app.Logger.Fatal(http.ListenAndServe(":3000", r))
