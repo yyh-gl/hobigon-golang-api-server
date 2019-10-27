@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	"github.com/pkg/errors"
+
 	"github.com/urfave/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	myCLI "github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
@@ -49,6 +51,6 @@ func main() {
 	logger.Print("[CLI-ExecuteLog] $ hobi " + os.Args[1])
 
 	if err := cliApp.Run(os.Args); err != nil {
-		panic("cliApp.Run内でのエラー")
+		logger.Panic(errors.Wrap(err, "cliApp.Run()内でのエラー"))
 	}
 }
