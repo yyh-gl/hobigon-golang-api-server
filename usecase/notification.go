@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
 )
 
@@ -81,7 +80,7 @@ func NotifyTodayTasksToSlackUseCase(ctx context.Context) error {
 
 // NotifyTodayBirthdayToSlackUseCase は今日誕生日の人を Slack に通知
 func NotifyTodayBirthdayToSlackUseCase(ctx context.Context) error {
-	birthdayRepository := repository.NewBirthdayRepository()
+	birthdayRepository := persistence.NewBirthdayRepository()
 	slackGateway := gateway.NewSlackGateway()
 	notificationService := service.NewNotificationService(slackGateway, nil)
 

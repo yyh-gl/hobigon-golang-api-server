@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
@@ -16,14 +20,20 @@ func main() {
 	//  -> logger, DB
 	app.Init(app.APILogFilename)
 
+	// 依存関係を定義
+	slackGateway := gateway.NewSlackGateway()
+	blogRepository := repository.NewBlogRepository()
+	blogUseCase := usecase.NewBlogUseCase(blogRepository, slackGateway)
+	blogHandler := rest.NewBlogHandler(blogUseCase)
+
 	// ルーティング設定
 	r := httprouter.New()
 	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 
 	// ブログ関連のAPI
-	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(rest.CreateBlogHandler)))
-	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(rest.GetBlogHandler)))
-	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(rest.LikeBlogHandler)))
+	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
+	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(blogHandler.Show)))
+	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
 
 	// 通知系API
 	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayTasksToSlackHandler)))

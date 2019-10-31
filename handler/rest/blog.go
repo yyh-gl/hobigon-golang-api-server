@@ -11,6 +11,24 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
+// BlogHandler : ブログ用のハンドラーインターフェース
+type BlogHandler interface {
+	Create(w http.ResponseWriter, r *http.Request)
+	Show(w http.ResponseWriter, r *http.Request)
+	Like(w http.ResponseWriter, r *http.Request)
+}
+
+type blogHandler struct {
+	bu usecase.BlogUseCase
+}
+
+// NewBlogHandler : ブログ用のハンドラーを取得
+func NewBlogHandler(bu usecase.BlogUseCase) BlogHandler {
+	return &blogHandler{
+		bu: bu,
+	}
+}
+
 type blog struct {
 	ID        uint       `json:"id,omitempty"`
 	Title     string     `json:"title,omitempty"`
@@ -27,8 +45,12 @@ type blogResponse struct {
 	Blog  *blog  `json:"blog,omitempty"`
 }
 
-// CreateBlogHandler はブログデータを新規に作成
-func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
+//////////////////////////////////////////////////
+// Create
+//////////////////////////////////////////////////
+
+// Create : ブログ情報を新規作成
+func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Title string `json:"title"`
 	}
@@ -72,8 +94,12 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetBlogHandler はブログデータを1件取得
-func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
+//////////////////////////////////////////////////
+// Show
+//////////////////////////////////////////////////
+
+// Show : ブログ情報を1件取得
+func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	ctx := r.Context()
@@ -92,7 +118,7 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch err.Error() {
 		case "record not found":
-			// レコードが存在しないときは空のデータを返す
+			// レコードが存在しないときは空の情報を返す
 			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
@@ -111,8 +137,12 @@ func GetBlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// LikeBlogHandler は指定ブログにいいねをプラス1
-func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
+//////////////////////////////////////////////////
+// Like
+//////////////////////////////////////////////////
+
+// Like : 指定ブログにいいねをプラス1
+func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	ctx := r.Context()
@@ -131,7 +161,7 @@ func LikeBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch err.Error() {
 		case "record not found":
-			// レコードが存在しないときは空のデータを返す
+			// レコードが存在しないときは空の情報を返す
 			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
