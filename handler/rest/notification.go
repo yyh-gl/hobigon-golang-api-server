@@ -23,7 +23,7 @@ type slackNotificationHandler struct {
 	nu usecase.NotificationUseCase
 }
 
-// NewNotificationHandler : Slack 通知用のハンドラーを取得
+// NewSlackNotificationHandler : Slack 通知用のハンドラーを取得
 func NewSlackNotificationHandler(nu usecase.NotificationUseCase) SlackNotificationHandler {
 	return &slackNotificationHandler{
 		nu: nu,
