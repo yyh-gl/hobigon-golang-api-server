@@ -11,6 +11,10 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
+//////////////////////////////////////////////////
+// NewBlogHandler
+//////////////////////////////////////////////////
+
 // BlogHandler : ブログ用のハンドラーインターフェース
 type BlogHandler interface {
 	Create(w http.ResponseWriter, r *http.Request)
