@@ -15,7 +15,7 @@ type blogRepository struct {
 	db *gorm.DB
 }
 
-// BlogRepository : ブログ用のリポジトリインターフェース
+// NewBlogRepository : ブログ用のリポジトリを取得
 func NewBlogRepository() repository.BlogRepository {
 	return &blogRepository{
 		db: app.DB,
