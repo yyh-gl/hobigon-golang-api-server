@@ -9,10 +9,10 @@ import (
 )
 
 //////////////////////////////////////////////////
-// NewNotificationHandler
+// NewSlackNotificationHandler
 //////////////////////////////////////////////////
 
-// NotificationHandler : Slack 通知用のハンドラーインターフェース
+// SlackNotificationHandler : Slack 通知用のハンドラーインターフェース
 type SlackNotificationHandler interface {
 	NotifyTodayTasks(w http.ResponseWriter, r *http.Request)
 	NotifyTodayBirthday(w http.ResponseWriter, r *http.Request)
