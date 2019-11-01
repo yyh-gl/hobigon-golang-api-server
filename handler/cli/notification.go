@@ -9,42 +9,64 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
-// NotifyTodayTaskToSlackHandler は今日のタスク一覧を Slack に通知
-func NotifyTodayTasksToSlackHandler(c *cli.Context) error {
+//////////////////////////////////////////////////
+// NewSlackNotificationHandler
+//////////////////////////////////////////////////
+
+// SlackNotificationHandler : Slack 通知用のハンドラーインターフェース
+type SlackNotificationHandler interface {
+	NotifyTodayTasks(c *cli.Context) error
+	NotifyTodayBirthday(c *cli.Context) error
+	NotifyAccessRanking(c *cli.Context) error
+}
+
+type slackNotificationHandler struct {
+	nu usecase.NotificationUseCase
+}
+
+// NewSlackNotificationHandler : Slack 通知用のハンドラーを取得
+func NewSlackNotificationHandler(nu usecase.NotificationUseCase) SlackNotificationHandler {
+	return &slackNotificationHandler{
+		nu: nu,
+	}
+}
+
+// NotifyTodayTasks : 今日のタスク一覧を Slack に通知
+func (snh slackNotificationHandler) NotifyTodayTasks(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CliContextKey, c)
 
-	if err := usecase.NotifyTodayTasksToSlackUseCase(ctx); err != nil {
+	if err := snh.nu.NotifyTodayTasksToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
 	return nil
 }
 
-// NotifyTodayBirthdayToSlackHandler は今日誕生日の人を Slack に通知
-func NotifyTodayBirthdayToSlackHandler(c *cli.Context) error {
+// NotifyTodayBirthday : 今日誕生日の人を Slack に通知
+func (snh slackNotificationHandler) NotifyTodayBirthday(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CliContextKey, c)
 
-	if err := usecase.NotifyTodayBirthdayToSlackUseCase(ctx); err != nil {
+	if err := snh.nu.NotifyTodayBirthdayToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
 	return nil
 }
 
-// NotifyAccessRankingHandler はアクセスランキングを Slack に通知
-func NotifyAccessRankingToSlackHandler(c *cli.Context) error {
+// NotifyAccessRanking : アクセスランキングを Slack に通知
+func (snh slackNotificationHandler) NotifyAccessRanking(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CliContextKey, c)
 
-	if err := usecase.NotifyAccessRankingUseCase(ctx); err != nil {
+	if err := snh.nu.NotifyAccessRanking(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
