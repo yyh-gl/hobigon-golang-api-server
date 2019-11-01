@@ -3,9 +3,8 @@ package gateway
 import (
 	"strconv"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
-
 	"github.com/ashwanthkumar/slack-go-webhook"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
