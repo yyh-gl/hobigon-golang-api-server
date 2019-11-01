@@ -7,12 +7,39 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/service"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
-// GetAccessRanking はアクセスランキングを取得する関数
-func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
+//////////////////////////////////////////////////
+// NewRankingService
+//////////////////////////////////////////////////
+
+type rankingService struct{}
+
+// NewRankingService : ランキング用のサービスを取得
+func NewRankingService() service.RankingService {
+	return &rankingService{}
+}
+
+//////////////////////////////////////////////////
+// GetAccessRanking
+//////////////////////////////////////////////////
+
+// isContain : 文字列の配列に指定文字列が存在するか確認
+func isContain(arr []string, str string) bool {
+	for _, v := range arr {
+		if str == v {
+			return true
+		}
+	}
+	return false
+}
+
+// GetAccessRanking : アクセスランキングを取得する関数
+func (rs rankingService) GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3
@@ -75,14 +102,4 @@ func GetAccessRanking() (rankingMsg string, accessList model.AccessList, err err
 	}
 
 	return rankingMsg, accessList, nil
-}
-
-// isContain は文字列の配列に指定文字列が存在するか確認する関数
-func isContain(arr []string, str string) bool {
-	for _, v := range arr {
-		if str == v {
-			return true
-		}
-	}
-	return false
 }
