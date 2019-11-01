@@ -10,12 +10,21 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 )
 
+//////////////////////////////////////////////////
+// NewSlackGateway
+//////////////////////////////////////////////////
+
 type slackGateway struct{}
 
 func NewSlackGateway() gateway.SlackGateway {
 	return &slackGateway{}
 }
 
+//////////////////////////////////////////////////
+// send
+//////////////////////////////////////////////////
+
+// send : Slack に通知を送信
 func (s slackGateway) send(data model.Slack) (err []error) {
 	payload := slack.Payload{
 		Username: data.Username,
@@ -32,6 +41,11 @@ func (s slackGateway) send(data model.Slack) (err []error) {
 	return nil
 }
 
+//////////////////////////////////////////////////
+// SendTask
+//////////////////////////////////////////////////
+
+// SendTask : Slack にタスクを送信
 func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
 	data := model.Slack{
 		Username: "まりお",
@@ -44,6 +58,11 @@ func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Tas
 	return err
 }
 
+//////////////////////////////////////////////////
+// SendBirthday
+//////////////////////////////////////////////////
+
+// SendBirthday : Slack に誕生日通知を送信
 func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
 	var data model.Slack
 	switch {
@@ -65,6 +84,11 @@ func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
 	return err
 }
 
+//////////////////////////////////////////////////
+// SendLikeNotify
+//////////////////////////////////////////////////
+
+// SendLikeNotify : Slack にいいね（ブログ）通知を送信
 func (s slackGateway) SendLikeNotify(blog model.Blog) (err error) {
 	data := model.Slack{
 		Username: "くりぼー",
@@ -76,7 +100,11 @@ func (s slackGateway) SendLikeNotify(blog model.Blog) (err error) {
 	return err
 }
 
-// ランキングを Slack に通知する関数
+//////////////////////////////////////////////////
+// SendRanking
+//////////////////////////////////////////////////
+
+// SendRanking : Slack にアクセスラキングを送信
 func (s slackGateway) SendRanking(ranking string) (err error) {
 	data := model.Slack{
 		Username: "くりぼー",
