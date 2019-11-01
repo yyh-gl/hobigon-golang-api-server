@@ -5,16 +5,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
-
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
-	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
-
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
 func main() {
