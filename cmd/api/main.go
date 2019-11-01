@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
@@ -21,10 +23,20 @@ func main() {
 	app.Init(app.APILogFilename)
 
 	// 依存関係を定義
+	taskGateway := gateway.NewTaskGateway()
 	slackGateway := gateway.NewSlackGateway()
+
 	blogRepository := repository.NewBlogRepository()
 	blogUseCase := usecase.NewBlogUseCase(blogRepository, slackGateway)
 	blogHandler := rest.NewBlogHandler(blogUseCase)
+
+	notificationService := service.NewNotificationService(slackGateway)
+	rankingService := service.NewRankingService()
+
+	birthdayRepository := repository.NewBirthdayRepository()
+
+	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
+	slackNotificationHandler := rest.NewSlackNotificationHandler(notificationUseCase)
 
 	// ルーティング設定
 	r := httprouter.New()
@@ -36,10 +48,10 @@ func main() {
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
 
 	// 通知系API
-	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayTasksToSlackHandler)))
+	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyTodayTasks)))
 	// TODO: 誕生日の人が複数いたときに対応
-	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(rest.NotifyTodayBirthdayToSlackHandler)))
-	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(rest.NotifyAccessRankingToSlackHandler)))
+	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyTodayBirthday)))
+	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyAccessRanking)))
 
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
