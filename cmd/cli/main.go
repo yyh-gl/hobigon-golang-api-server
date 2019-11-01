@@ -4,10 +4,13 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-
 	"github.com/urfave/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	myCLI "github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
 func main() {
@@ -26,25 +29,37 @@ func main() {
 	// コマンドオプションを設定
 	cliApp.Flags = []cli.Flag{}
 
+	// 依存関係を定義
+	taskGateway := gateway.NewTaskGateway()
+	slackGateway := gateway.NewSlackGateway()
+
+	birthdayRepository := repository.NewBirthdayRepository()
+
+	notificationService := service.NewNotificationService(slackGateway)
+	rankingService := service.NewRankingService()
+
+	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
+	slackNotificationHandler := myCLI.NewSlackNotificationHandler(notificationUseCase)
+
 	// コマンドを設定
 	cliApp.Commands = []cli.Command{
 		{
 			Name:    "notify-today-tasks",
 			Aliases: []string{"ntt"},
 			Usage:   "Notify the today's tasks to Slack",
-			Action:  myCLI.NotifyTodayTasksToSlackHandler,
+			Action:  slackNotificationHandler.NotifyTodayTasks,
 		},
 		{
 			Name:    "notify-today-birthday",
 			Aliases: []string{"ntb"},
 			Usage:   "Notify the today's birthday to Slack",
-			Action:  myCLI.NotifyTodayBirthdayToSlackHandler,
+			Action:  slackNotificationHandler.NotifyTodayBirthday,
 		},
 		{
 			Name:    "notify-access-ranking",
 			Aliases: []string{"nar"},
 			Usage:   "Notify the access ranking to Slack",
-			Action:  myCLI.NotifyAccessRankingToSlackHandler,
+			Action:  slackNotificationHandler.NotifyAccessRanking,
 		},
 	}
 
