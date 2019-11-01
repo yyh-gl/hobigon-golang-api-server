@@ -16,6 +16,7 @@ import (
 
 type slackGateway struct{}
 
+// NewSlackGateway : Slack 用のゲートウェイを取得
 func NewSlackGateway() gateway.SlackGateway {
 	return &slackGateway{}
 }
