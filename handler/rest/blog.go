@@ -77,7 +77,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var b *model.Blog
 	if res.OK {
-		b, err = usecase.CreateBlogUseCase(r.Context(), req["title"].(string))
+		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {
 			res.OK = false
 			res.Error = err.Error()
@@ -113,7 +113,7 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 		OK: true,
 	}
 
-	b, err := usecase.GetBlogUseCase(ctx, ps.ByName("title"))
+	b, err := bh.bu.Show(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
@@ -156,7 +156,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 		OK: true,
 	}
 
-	b, err := usecase.LikeBlogUseCase(ctx, ps.ByName("title"))
+	b, err := bh.bu.Like(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
