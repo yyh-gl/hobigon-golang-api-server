@@ -16,6 +16,7 @@ type Birthday struct {
 	DeletedAt *time.Time
 }
 
+// NewBirthday : Birthday ドメインモデルを生成
 func NewBirthday(
 	name string,
 	date time.Time,
@@ -34,18 +35,18 @@ func NewBirthday(
 	}, nil
 }
 
-// time.Time 形式の日付を文字列形式（MMdd）に変換
+// convertStringDate : time.Time 形式の日付を文字列形式（MMdd）に変換
 func convertStringDate(date time.Time) string {
 	return date.Format("0102")
 }
 
-// 指定 Birthday が本日のものかどうか判定
+// IsToday : 指定 Birthday が本日のものかどうか判定
 func (b Birthday) IsToday() bool {
 	today := convertStringDate(time.Now())
 	return b.Date == today
 }
 
-// 誕生日メッセージを生成
+// CreateBirthdayMessage : 誕生日メッセージを生成
 func (b Birthday) CreateBirthdayMessage() string {
 	if b.WishList == "" {
 		b.WishList = "Amazon の欲しい物リスト教えて！"
