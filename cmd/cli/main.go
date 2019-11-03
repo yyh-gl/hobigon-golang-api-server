@@ -7,9 +7,9 @@ import (
 	"github.com/urfave/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	myCLI "github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/igateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/irepository"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/iservice"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -30,13 +30,13 @@ func main() {
 	cliApp.Flags = []cli.Flag{}
 
 	// 依存関係を定義
-	taskGateway := gateway.NewTaskGateway()
-	slackGateway := gateway.NewSlackGateway()
+	taskGateway := igateway.NewTaskGateway()
+	slackGateway := igateway.NewSlackGateway()
 
-	birthdayRepository := repository.NewBirthdayRepository()
+	birthdayRepository := irepository.NewBirthdayRepository()
 
-	notificationService := service.NewNotificationService(slackGateway)
-	rankingService := service.NewRankingService()
+	notificationService := iservice.NewNotificationService(slackGateway)
+	rankingService := iservice.NewRankingService()
 
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := myCLI.NewNotificationHandler(notificationUseCase)

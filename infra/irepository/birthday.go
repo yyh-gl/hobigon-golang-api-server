@@ -1,4 +1,4 @@
-package repository
+package irepository
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
-	infraModel "github.com/yyh-gl/hobigon-golang-api-server/infra/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 )
 
 //////////////////////////////////////////////////
@@ -34,7 +34,7 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 // Create : 誕生日データを新規作成
 func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthday) (*entity.Birthday, error) {
 	// Birthday モデル を DTO に変換
-	birthdayDTO := infraModel.BirthdayDTO{
+	birthdayDTO := imodel.BirthdayDTO{
 		Name:     birthday.Name(),
 		Date:     birthday.Date().String(),
 		WishList: birthday.WishList().String(),
@@ -61,7 +61,7 @@ func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthda
 // SelectByDate : 日付から誕生日を1件取得
 func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*entity.Birthday, error) {
 	// Birthday の DTO を用意
-	birthdayDTO := infraModel.BirthdayDTO{}
+	birthdayDTO := imodel.BirthdayDTO{}
 
 	// date 指定で誕生日情報を取得
 	err := br.db.First(&birthdayDTO, "date=?", date).Error

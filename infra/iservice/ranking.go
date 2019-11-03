@@ -1,4 +1,4 @@
-package service
+package iservice
 
 import (
 	"bufio"

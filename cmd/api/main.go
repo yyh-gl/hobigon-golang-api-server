@@ -9,9 +9,9 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/repository"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/service"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/igateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/irepository"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/iservice"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -21,17 +21,17 @@ func main() {
 	app.Init(app.APILogFilename)
 
 	// 依存関係を定義
-	taskGateway := gateway.NewTaskGateway()
-	slackGateway := gateway.NewSlackGateway()
+	taskGateway := igateway.NewTaskGateway()
+	slackGateway := igateway.NewSlackGateway()
 
-	blogRepository := repository.NewBlogRepository()
+	blogRepository := irepository.NewBlogRepository()
 	blogUseCase := usecase.NewBlogUseCase(blogRepository, slackGateway)
 	blogHandler := rest.NewBlogHandler(blogUseCase)
 
-	notificationService := service.NewNotificationService(slackGateway)
-	rankingService := service.NewRankingService()
+	notificationService := iservice.NewNotificationService(slackGateway)
+	rankingService := iservice.NewRankingService()
 
-	birthdayRepository := repository.NewBirthdayRepository()
+	birthdayRepository := irepository.NewBirthdayRepository()
 	birthdayUseCase := usecase.NewBirthdayUseCase(birthdayRepository)
 	birthdayHandler := rest.NewBirthdayHandler(birthdayUseCase)
 
