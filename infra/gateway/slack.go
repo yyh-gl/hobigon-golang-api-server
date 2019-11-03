@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
@@ -25,7 +26,7 @@ func NewSlackGateway() gateway.SlackGateway {
 //////////////////////////////////////////////////
 
 // send : Slack に通知を送信
-func (s slackGateway) send(data model.Slack) (err []error) {
+func (s slackGateway) send(ctx context.Context, data model.Slack) (err []error) {
 	payload := slack.Payload{
 		Username: data.Username,
 		Channel:  data.Channel,
@@ -46,7 +47,7 @@ func (s slackGateway) send(data model.Slack) (err []error) {
 //////////////////////////////////////////////////
 
 // SendTask : Slack にタスクを送信
-func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
+func (s slackGateway) SendTask(ctx context.Context, todayTasks []model.Task, dueOverTasks []model.Task) (err error) {
 	data := model.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",
@@ -54,7 +55,7 @@ func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Tas
 
 	data.Text = data.CreateTaskMessage(todayTasks, dueOverTasks)
 
-	s.send(data)
+	s.send(ctx, data)
 	return err
 }
 
@@ -63,7 +64,7 @@ func (s slackGateway) SendTask(todayTasks []model.Task, dueOverTasks []model.Tas
 //////////////////////////////////////////////////
 
 // SendBirthday : Slack に誕生日通知を送信
-func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
+func (s slackGateway) SendBirthday(ctx context.Context, birthday model.Birthday) (err error) {
 	var data model.Slack
 	switch {
 	case app.IsPrd():
@@ -80,7 +81,7 @@ func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
 
 	data.Text = birthday.CreateBirthdayMessage()
 
-	s.send(data)
+	s.send(ctx, data)
 	return err
 }
 
@@ -89,14 +90,14 @@ func (s slackGateway) SendBirthday(birthday model.Birthday) (err error) {
 //////////////////////////////////////////////////
 
 // SendLikeNotify : Slack にいいね（ブログ）通知を送信
-func (s slackGateway) SendLikeNotify(blog model.Blog) (err error) {
+func (s slackGateway) SendLikeNotify(ctx context.Context, blog model.Blog) (err error) {
 	data := model.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
 		Text:     "【" + blog.Title + "】いいね！（Total: " + strconv.Itoa(*blog.Count) + "）",
 	}
 
-	s.send(data)
+	s.send(ctx, data)
 	return err
 }
 
@@ -105,13 +106,13 @@ func (s slackGateway) SendLikeNotify(blog model.Blog) (err error) {
 //////////////////////////////////////////////////
 
 // SendRanking : Slack にアクセスラキングを送信
-func (s slackGateway) SendRanking(ranking string) (err error) {
+func (s slackGateway) SendRanking(ctx context.Context, ranking string) (err error) {
 	data := model.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
 		Text:     ranking,
 	}
 
-	s.send(data)
+	s.send(ctx, data)
 	return err
 }

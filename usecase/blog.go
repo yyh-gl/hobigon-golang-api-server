@@ -42,7 +42,7 @@ func (bu blogUseCase) Create(ctx context.Context, title string) (*model.Blog, er
 	blog := model.Blog{
 		Title: title,
 	}
-	blog, err := bu.br.Create(blog)
+	blog, err := bu.br.Create(ctx, blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
 	}
@@ -56,7 +56,7 @@ func (bu blogUseCase) Create(ctx context.Context, title string) (*model.Blog, er
 
 // Show : ブログ情報を1件取得
 func (bu blogUseCase) Show(ctx context.Context, title string) (*model.Blog, error) {
-	blog, err := bu.br.SelectByTitle(title)
+	blog, err := bu.br.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
 		case "record not found":
@@ -75,7 +75,7 @@ func (bu blogUseCase) Show(ctx context.Context, title string) (*model.Blog, erro
 
 // Like : 指定ブログにいいねをプラス1
 func (bu blogUseCase) Like(ctx context.Context, title string) (*model.Blog, error) {
-	blog, err := bu.br.SelectByTitle(title)
+	blog, err := bu.br.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
 		case "record not found":
@@ -88,13 +88,13 @@ func (bu blogUseCase) Like(ctx context.Context, title string) (*model.Blog, erro
 	// Count をプラス1
 	addedCount := *blog.Count + 1
 	blog.Count = &addedCount
-	blog, err = bu.br.Update(blog)
+	blog, err = bu.br.Update(ctx, blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Update()内でのエラー")
 	}
 
 	// Slack に通知
-	err = bu.sg.SendLikeNotify(blog)
+	err = bu.sg.SendLikeNotify(ctx, blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "slackGateway.SendLikeNotify()内でのエラー")
 	}

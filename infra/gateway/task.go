@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"context"
 	"os"
 
 	"github.com/adlio/trello"
@@ -30,7 +31,7 @@ func NewTaskGateway() gateway.TaskGateway {
 //////////////////////////////////////////////////
 
 // getBoard : ボード情報を取得
-func (tg taskGateway) getBoard(boardID string) (board *trello.Board, err error) {
+func (tg taskGateway) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
 	client := trello.NewClient(tg.APIKey, tg.APIToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
@@ -44,8 +45,8 @@ func (tg taskGateway) getBoard(boardID string) (board *trello.Board, err error) 
 //////////////////////////////////////////////////
 
 // GetListsByBoardID : ボードIDからリスト情報を取得
-func (tg taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, err error) {
-	board, err := tg.getBoard(boardID)
+func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
+	board, err := tg.getBoard(ctx, boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,13 +70,13 @@ func (tg taskGateway) GetListsByBoardID(boardID string) (lists []*trello.List, e
 //////////////////////////////////////////////////
 
 // GetTasksFromList : リストからタスク一覧を取得
-func (tg taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
+func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
 		return model.TaskList{}, model.TaskList{}, err
 	}
 
-	allTask := convertToTasksModel(trelloTasks)
+	allTask := convertToTasksModel(ctx, trelloTasks)
 
 	for _, task := range allTask.Tasks {
 		task.Board = list.Board.Name
@@ -96,7 +97,7 @@ func (tg taskGateway) GetTasksFromList(list trello.List) (taskList model.TaskLis
 //////////////////////////////////////////////////
 
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
-func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
+func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.TaskList) {
 	for _, card := range trelloCards {
 		task := new(model.Task)
 		task.Title = card.Name
@@ -116,7 +117,7 @@ func convertToTasksModel(trelloCards []*trello.Card) (taskList model.TaskList) {
 //////////////////////////////////////////////////
 
 // MoveToWIP : 指定タスクを WIP リストに移動
-func (tg taskGateway) MoveToWIP(tasks []model.Task) (err error) {
+func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []model.Task) (err error) {
 	for _, task := range tasks {
 		var wipListID string
 		switch task.Board {

@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
@@ -27,7 +29,7 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 //////////////////////////////////////////////////
 
 // SelectByDate : 日付から誕生日を1件取得
-func (br birthdayRepository) SelectByDate(date string) (birthday model.Birthday, err error) {
+func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (birthday model.Birthday, err error) {
 	err = br.db.First(&birthday, "date=?", date).Error
 	if err != nil {
 		return model.Birthday{}, err

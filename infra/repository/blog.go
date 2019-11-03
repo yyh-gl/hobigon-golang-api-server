@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
@@ -27,7 +29,7 @@ func NewBlogRepository() repository.BlogRepository {
 //////////////////////////////////////////////////
 
 // Create : ブログ情報を新規作成
-func (br blogRepository) Create(blog model.Blog) (model.Blog, error) {
+func (br blogRepository) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	err := br.db.Create(&blog).Error
 	if err != nil {
 		return model.Blog{}, err
@@ -40,7 +42,7 @@ func (br blogRepository) Create(blog model.Blog) (model.Blog, error) {
 //////////////////////////////////////////////////
 
 // SelectByTitle : タイトルからブログ情報を1件取得
-func (br blogRepository) SelectByTitle(title string) (blog model.Blog, err error) {
+func (br blogRepository) SelectByTitle(ctx context.Context, title string) (blog model.Blog, err error) {
 	err = br.db.First(&blog, "title=?", title).Error
 	if err != nil {
 		return model.Blog{}, err
@@ -53,7 +55,7 @@ func (br blogRepository) SelectByTitle(title string) (blog model.Blog, err error
 //////////////////////////////////////////////////
 
 // Update : ブログ情報を1件更新
-func (br blogRepository) Update(blog model.Blog) (model.Blog, error) {
+func (br blogRepository) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	err := br.db.Save(&blog).Error
 	if err != nil {
 		return model.Blog{}, err

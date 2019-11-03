@@ -2,6 +2,7 @@ package service
 
 import (
 	"bufio"
+	"context"
 	"os"
 	"sort"
 	"strconv"
@@ -38,7 +39,7 @@ func isContain(arr []string, str string) bool {
 }
 
 // GetAccessRanking : アクセスランキングを取得する関数
-func (rs rankingService) GetAccessRanking() (rankingMsg string, accessList model.AccessList, err error) {
+func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList model.AccessList, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3

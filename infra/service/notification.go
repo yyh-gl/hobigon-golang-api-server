@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
@@ -23,10 +25,10 @@ func NewNotificationService(sg gateway.SlackGateway) service.NotificationService
 }
 
 // SendBirthdayToSlack は今日の誕生日
-func (ns notificationService) SendTodayBirthdayToSlack(birthday model.Birthday) (err error) {
+func (ns notificationService) SendTodayBirthdayToSlack(ctx context.Context, birthday model.Birthday) (err error) {
 	// 今日が誕生日であった場合にのみ Slack に通知
 	if birthday.IsToday() {
-		if err = ns.sg.SendBirthday(birthday); err != nil {
+		if err = ns.sg.SendBirthday(ctx, birthday); err != nil {
 			return errors.Wrap(err, "slackGateway.SendBirthday()内でのエラー")
 		}
 	}
