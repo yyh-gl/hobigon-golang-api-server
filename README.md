@@ -22,4 +22,7 @@
 
 # TODO
 - ドメインモデル貧血症の改善
-- JSON タグの場所
+  - Birthday については完了
+- JSON, GORM タグをドメインモデルから除去
+  - Birthday については完了
+
