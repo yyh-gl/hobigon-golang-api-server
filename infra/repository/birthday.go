@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -34,10 +33,6 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 func (br birthdayRepository) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
 	// Birthday モデル を DTO に変換
 	birthdayDTO := infraModel.BirthdayDTO(birthday)
-
-	fmt.Println("========================")
-	fmt.Println(birthdayDTO)
-	fmt.Println("========================")
 
 	// date 指定で誕生日情報を取得
 	err := br.db.Create(&birthdayDTO).Error
