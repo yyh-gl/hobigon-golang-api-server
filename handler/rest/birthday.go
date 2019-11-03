@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
@@ -85,20 +84,26 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			e := errors.Wrap(err, "time.Parse()内でのエラー")
 			logger.Println(e)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
 
-		b, err = bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
-		if err != nil {
 			res.OK = false
 			res.Error = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 
-		if b != nil {
-			birthdayRes := birthday(*b)
-			res.Blog = &birthdayRes
+		if res.OK {
+			b, err = bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
+			if err != nil {
+				logger.Println(err)
+
+				res.OK = false
+				res.Error = err.Error()
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+
+			if b != nil {
+				birthdayRes := birthday(*b)
+				res.Blog = &birthdayRes
+			}
 		}
 	}
 
