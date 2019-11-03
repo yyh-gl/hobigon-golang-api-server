@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// TODO: ドメイン貧血症を治す
 type Birthday struct {
 	ID        uint
 	Name      string
