@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type BirthdayDTO struct {
 	ID        uint   `gorm:"primary_key;AUTO_INCREMENT"`

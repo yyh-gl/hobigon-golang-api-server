@@ -100,8 +100,17 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 
+			// Birthday モデルをレスポン用に変換
 			if b != nil {
-				birthdayRes := birthday(*b)
+				birthdayRes := birthday{
+					ID:        b.ID(),
+					Name:      b.Name(),
+					Date:      b.Date().String(),
+					WishList:  b.WishList().String(),
+					CreatedAt: b.CreatedAt(),
+					UpdatedAt: b.UpdatedAt(),
+					DeletedAt: b.DeletedAt(),
+				}
 				res.Blog = &birthdayRes
 			}
 		}
