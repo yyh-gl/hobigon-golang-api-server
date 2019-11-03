@@ -7,7 +7,7 @@ import (
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -75,7 +75,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var b *model.Blog
+	var b *entity.Blog
 	if res.OK {
 		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {

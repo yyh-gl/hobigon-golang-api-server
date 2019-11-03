@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
@@ -15,7 +15,7 @@ import (
 
 // BirthdayUseCase : 誕生日用のユースケースインターフェース
 type BirthdayUseCase interface {
-	Create(ctx context.Context, name string, date time.Time, wishList string) (*model.Birthday, error)
+	Create(ctx context.Context, name string, date time.Time, wishList string) (*entity.Birthday, error)
 }
 
 type birthdayUseCase struct {
@@ -36,9 +36,9 @@ func NewBirthdayUseCase(
 //////////////////////////////////////////////////
 
 // Create : 誕生日データを新規作成
-func (bu birthdayUseCase) Create(ctx context.Context, name string, date time.Time, wishList string) (*model.Birthday, error) {
+func (bu birthdayUseCase) Create(ctx context.Context, name string, date time.Time, wishList string) (*entity.Birthday, error) {
 	// 新しい Birthday データを作成
-	birthday, err := model.NewBirthday(name, date, wishList)
+	birthday, err := entity.NewBirthday(name, date, wishList)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBirthday()内でのエラー")
 	}

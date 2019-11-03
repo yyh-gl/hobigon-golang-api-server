@@ -1,4 +1,4 @@
-package model
+package entity
 
 // アクセスランキング用の構造体
 type Access struct {

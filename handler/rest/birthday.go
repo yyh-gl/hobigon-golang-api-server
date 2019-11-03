@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -76,7 +77,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var b *model.Birthday
+	var b *entity.Birthday
 	if res.OK {
 		// リクエストパラメータ内の date を time.Time 型に変換
 		// TODO: フォーマット部分を定数化

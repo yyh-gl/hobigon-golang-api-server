@@ -5,10 +5,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/service"
 )
@@ -55,8 +56,8 @@ func NewNotificationUseCase(
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (nu notificationUseCase) NotifyTodayTasksToSlack(ctx context.Context) error {
-	var todayTasks []model.Task
-	var dueOverTasks []model.Task
+	var todayTasks []entity.Task
+	var dueOverTasks []entity.Task
 
 	// TODO: ビジネスロジックを結構持ってしまっているのでドメインモデルに落とし込んでいく
 	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}

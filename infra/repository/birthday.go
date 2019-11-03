@@ -2,14 +2,12 @@ package repository
 
 import (
 	"context"
-	"strconv"
-	"time"
 
 	"github.com/pkg/errors"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 	infraModel "github.com/yyh-gl/hobigon-golang-api-server/infra/model"
 )
@@ -34,7 +32,7 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 //////////////////////////////////////////////////
 
 // Create : 誕生日データを新規作成
-func (br birthdayRepository) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
+func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthday) (*entity.Birthday, error) {
 	// Birthday モデル を DTO に変換
 	birthdayDTO := infraModel.BirthdayDTO{
 		Name:     birthday.Name(),
@@ -49,24 +47,10 @@ func (br birthdayRepository) Create(ctx context.Context, birthday model.Birthday
 	}
 
 	// DTO を ドメインモデルに変換
-	month, err := strconv.Atoi(birthdayDTO.Date[0:2])
+	createdBirthday, err := birthdayDTO.ConvertToDomainModel()
 	if err != nil {
-		return nil, errors.Wrap(err, "hour取得におけるstrconv.Atoi()内でのエラー")
+		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
 	}
-	day, err := strconv.Atoi(birthdayDTO.Date[2:4])
-	if err != nil {
-		return nil, errors.Wrap(err, "hour取得におけるstrconv.Atoi()内でのエラー")
-	}
-	d := time.Date(0, time.Month(month), day, 0, 0, 0, 0, time.Local)
-	createdBirthday, err := model.NewBirthday(birthdayDTO.Name, d, birthdayDTO.WishList)
-	if err != nil {
-		return nil, errors.Wrap(err, "NewBirthday()内でのエラー")
-	}
-	createdBirthday.SetID(birthdayDTO.ID)
-	createdBirthday.SetCreatedAt(birthdayDTO.CreatedAt)
-	createdBirthday.SetUpdatedAt(birthdayDTO.UpdatedAt)
-	createdBirthday.SetDeletedAt(birthdayDTO.DeletedAt)
-
 	return createdBirthday, nil
 }
 
@@ -75,7 +59,7 @@ func (br birthdayRepository) Create(ctx context.Context, birthday model.Birthday
 //////////////////////////////////////////////////
 
 // SelectByDate : 日付から誕生日を1件取得
-func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*model.Birthday, error) {
+func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*entity.Birthday, error) {
 	// Birthday の DTO を用意
 	birthdayDTO := infraModel.BirthdayDTO{}
 
@@ -86,23 +70,9 @@ func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*mo
 	}
 
 	// DTO を ドメインモデルに変換
-	month, err := strconv.Atoi(birthdayDTO.Date[0:2])
+	birthday, err := birthdayDTO.ConvertToDomainModel()
 	if err != nil {
-		return nil, errors.Wrap(err, "hour取得におけるstrconv.Atoi()内でのエラー")
+		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
 	}
-	day, err := strconv.Atoi(birthdayDTO.Date[2:4])
-	if err != nil {
-		return nil, errors.Wrap(err, "hour取得におけるstrconv.Atoi()内でのエラー")
-	}
-	d := time.Date(0, time.Month(month), day, 0, 0, 0, 0, time.Local)
-	birthday, err := model.NewBirthday(birthdayDTO.Name, d, birthdayDTO.WishList)
-	if err != nil {
-		return nil, errors.Wrap(err, "NewBirthday()内でのエラー")
-	}
-	birthday.SetID(birthdayDTO.ID)
-	birthday.SetCreatedAt(birthdayDTO.CreatedAt)
-	birthday.SetUpdatedAt(birthdayDTO.UpdatedAt)
-	birthday.SetDeletedAt(birthdayDTO.DeletedAt)
-
 	return birthday, nil
 }

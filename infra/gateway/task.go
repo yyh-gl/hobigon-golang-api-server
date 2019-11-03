@@ -6,7 +6,7 @@ import (
 
 	"github.com/adlio/trello"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 )
 
 //////////////////////////////////////////////////
@@ -70,10 +70,10 @@ func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 //////////////////////////////////////////////////
 
 // GetTasksFromList : リストからタスク一覧を取得
-func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.TaskList, dueOverTaskList model.TaskList, err error) {
+func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList entity.TaskList, dueOverTaskList entity.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
-		return model.TaskList{}, model.TaskList{}, err
+		return entity.TaskList{}, entity.TaskList{}, err
 	}
 
 	allTask := convertToTasksModel(ctx, trelloTasks)
@@ -97,9 +97,9 @@ func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 //////////////////////////////////////////////////
 
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
-func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.TaskList) {
+func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList entity.TaskList) {
 	for _, card := range trelloCards {
-		task := new(model.Task)
+		task := new(entity.Task)
 		task.Title = card.Name
 		task.Description = card.Desc
 		task.ShortURL = card.ShortURL
@@ -117,7 +117,7 @@ func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskL
 //////////////////////////////////////////////////
 
 // MoveToWIP : 指定タスクを WIP リストに移動
-func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []model.Task) (err error) {
+func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []entity.Task) (err error) {
 	for _, task := range tasks {
 		var wipListID string
 		switch task.Board {

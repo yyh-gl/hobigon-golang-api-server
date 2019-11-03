@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 )
 
 // TODO: api と cli で分ける（それぞれの main の中に入れてしまってもいいかも）
@@ -76,8 +76,8 @@ func getGormConnect() *gorm.DB {
 	}
 
 	// マイグレーション実行
-	db.AutoMigrate(&model.Blog{})
-	db.AutoMigrate(&model.Birthday{})
+	db.AutoMigrate(&entity.Blog{})
+	db.AutoMigrate(&entity.Birthday{})
 
 	return db
 }
