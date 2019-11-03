@@ -24,7 +24,7 @@ func NewNotificationService(sg gateway.SlackGateway) service.NotificationService
 	}
 }
 
-// SendBirthdayToSlack は今日の誕生日
+// SendBirthdayToSlackToSlack : 今日の誕生日を通知
 func (ns notificationService) SendTodayBirthdayToSlack(ctx context.Context, birthday model.Birthday) (err error) {
 	// 今日が誕生日であった場合にのみ Slack に通知
 	if birthday.IsToday() {

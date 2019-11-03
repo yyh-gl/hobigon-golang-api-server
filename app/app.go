@@ -21,7 +21,7 @@ var (
 // コンテキストにセットするさいのキー用の型
 type contextKey int
 
-// CliContextKey は cli.Context を context.Context にセットするさいのキー
+// CliContextKey : cli.Context を context.Context にセットするさいのキー
 const CliContextKey contextKey = iota
 
 // ログファイル名
@@ -30,13 +30,13 @@ const (
 	CLiLogFilename string = "cli.log"
 )
 
-// アプリ全体で使用する機能を初期化する関数
+// Init : アプリ全体で使用する機能を初期化
 func Init(logFilename string) {
 	Logger = getLogger(logFilename)
 	DB = getGormConnect()
 }
 
-// getLogger はロガーを取得する関数
+// getLogger : ロガーを取得
 func getLogger(filename string) *log.Logger {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
@@ -58,7 +58,7 @@ func getLogger(filename string) *log.Logger {
 	return logger
 }
 
-// getGormConnect は DB コネクションを取得する関数
+// getGormConnect : DB コネクションを取得
 func getGormConnect() *gorm.DB {
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
@@ -81,7 +81,7 @@ func getGormConnect() *gorm.DB {
 	return db
 }
 
-// IsPrd は実行環境が Production か確認する関数
+// IsPrd : 実行環境が Production かどうかを確認
 func IsPrd() bool {
 	return os.Getenv("APP_ENV") == "production"
 }

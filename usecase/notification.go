@@ -53,7 +53,7 @@ func NewNotificationUseCase(
 // NotifyTodayTasksToSlack
 //////////////////////////////////////////////////
 
-// NotifyTodayTasksToSlack は今日のタスク一覧を Slack に通知
+// NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (nu notificationUseCase) NotifyTodayTasksToSlack(ctx context.Context) error {
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
@@ -112,7 +112,7 @@ func (nu notificationUseCase) NotifyTodayTasksToSlack(ctx context.Context) error
 // NotifyTodayBirthdayToSlack
 //////////////////////////////////////////////////
 
-// NotifyTodayBirthdayToSlack は今日誕生日の人を Slack に通知
+// NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (nu notificationUseCase) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 	// 今日の誕生日情報を取得
 	today := time.Now().Format("0102")
@@ -134,7 +134,7 @@ func (nu notificationUseCase) NotifyTodayBirthdayToSlack(ctx context.Context) er
 // NotifyAccessRanking
 //////////////////////////////////////////////////
 
-// NotifyAccessRanking はアクセスランキングを Slack に通知
+// NotifyAccessRanking : アクセスランキングを Slack に通知
 func (nu notificationUseCase) NotifyAccessRanking(ctx context.Context) error {
 	// アクセスランキングの結果を取得
 	// TODO: エクセルに出力して解析とかしたい
