@@ -9,29 +9,33 @@ import (
 )
 
 //////////////////////////////////////////////////
-// NewSlackNotificationHandler
+// NewNotificationHandler
 //////////////////////////////////////////////////
 
-// SlackNotificationHandler : Slack 通知用のハンドラーインターフェース
-type SlackNotificationHandler interface {
-	NotifyTodayTasks(c *cli.Context) error
-	NotifyTodayBirthday(c *cli.Context) error
-	NotifyAccessRanking(c *cli.Context) error
+// NotificationHandler : Slack 通知用のハンドラーインターフェース
+type NotificationHandler interface {
+	NotifyTodayTasksToSlack(c *cli.Context) error
+	NotifyTodayBirthdayToSlack(c *cli.Context) error
+	NotifyAccessRankingToSlack(c *cli.Context) error
 }
 
-type slackNotificationHandler struct {
+type notificationHandler struct {
 	nu usecase.NotificationUseCase
 }
 
-// NewSlackNotificationHandler : Slack 通知用のハンドラーを取得
-func NewSlackNotificationHandler(nu usecase.NotificationUseCase) SlackNotificationHandler {
-	return &slackNotificationHandler{
+// NewNotificationHandler : Slack 通知用のハンドラーを取得
+func NewNotificationHandler(nu usecase.NotificationUseCase) NotificationHandler {
+	return &notificationHandler{
 		nu: nu,
 	}
 }
 
-// NotifyTodayTasks : 今日のタスク一覧を Slack に通知
-func (snh slackNotificationHandler) NotifyTodayTasks(c *cli.Context) error {
+//////////////////////////////////////////////////
+// NotifyTodayTasksToSlack
+//////////////////////////////////////////////////
+
+// NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
+func (snh notificationHandler) NotifyTodayTasksToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
@@ -44,8 +48,12 @@ func (snh slackNotificationHandler) NotifyTodayTasks(c *cli.Context) error {
 	return nil
 }
 
-// NotifyTodayBirthday : 今日誕生日の人を Slack に通知
-func (snh slackNotificationHandler) NotifyTodayBirthday(c *cli.Context) error {
+//////////////////////////////////////////////////
+// NotifyTodayBirthdayToSlack
+//////////////////////////////////////////////////
+
+// NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
+func (snh notificationHandler) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
@@ -58,8 +66,12 @@ func (snh slackNotificationHandler) NotifyTodayBirthday(c *cli.Context) error {
 	return nil
 }
 
-// NotifyAccessRanking : アクセスランキングを Slack に通知
-func (snh slackNotificationHandler) NotifyAccessRanking(c *cli.Context) error {
+//////////////////////////////////////////////////
+// NotifyAccessRankingToSlack
+//////////////////////////////////////////////////
+
+// NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
+func (snh notificationHandler) NotifyAccessRankingToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()

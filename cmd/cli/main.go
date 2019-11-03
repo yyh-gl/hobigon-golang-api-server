@@ -39,7 +39,7 @@ func main() {
 	rankingService := service.NewRankingService()
 
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
-	slackNotificationHandler := myCLI.NewSlackNotificationHandler(notificationUseCase)
+	notificationHandler := myCLI.NewNotificationHandler(notificationUseCase)
 
 	// コマンドを設定
 	cliApp.Commands = []cli.Command{
@@ -47,19 +47,19 @@ func main() {
 			Name:    "notify-today-tasks",
 			Aliases: []string{"ntt"},
 			Usage:   "Notify the today's tasks to Slack",
-			Action:  slackNotificationHandler.NotifyTodayTasks,
+			Action:  notificationHandler.NotifyTodayTasksToSlack,
 		},
 		{
 			Name:    "notify-today-birthday",
 			Aliases: []string{"ntb"},
 			Usage:   "Notify the today's birthday to Slack",
-			Action:  slackNotificationHandler.NotifyTodayBirthday,
+			Action:  notificationHandler.NotifyTodayBirthdayToSlack,
 		},
 		{
 			Name:    "notify-access-ranking",
 			Aliases: []string{"nar"},
 			Usage:   "Notify the access ranking to Slack",
-			Action:  slackNotificationHandler.NotifyAccessRanking,
+			Action:  notificationHandler.NotifyAccessRankingToSlack,
 		},
 	}
 

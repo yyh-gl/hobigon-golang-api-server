@@ -9,23 +9,23 @@ import (
 )
 
 //////////////////////////////////////////////////
-// NewSlackNotificationHandler
+// NewNotificationHandler
 //////////////////////////////////////////////////
 
-// SlackNotificationHandler : Slack 通知用のハンドラーインターフェース
-type SlackNotificationHandler interface {
-	NotifyTodayTasks(w http.ResponseWriter, r *http.Request)
-	NotifyTodayBirthday(w http.ResponseWriter, r *http.Request)
-	NotifyAccessRanking(w http.ResponseWriter, r *http.Request)
+// NotificationHandler : Slack 通知用のハンドラーインターフェース
+type NotificationHandler interface {
+	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
+	NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request)
+	NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request)
 }
 
-type slackNotificationHandler struct {
+type notificationHandler struct {
 	nu usecase.NotificationUseCase
 }
 
-// NewSlackNotificationHandler : Slack 通知用のハンドラーを取得
-func NewSlackNotificationHandler(nu usecase.NotificationUseCase) SlackNotificationHandler {
-	return &slackNotificationHandler{
+// NewNotificationHandler : Slack 通知用のハンドラーを取得
+func NewNotificationHandler(nu usecase.NotificationUseCase) NotificationHandler {
+	return &notificationHandler{
 		nu: nu,
 	}
 }
@@ -41,11 +41,11 @@ type notificationResponse struct {
 }
 
 //////////////////////////////////////////////////
-// NotifyTodayTask
+// NotifyTodayTasksToSlack
 //////////////////////////////////////////////////
 
-// NotifyTodayTaskToSlack : 今日のタスク一覧を Slack に通知
-func (snh slackNotificationHandler) NotifyTodayTasks(w http.ResponseWriter, r *http.Request) {
+// NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
+func (snh notificationHandler) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	res := notificationResponse{
@@ -67,11 +67,11 @@ func (snh slackNotificationHandler) NotifyTodayTasks(w http.ResponseWriter, r *h
 }
 
 //////////////////////////////////////////////////
-// NotifyTodayBirthday
+// NotifyTodayBirthdayToSlack
 //////////////////////////////////////////////////
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
-func (snh slackNotificationHandler) NotifyTodayBirthday(w http.ResponseWriter, r *http.Request) {
+func (snh notificationHandler) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	res := notificationResponse{
@@ -93,11 +93,11 @@ func (snh slackNotificationHandler) NotifyTodayBirthday(w http.ResponseWriter, r
 }
 
 //////////////////////////////////////////////////
-// NotifyAccessRanking
+// NotifyAccessRankingToSlack
 //////////////////////////////////////////////////
 
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
-func (snh slackNotificationHandler) NotifyAccessRanking(w http.ResponseWriter, r *http.Request) {
+func (snh notificationHandler) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	res := notificationResponse{

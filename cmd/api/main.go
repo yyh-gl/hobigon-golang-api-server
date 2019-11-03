@@ -34,7 +34,7 @@ func main() {
 	birthdayRepository := repository.NewBirthdayRepository()
 
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
-	slackNotificationHandler := rest.NewSlackNotificationHandler(notificationUseCase)
+	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
 
 	// ルーティング設定
 	r := httprouter.New()
@@ -46,10 +46,10 @@ func main() {
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
 
 	// 通知系API
-	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyTodayTasks)))
+	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayTasksToSlack)))
 	// TODO: 誕生日の人が複数いたときに対応
-	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyTodayBirthday)))
-	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(slackNotificationHandler.NotifyAccessRanking)))
+	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayBirthdayToSlack)))
+	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(notificationHandler.NotifyAccessRankingToSlack)))
 
 	// 技術検証用ルーティング設定
 	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
