@@ -5,20 +5,14 @@ import (
 )
 
 // TODO: ドメイン貧血症を治す
-// TODO: JSON タグをドメインモデルではなく、ハンドラー層に定義した構造体に定義するように修正する
-// TODO: gorm タグを削除
 type Birthday struct {
-	ID        uint   `gorm:"primary_key;AUTO_INCREMENT"`
-	Name      string `gorm:"name;not null"`
-	Date      string `gorm:"date;not null"`
-	WishList  string `gorm:"wish_list"`
+	ID        uint
+	Name      string
+	Date      string
+	WishList  string
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 	DeletedAt *time.Time
-}
-
-func (b Birthday) TableName() string {
-	return "birthdays"
 }
 
 func (b Birthday) IsToday() bool {
@@ -27,5 +21,8 @@ func (b Birthday) IsToday() bool {
 }
 
 func (b Birthday) CreateBirthdayMessage() string {
-	return "今日は *" + b.Name + "* の誕生日だっぴ > :honda:\n:gainings: " + b.WishList + " :gainings:"
+	if b.WishList == "" {
+		b.WishList = "Amazon の欲しい物リスト教えて！"
+	}
+	return "今日は *" + b.Name + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + b.WishList + " :gainings:"
 }

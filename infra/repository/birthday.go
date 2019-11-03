@@ -7,6 +7,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
+	infraModel "github.com/yyh-gl/hobigon-golang-api-server/infra/model"
 )
 
 //////////////////////////////////////////////////
@@ -30,9 +31,17 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 
 // SelectByDate : 日付から誕生日を1件取得
 func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (birthday model.Birthday, err error) {
-	err = br.db.First(&birthday, "date=?", date).Error
+	// Birthday の DTO を用意
+	birthdayDTO := infraModel.BirthdayDTO{}
+
+	// date 指定で誕生日情報を取得
+	err = br.db.First(&birthdayDTO, "date=?", date).Error
 	if err != nil {
 		return model.Birthday{}, err
 	}
+
+	// DTO を ドメインモデルに変換
+	birthday = model.Birthday(birthdayDTO)
+
 	return birthday, nil
 }
