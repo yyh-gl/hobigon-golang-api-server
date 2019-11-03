@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -26,22 +27,47 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 }
 
 //////////////////////////////////////////////////
+// Create
+//////////////////////////////////////////////////
+
+// Create : 誕生日データを新規作成
+func (br birthdayRepository) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
+	// Birthday モデル を DTO に変換
+	birthdayDTO := infraModel.BirthdayDTO(birthday)
+
+	fmt.Println("========================")
+	fmt.Println(birthdayDTO)
+	fmt.Println("========================")
+
+	// date 指定で誕生日情報を取得
+	err := br.db.Create(&birthdayDTO).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// DTO を ドメインモデルに変換
+	createdBirthday := model.Birthday(birthdayDTO)
+
+	return &createdBirthday, nil
+}
+
+//////////////////////////////////////////////////
 // SelectByDate
 //////////////////////////////////////////////////
 
 // SelectByDate : 日付から誕生日を1件取得
-func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (birthday model.Birthday, err error) {
+func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*model.Birthday, error) {
 	// Birthday の DTO を用意
 	birthdayDTO := infraModel.BirthdayDTO{}
 
 	// date 指定で誕生日情報を取得
-	err = br.db.First(&birthdayDTO, "date=?", date).Error
+	err := br.db.First(&birthdayDTO, "date=?", date).Error
 	if err != nil {
-		return model.Birthday{}, err
+		return nil, err
 	}
 
 	// DTO を ドメインモデルに変換
-	birthday = model.Birthday(birthdayDTO)
+	birthday := model.Birthday(birthdayDTO)
 
-	return birthday, nil
+	return &birthday, nil
 }

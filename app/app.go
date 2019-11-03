@@ -66,8 +66,9 @@ func getGormConnect() *gorm.DB {
 	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
 	DATABASE := os.Getenv("MYSQL_DATABASE")
 
-	// ?parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?parseTime=true&loc=Asia%2FTokyo"
+	// charset=utf8mb4 により文字コードを utf8mb4 に変更
+	// parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
+	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
 
 	db, err := gorm.Open(DBMS, CONNECT)
 	if err != nil {

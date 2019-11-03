@@ -122,9 +122,11 @@ func (nu notificationUseCase) NotifyTodayBirthdayToSlack(ctx context.Context) er
 	}
 
 	// 誕生日情報を Slack に通知
-	err = nu.ns.SendTodayBirthdayToSlack(ctx, birthday)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return errors.Wrap(err, "notificationService.SendTodayBirthdayToSlack()内でのエラー")
+	if birthday != nil {
+		err = nu.ns.SendTodayBirthdayToSlack(ctx, *birthday)
+		if err != nil && err != gorm.ErrRecordNotFound {
+			return errors.Wrap(err, "notificationService.SendTodayBirthdayToSlack()内でのエラー")
+		}
 	}
 
 	return nil

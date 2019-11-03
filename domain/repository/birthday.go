@@ -7,5 +7,6 @@ import (
 )
 
 type BirthdayRepository interface {
-	SelectByDate(ctx context.Context, date string) (model.Birthday, error)
+	Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error)
+	SelectByDate(ctx context.Context, date string) (*model.Birthday, error)
 }

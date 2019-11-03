@@ -18,7 +18,6 @@ type Birthday struct {
 }
 
 func NewBirthday(
-	id uint,
 	name string,
 	date time.Time,
 	wishList string,
@@ -30,7 +29,6 @@ func NewBirthday(
 	}
 
 	return &Birthday{
-		ID:       id,
 		Name:     name,
 		Date:     convertStringDate(date),
 		WishList: wishList,

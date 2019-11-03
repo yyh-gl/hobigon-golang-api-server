@@ -32,6 +32,8 @@ func main() {
 	rankingService := service.NewRankingService()
 
 	birthdayRepository := repository.NewBirthdayRepository()
+	birthdayUseCase := usecase.NewBirthdayUseCase(birthdayRepository)
+	birthdayHandler := rest.NewBirthdayHandler(birthdayUseCase)
 
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
@@ -44,6 +46,9 @@ func main() {
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
 	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(blogHandler.Show)))
 	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
+
+	// 誕生日関連のAPI
+	r.POST("/api/v1/birthday", wrapHandler(http.HandlerFunc(birthdayHandler.Create)))
 
 	// 通知系API
 	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayTasksToSlack)))
