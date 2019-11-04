@@ -12,9 +12,9 @@ import (
 // BirthdayDTO : 誕生日用の DTO
 type BirthdayDTO struct {
 	ID        uint   `gorm:"primary_key;AUTO_INCREMENT"`
-	Name      string `gorm:"name;not null"`
-	Date      string `gorm:"date;not null"`
-	WishList  string `gorm:"wish_list"`
+	Name      string `gorm:"not null"`
+	Date      string `gorm:"not null"`
+	WishList  string
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 	DeletedAt *time.Time
