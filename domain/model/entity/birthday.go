@@ -7,6 +7,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/value"
 )
 
+// Birthday : 誕生日用のドメインモデル
 type Birthday struct {
 	id        uint
 	name      string
@@ -15,6 +16,21 @@ type Birthday struct {
 	createdAt *time.Time
 	updatedAt *time.Time
 	deletedAt *time.Time
+}
+
+type jsonFields struct {
+	ID        uint       `json:"id,omitempty"`
+	Name      string     `json:"name,omitempty"`
+	Date      string     `json:"date,omitempty"`
+	WishList  string     `json:"wish_list,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+}
+
+// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
+type BirthdayJSON struct {
+	jsonFields
 }
 
 // NewBirthday : Birthday ドメインモデルを生成
@@ -71,9 +87,16 @@ func NewBirthdayWithFullParams(
 	}, nil
 }
 
-// ID : id のゲッター
-func (b Birthday) ID() uint {
-	return b.id
+func (b Birthday) JSONSerialize() BirthdayJSON {
+	return BirthdayJSON{jsonFields{
+		ID:        b.id,
+		Name:      b.name,
+		Date:      b.date.String(),
+		WishList:  b.wishList.String(),
+		CreatedAt: b.createdAt,
+		UpdatedAt: b.updatedAt,
+		DeletedAt: b.deletedAt,
+	}}
 }
 
 // Name : name のゲッター
@@ -89,21 +112,6 @@ func (b Birthday) Date() value.Date {
 // WishList : wishList のゲッター
 func (b Birthday) WishList() value.WishList {
 	return b.wishList
-}
-
-// CreatedAt : createdAt のゲッター
-func (b Birthday) CreatedAt() *time.Time {
-	return b.createdAt
-}
-
-// UpdatedAt : updatedAt のゲッター
-func (b Birthday) UpdatedAt() *time.Time {
-	return b.updatedAt
-}
-
-// DeletedAt : deletedAt のゲッター
-func (b Birthday) DeletedAt() *time.Time {
-	return b.deletedAt
 }
 
 // CreateBirthdayMessage : 誕生日メッセージを生成

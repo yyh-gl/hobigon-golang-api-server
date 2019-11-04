@@ -32,21 +32,11 @@ func NewBirthdayHandler(bu usecase.BirthdayUseCase) BirthdayHandler {
 	}
 }
 
-type birthday struct {
-	ID        uint       `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"`
-	Date      string     `json:"date,omitempty"`
-	WishList  string     `json:"wish_list,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-}
-
 // TODO: OK, Error 部分は共通レスポンスにする
 type birthdayResponse struct {
-	OK    bool      `json:"ok"`
-	Error string    `json:"error,omitempty"`
-	Blog  *birthday `json:"birthday,omitempty"`
+	OK       bool                `json:"ok"`
+	Error    string              `json:"error,omitempty"`
+	Birthday entity.BirthdayJSON `json:"birthday,omitempty"`
 }
 
 //////////////////////////////////////////////////
@@ -77,7 +67,6 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var b *entity.Birthday
 	if res.OK {
 		// リクエストパラメータ内の date を time.Time 型に変換
 		// TODO: フォーマット部分を定数化
@@ -92,27 +81,16 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if res.OK {
-			b, err = bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
+			birthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
 				logger.Println(err)
 
 				res.OK = false
 				res.Error = err.Error()
 				w.WriteHeader(http.StatusInternalServerError)
-			}
-
-			// Birthday モデルをレスポン用に変換
-			if b != nil {
-				birthdayRes := birthday{
-					ID:        b.ID(),
-					Name:      b.Name(),
-					Date:      b.Date().String(),
-					WishList:  b.WishList().String(),
-					CreatedAt: b.CreatedAt(),
-					UpdatedAt: b.UpdatedAt(),
-					DeletedAt: b.DeletedAt(),
-				}
-				res.Blog = &birthdayRes
+			} else {
+				// JSON 形式に変換
+				res.Birthday = birthday.JSONSerialize()
 			}
 		}
 	}
