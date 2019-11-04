@@ -47,7 +47,7 @@ func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthda
 	}
 
 	// DTO を ドメインモデルに変換
-	createdBirthday, err := birthdayDTO.ConvertToDomainModel()
+	createdBirthday, err := birthdayDTO.ConvertToDomainModel(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
 	}
@@ -70,7 +70,7 @@ func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*en
 	}
 
 	// DTO を ドメインモデルに変換
-	birthday, err := birthdayDTO.ConvertToDomainModel()
+	birthday, err := birthdayDTO.ConvertToDomainModel(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
 	}

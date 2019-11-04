@@ -1,6 +1,7 @@
 package imodel
 
 import (
+	"context"
 	"strconv"
 	"time"
 
@@ -25,7 +26,7 @@ func (b BirthdayDTO) TableName() string {
 }
 
 // ConvertToDomainModel : ドメインモデルに変換
-func (b BirthdayDTO) ConvertToDomainModel() (*entity.Birthday, error) {
+func (b BirthdayDTO) ConvertToDomainModel(ctx context.Context) (*entity.Birthday, error) {
 	// time.Time 型の日付情報を取得
 	month, err := strconv.Atoi(b.Date[0:2])
 	if err != nil {
