@@ -7,6 +7,10 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/value"
 )
 
+//////////////////////////////////////////////////
+// Birthday
+//////////////////////////////////////////////////
+
 // Birthday : 誕生日用のドメインモデル
 type Birthday struct {
 	id        uint
@@ -16,21 +20,6 @@ type Birthday struct {
 	createdAt *time.Time
 	updatedAt *time.Time
 	deletedAt *time.Time
-}
-
-type birthdayJSONFields struct {
-	ID        uint       `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"`
-	Date      string     `json:"date,omitempty"`
-	WishList  string     `json:"wish_list,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-}
-
-// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
-type BirthdayJSON struct {
-	birthdayJSONFields
 }
 
 // NewBirthday : Birthday ドメインモデルを生成
@@ -87,19 +76,6 @@ func NewBirthdayWithFullParams(
 	}, nil
 }
 
-// JSONSerialize : JSON タグを含む構造体を返却
-func (b Birthday) JSONSerialize() BirthdayJSON {
-	return BirthdayJSON{birthdayJSONFields{
-		ID:        b.id,
-		Name:      b.name,
-		Date:      b.date.String(),
-		WishList:  b.wishList.String(),
-		CreatedAt: b.createdAt,
-		UpdatedAt: b.updatedAt,
-		DeletedAt: b.deletedAt,
-	}}
-}
-
 // Name : name のゲッター
 func (b Birthday) Name() string {
 	return b.name
@@ -122,4 +98,36 @@ func (b Birthday) CreateBirthdayMessage() string {
 		wishList = "Amazon の欲しい物リスト教えて！"
 	}
 	return "今日は *" + b.name + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
+}
+
+//////////////////////////////////////////////////
+// BirthdayJSON
+//////////////////////////////////////////////////
+
+type birthdayJSONFields struct {
+	ID        uint       `json:"id,omitempty"`
+	Name      string     `json:"name,omitempty"`
+	Date      string     `json:"date,omitempty"`
+	WishList  string     `json:"wish_list,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+}
+
+// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
+type BirthdayJSON struct {
+	birthdayJSONFields
+}
+
+// JSONSerialize : JSON タグを含む構造体を返却
+func (b Birthday) JSONSerialize() BirthdayJSON {
+	return BirthdayJSON{birthdayJSONFields{
+		ID:        b.id,
+		Name:      b.name,
+		Date:      b.date.String(),
+		WishList:  b.wishList.String(),
+		CreatedAt: b.createdAt,
+		UpdatedAt: b.updatedAt,
+		DeletedAt: b.deletedAt,
+	}}
 }

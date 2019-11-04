@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+//////////////////////////////////////////////////
+// Blog
+//////////////////////////////////////////////////
+
 // Blog : ブログ用のドメインモデル
 type Blog struct {
 	id        uint
@@ -13,20 +17,6 @@ type Blog struct {
 	createdAt *time.Time
 	updatedAt *time.Time
 	deletedAt *time.Time
-}
-
-type blogJSONFields struct {
-	ID        uint       `json:"id"`
-	Title     string     `json:"title"`
-	Count     *int       `json:"count"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-}
-
-// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
-type BlogJSON struct {
-	blogJSONFields
 }
 
 // NewBlog : Blog ドメインモデルを生成
@@ -57,18 +47,6 @@ func NewBlogWithFullParams(
 	}
 }
 
-// JSONSerialize : JSON タグを含む構造体を返却
-func (b Blog) JSONSerialize() BlogJSON {
-	return BlogJSON{blogJSONFields{
-		ID:        b.id,
-		Title:     b.title,
-		Count:     b.count,
-		CreatedAt: b.createdAt,
-		UpdatedAt: b.updatedAt,
-		DeletedAt: b.deletedAt,
-	}}
-}
-
 // ID : id のゲッター
 func (b Blog) ID() uint {
 	return b.id
@@ -93,4 +71,34 @@ func (b *Blog) CountUp() {
 // CreateLikeMessage : いいね受信メッセージを生成
 func (b Blog) CreateLikeMessage() string {
 	return "【" + b.title + "】いいね！（Total: " + strconv.Itoa(*b.count) + "）"
+}
+
+//////////////////////////////////////////////////
+// BlogJSON
+//////////////////////////////////////////////////
+
+type blogJSONFields struct {
+	ID        uint       `json:"id"`
+	Title     string     `json:"title"`
+	Count     *int       `json:"count"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+}
+
+// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
+type BlogJSON struct {
+	blogJSONFields
+}
+
+// JSONSerialize : JSON タグを含む構造体を返却
+func (b Blog) JSONSerialize() BlogJSON {
+	return BlogJSON{blogJSONFields{
+		ID:        b.id,
+		Title:     b.title,
+		Count:     b.count,
+		CreatedAt: b.createdAt,
+		UpdatedAt: b.updatedAt,
+		DeletedAt: b.deletedAt,
+	}}
 }
