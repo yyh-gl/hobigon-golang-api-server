@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
+
 	"github.com/jinzhu/gorm"
 	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -77,7 +79,7 @@ func getGormConnect() *gorm.DB {
 
 	// マイグレーション実行
 	db.AutoMigrate(&entity.Blog{})
-	db.AutoMigrate(&entity.Birthday{})
+	db.AutoMigrate(&imodel.BirthdayDTO{})
 
 	return db
 }
