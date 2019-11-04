@@ -18,7 +18,7 @@ type Birthday struct {
 	deletedAt *time.Time
 }
 
-type jsonFields struct {
+type birthdayJSONFields struct {
 	ID        uint       `json:"id,omitempty"`
 	Name      string     `json:"name,omitempty"`
 	Date      string     `json:"date,omitempty"`
@@ -30,7 +30,7 @@ type jsonFields struct {
 
 // BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
 type BirthdayJSON struct {
-	jsonFields
+	birthdayJSONFields
 }
 
 // NewBirthday : Birthday ドメインモデルを生成
@@ -87,8 +87,9 @@ func NewBirthdayWithFullParams(
 	}, nil
 }
 
+// JSONSerialize : JSON タグを含む構造体を返却
 func (b Birthday) JSONSerialize() BirthdayJSON {
-	return BirthdayJSON{jsonFields{
+	return BirthdayJSON{birthdayJSONFields{
 		ID:        b.id,
 		Name:      b.name,
 		Date:      b.date.String(),

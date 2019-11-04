@@ -2,7 +2,6 @@ package igateway
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -94,7 +93,7 @@ func (s slackGateway) SendLikeNotify(ctx context.Context, blog entity.Blog) (err
 	data := entity.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
-		Text:     "【" + blog.Title + "】いいね！（Total: " + strconv.Itoa(*blog.Count) + "）",
+		Text:     blog.CreateLikeMessage(),
 	}
 
 	s.send(ctx, data)

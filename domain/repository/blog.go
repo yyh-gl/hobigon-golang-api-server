@@ -8,7 +8,7 @@ import (
 
 // BlogRepository : ブログ用のリポジトリインターフェース
 type BlogRepository interface {
-	Create(ctx context.Context, blog entity.Blog) (entity.Blog, error)
-	SelectByTitle(ctx context.Context, title string) (entity.Blog, error)
-	Update(ctx context.Context, blog entity.Blog) (entity.Blog, error)
+	Create(ctx context.Context, blog entity.Blog) (*entity.Blog, error)
+	SelectByTitle(ctx context.Context, title string) (*entity.Blog, error)
+	Update(ctx context.Context, blog entity.Blog) (*entity.Blog, error)
 }

@@ -3,7 +3,6 @@ package rest
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
@@ -33,20 +32,11 @@ func NewBlogHandler(bu usecase.BlogUseCase) BlogHandler {
 	}
 }
 
-type blog struct {
-	ID        uint       `json:"id,omitempty"`
-	Title     string     `json:"title,omitempty"`
-	Count     *int       `json:"count,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-}
-
 // TODO: OK, Error 部分は共通レスポンスにする
 type blogResponse struct {
-	OK    bool   `json:"ok"`
-	Error string `json:"error,omitempty"`
-	Blog  *blog  `json:"blog,omitempty"`
+	OK    bool            `json:"ok"`
+	Error string          `json:"error,omitempty"`
+	Blog  entity.BlogJSON `json:"blog,omitempty"`
 }
 
 //////////////////////////////////////////////////
@@ -82,11 +72,9 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 			res.OK = false
 			res.Error = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
-		}
-
-		if b != nil {
-			blogRes := blog(*b)
-			res.Blog = &blogRes
+		} else {
+			// JSON 形式に変換
+			res.Blog = b.JSONSerialize()
 		}
 	}
 
@@ -127,11 +115,9 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
-
-	if b != nil {
-		blogRes := blog(*b)
-		res.Blog = &blogRes
+	} else {
+		// JSON 形式に変換
+		res.Blog = b.JSONSerialize()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
@@ -170,11 +156,9 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
-
-	if b != nil {
-		blogRes := blog(*b)
-		res.Blog = &blogRes
+	} else {
+		// JSON 形式に変換
+		res.Blog = b.JSONSerialize()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

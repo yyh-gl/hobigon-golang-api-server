@@ -39,15 +39,13 @@ func NewBlogUseCase(br repository.BlogRepository, sg gateway.SlackGateway) BlogU
 
 // Create : ブログ情報を新規作成
 func (bu blogUseCase) Create(ctx context.Context, title string) (*entity.Blog, error) {
-	blog := entity.Blog{
-		Title: title,
-	}
-	blog, err := bu.br.Create(ctx, blog)
+	blog := entity.NewBlog(title)
+	createdBlog, err := bu.br.Create(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
 	}
 
-	return &blog, nil
+	return createdBlog, nil
 }
 
 //////////////////////////////////////////////////
@@ -66,7 +64,7 @@ func (bu blogUseCase) Show(ctx context.Context, title string) (*entity.Blog, err
 		}
 	}
 
-	return &blog, nil
+	return blog, nil
 }
 
 //////////////////////////////////////////////////
@@ -86,18 +84,17 @@ func (bu blogUseCase) Like(ctx context.Context, title string) (*entity.Blog, err
 	}
 
 	// Count をプラス1
-	addedCount := *blog.Count + 1
-	blog.Count = &addedCount
-	blog, err = bu.br.Update(ctx, blog)
+	blog.CountUp()
+	blog, err = bu.br.Update(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Update()内でのエラー")
 	}
 
 	// Slack に通知
-	err = bu.sg.SendLikeNotify(ctx, blog)
+	err = bu.sg.SendLikeNotify(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "slackGateway.SendLikeNotify()内でのエラー")
 	}
 
-	return &blog, nil
+	return blog, nil
 }
