@@ -3,11 +3,11 @@ package irepository
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
+
 	"github.com/pkg/errors"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
-
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -34,7 +34,7 @@ func NewBlogRepository() repository.BlogRepository {
 //////////////////////////////////////////////////
 
 // Create : ブログ情報を新規作成
-func (br blogRepository) Create(ctx context.Context, blog entity.Blog) (*entity.Blog, error) {
+func (br blogRepository) Create(ctx context.Context, blog blog.Blog) (*blog.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
 		Title: blog.Title(),
@@ -55,7 +55,7 @@ func (br blogRepository) Create(ctx context.Context, blog entity.Blog) (*entity.
 //////////////////////////////////////////////////
 
 // SelectByTitle : タイトルからブログ情報を1件取得
-func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*entity.Blog, error) {
+func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*blog.Blog, error) {
 	blogDTO := imodel.BlogDTO{}
 	err := br.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
@@ -71,7 +71,7 @@ func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*enti
 //////////////////////////////////////////////////
 
 // Update : ブログ情報を1件更新
-func (br blogRepository) Update(ctx context.Context, blog entity.Blog) (*entity.Blog, error) {
+func (br blogRepository) Update(ctx context.Context, blog blog.Blog) (*blog.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
 		ID:    blog.ID(),

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 )
 
 // BlogDTO : ブログ用の DTO
@@ -23,8 +23,8 @@ func (b BlogDTO) TableName() string {
 }
 
 // ConvertToDomainModel : ドメインモデルに変換
-func (b BlogDTO) ConvertToDomainModel(ctx context.Context) *entity.Blog {
-	return entity.NewBlogWithFullParams(
+func (b BlogDTO) ConvertToDomainModel(ctx context.Context) *blog.Blog {
+	return blog.NewBlogWithFullParams(
 		b.ID, b.Title, b.Count, b.CreatedAt, b.UpdatedAt, b.DeletedAt,
 	)
 }

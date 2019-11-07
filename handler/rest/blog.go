@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -34,9 +35,9 @@ func NewBlogHandler(bu usecase.BlogUseCase) BlogHandler {
 
 // TODO: OK, Error 部分は共通レスポンスにする
 type blogResponse struct {
-	OK    bool            `json:"ok"`
-	Error string          `json:"error,omitempty"`
-	Blog  entity.BlogJSON `json:"blog,omitempty"`
+	OK    bool          `json:"ok"`
+	Error string        `json:"error,omitempty"`
+	Blog  blog.BlogJSON `json:"blog,omitempty"`
 }
 
 //////////////////////////////////////////////////
@@ -65,7 +66,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var b *entity.Blog
+	var b *blog.Blog
 	if res.OK {
 		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {

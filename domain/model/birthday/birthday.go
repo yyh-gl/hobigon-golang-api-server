@@ -1,10 +1,9 @@
-package entity
+package birthday
 
 import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/value"
 )
 
 //////////////////////////////////////////////////
@@ -15,8 +14,8 @@ import (
 type Birthday struct {
 	id        uint
 	name      string
-	date      value.Date
-	wishList  value.WishList
+	date      Date
+	wishList  WishList
 	createdAt *time.Time
 	updatedAt *time.Time
 	deletedAt *time.Time
@@ -25,13 +24,13 @@ type Birthday struct {
 // NewBirthday : Birthday ドメインモデルを生成
 func NewBirthday(name string, date time.Time, wishList string) (*Birthday, error) {
 	// Date を生成
-	d, err := value.NewDate(date)
+	d, err := NewDate(date)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewDate()内でのエラー")
 	}
 
 	// WishList を生成
-	wl, err := value.NewWishList(wishList)
+	wl, err := NewWishList(wishList)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewWishList()内でのエラー")
 	}
@@ -54,13 +53,13 @@ func NewBirthdayWithFullParams(
 	deletedAt *time.Time,
 ) (*Birthday, error) {
 	// Date を生成
-	d, err := value.NewDate(date)
+	d, err := NewDate(date)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewDate()内でのエラー")
 	}
 
 	// WishList を生成
-	wl, err := value.NewWishList(wishList)
+	wl, err := NewWishList(wishList)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewWishList()内でのエラー")
 	}
@@ -82,12 +81,12 @@ func (b Birthday) Name() string {
 }
 
 // Date : date のゲッター
-func (b Birthday) Date() value.Date {
+func (b Birthday) Date() Date {
 	return b.date
 }
 
 // WishList : wishList のゲッター
-func (b Birthday) WishList() value.WishList {
+func (b Birthday) WishList() WishList {
 	return b.wishList
 }
 

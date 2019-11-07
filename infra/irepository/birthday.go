@@ -3,11 +3,12 @@ package irepository
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
+
 	"github.com/pkg/errors"
 
 	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 )
@@ -32,7 +33,7 @@ func NewBirthdayRepository() repository.BirthdayRepository {
 //////////////////////////////////////////////////
 
 // Create : 誕生日データを新規作成
-func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthday) (*entity.Birthday, error) {
+func (br birthdayRepository) Create(ctx context.Context, birthday birthday.Birthday) (*birthday.Birthday, error) {
 	// Birthday モデル を DTO に変換
 	birthdayDTO := imodel.BirthdayDTO{
 		Name:     birthday.Name(),
@@ -59,7 +60,7 @@ func (br birthdayRepository) Create(ctx context.Context, birthday entity.Birthda
 //////////////////////////////////////////////////
 
 // SelectByDate : 日付から誕生日を1件取得
-func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*entity.Birthday, error) {
+func (br birthdayRepository) SelectByDate(ctx context.Context, date string) (*birthday.Birthday, error) {
 	// Birthday の DTO を用意
 	birthdayDTO := imodel.BirthdayDTO{}
 

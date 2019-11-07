@@ -3,9 +3,10 @@ package usecase
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
+
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
@@ -15,9 +16,9 @@ import (
 
 // BlogUseCase : ブログ用のユースケースインターフェース
 type BlogUseCase interface {
-	Create(context.Context, string) (*entity.Blog, error)
-	Show(context.Context, string) (*entity.Blog, error)
-	Like(context.Context, string) (*entity.Blog, error)
+	Create(context.Context, string) (*blog.Blog, error)
+	Show(context.Context, string) (*blog.Blog, error)
+	Like(context.Context, string) (*blog.Blog, error)
 }
 
 type blogUseCase struct {
@@ -38,8 +39,8 @@ func NewBlogUseCase(br repository.BlogRepository, sg gateway.SlackGateway) BlogU
 //////////////////////////////////////////////////
 
 // Create : ブログ情報を新規作成
-func (bu blogUseCase) Create(ctx context.Context, title string) (*entity.Blog, error) {
-	blog := entity.NewBlog(title)
+func (bu blogUseCase) Create(ctx context.Context, title string) (*blog.Blog, error) {
+	blog := blog.NewBlog(title)
 	createdBlog, err := bu.br.Create(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
@@ -53,7 +54,7 @@ func (bu blogUseCase) Create(ctx context.Context, title string) (*entity.Blog, e
 //////////////////////////////////////////////////
 
 // Show : ブログ情報を1件取得
-func (bu blogUseCase) Show(ctx context.Context, title string) (*entity.Blog, error) {
+func (bu blogUseCase) Show(ctx context.Context, title string) (*blog.Blog, error) {
 	blog, err := bu.br.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
@@ -72,7 +73,7 @@ func (bu blogUseCase) Show(ctx context.Context, title string) (*entity.Blog, err
 //////////////////////////////////////////////////
 
 // Like : 指定ブログにいいねをプラス1
-func (bu blogUseCase) Like(ctx context.Context, title string) (*entity.Blog, error) {
+func (bu blogUseCase) Like(ctx context.Context, title string) (*blog.Blog, error) {
 	blog, err := bu.br.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {

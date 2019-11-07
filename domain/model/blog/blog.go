@@ -1,4 +1,4 @@
-package entity
+package blog
 
 import (
 	"strconv"
