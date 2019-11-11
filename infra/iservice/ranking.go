@@ -56,7 +56,7 @@ func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg strin
 	if err != nil {
 		return "", nil, err
 	}
-	defer fp.Close()
+	defer func() { _ = fp.Close() }()
 
 	accessCountPerEndpoint := map[string]int{}
 

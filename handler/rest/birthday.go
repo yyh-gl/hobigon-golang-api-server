@@ -65,7 +65,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		res.Error = err.Error()
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 
 	if res.OK {
 		// リクエストパラメータ内の date を time.Time 型に変換

@@ -8,6 +8,7 @@ import (
 	"github.com/adlio/trello"
 )
 
+// TaskGateway : タスク用のゲートウェイインターフェース
 type TaskGateway interface {
 	GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error)
 	GetTasksFromList(ctx context.Context, list trello.List) (task.TaskList, task.TaskList, error)

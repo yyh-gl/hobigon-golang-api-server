@@ -7,6 +7,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/task"
 )
 
+// Slack : Slack 用のドメインモデル
 // TODO: ドメイン貧血症を治す
 type Slack struct {
 	Username string
@@ -14,6 +15,7 @@ type Slack struct {
 	Text     string
 }
 
+// GetWebHookURL : WebHook URL を取得
 func (s Slack) GetWebHookURL() (webHookURL string) {
 	switch s.Channel {
 	case "00_today_tasks":
@@ -26,6 +28,7 @@ func (s Slack) GetWebHookURL() (webHookURL string) {
 	return webHookURL
 }
 
+// CreateTaskMessage : タスク通知用のメッセージを作成
 func (s Slack) CreateTaskMessage(todayTasks []task.Task, dueOverTasks []task.Task) string {
 	var mainTodayTasks []task.Task
 	var techTodayTasks []task.Task

@@ -86,7 +86,7 @@ type blogJSONFields struct {
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }
 
-// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
+// BlogJSON : ブログ用の JSON レスポンス形式の定義
 type BlogJSON struct {
 	blogJSONFields
 }

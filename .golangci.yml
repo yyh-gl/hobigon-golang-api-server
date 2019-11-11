@@ -1,0 +1,18 @@
+run:
+  deadline: 30s
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    - goimports
+    - golint
+    - govet
+    - errcheck
+
+linters-settings:
+  golint:
+    min-confidence: 0.8
+
+issues:
+  exclude-use-default: false
