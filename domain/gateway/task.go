@@ -7,6 +7,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 )
 
+// TaskGateway : タスク用のゲートウェイインターフェース
 type TaskGateway interface {
 	GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error)
 	GetTasksFromList(ctx context.Context, list trello.List) (entity.TaskList, entity.TaskList, error)

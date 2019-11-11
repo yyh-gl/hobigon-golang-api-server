@@ -15,8 +15,10 @@ import (
 // TODO: api と cli で分ける（それぞれの main の中に入れてしまってもいいかも）
 
 var (
+	// Logger : システム共通ロガー
 	Logger *log.Logger
-	DB     *gorm.DB
+	// DB : システム共通 DB クライアント
+	DB *gorm.DB
 )
 
 // コンテキストにセットするさいのキー用の型

@@ -63,7 +63,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 		res.Error = err.Error()
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 
 	var b *entity.Blog
 	if res.OK {

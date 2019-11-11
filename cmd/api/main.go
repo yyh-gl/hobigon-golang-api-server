@@ -56,10 +56,6 @@ func main() {
 	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayBirthdayToSlack)))
 	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(notificationHandler.NotifyAccessRankingToSlack)))
 
-	// 技術検証用ルーティング設定
-	//r.GET("/api/v1/header", wrapHandler(http.HandlerFunc(rest.GetHeaderHandler)))
-	//r.GET("/api/v1/footer", wrapHandler(http.HandlerFunc(rest.GetFooterHandler)))
-
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
 	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)

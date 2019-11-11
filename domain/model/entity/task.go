@@ -4,24 +4,7 @@ import (
 	"time"
 )
 
-// TODO: ドメイン貧血症を治す
-// TODO: JSON タグをドメインモデルではなく、ハンドラー層に定義した構造体に定義するように修正する
-type Board struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	Desc           string `json:"desc"`
-	Closed         bool   `json:"closed"`
-	IDOrganization string `json:"idOrganization"`
-	Pinned         bool   `json:"pinned"`
-	URL            string `json:"url"`
-	ShortURL       string `json:"shortUrl"`
-}
-
-type List struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-
+// Task : タスク用のドメインモデル
 type Task struct {
 	Title         string      `json:"title"`
 	Description   string      `json:"description"`
@@ -32,16 +15,19 @@ type Task struct {
 	OriginalModel interface{} `json:"-"`
 }
 
+// TaskList : タスク用ドメインモデルの配列
 type TaskList struct {
 	Tasks []Task
 }
 
+// GetJSTDue : 日本時間の期限を取得
 func (t Task) GetJSTDue(utcDue *time.Time) *time.Time {
 	jst := getJSTNow()
 	jstDue := utcDue.In(jst)
 	return &jstDue
 }
 
+// IsDueOver : 期限切れかどうか判定
 func (t Task) IsDueOver() (isDueOver bool) {
 	jst := getJSTNow()
 	today := time.Now()
@@ -49,6 +35,7 @@ func (t Task) IsDueOver() (isDueOver bool) {
 	return !t.Due.Equal(todayStart) && t.Due.Before(todayStart)
 }
 
+// IsTodayTask : 今日のタスクかどうか判定
 func (t Task) IsTodayTask() (isTodayTask bool) {
 	jst := getJSTNow()
 	today := time.Now()
@@ -60,6 +47,7 @@ func (t Task) IsTodayTask() (isTodayTask bool) {
 	return false
 }
 
+// GetTodayTasks : タスクリストから今日のタスクを取得
 func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
 	for _, task := range tl.Tasks {
 		if task.IsTodayTask() {
@@ -69,6 +57,7 @@ func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
 	return todayTasks
 }
 
+// getJSTNow : 現在時刻を日本時間で取得
 func getJSTNow() *time.Location {
 	return time.FixedZone("Asia/Tokyo", 9*60*60)
 }

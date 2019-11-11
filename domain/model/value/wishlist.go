@@ -25,6 +25,7 @@ func (wl WishList) String() string {
 	return wl.value
 }
 
+// IsNull : WishList の値が Null かどうか判定
 func (wl WishList) IsNull() bool {
 	return wl.value == ""
 }
