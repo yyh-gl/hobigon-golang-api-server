@@ -3,10 +3,15 @@ package igateway
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/task"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
+
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+	mySlack "github.com/yyh-gl/hobigon-golang-api-server/domain/model/slack"
 )
 
 //////////////////////////////////////////////////
@@ -25,7 +30,7 @@ func NewSlackGateway() gateway.SlackGateway {
 //////////////////////////////////////////////////
 
 // send : Slack に通知を送信
-func (s slackGateway) send(ctx context.Context, data entity.Slack) (err []error) {
+func (s slackGateway) send(ctx context.Context, data mySlack.Slack) (err []error) {
 	payload := slack.Payload{
 		Username: data.Username,
 		Channel:  data.Channel,
@@ -46,8 +51,8 @@ func (s slackGateway) send(ctx context.Context, data entity.Slack) (err []error)
 //////////////////////////////////////////////////
 
 // SendTask : Slack にタスクを送信
-func (s slackGateway) SendTask(ctx context.Context, todayTasks []entity.Task, dueOverTasks []entity.Task) (err error) {
-	data := entity.Slack{
+func (s slackGateway) SendTask(ctx context.Context, todayTasks []task.Task, dueOverTasks []task.Task) (err error) {
+	data := mySlack.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",
 	}
@@ -63,16 +68,16 @@ func (s slackGateway) SendTask(ctx context.Context, todayTasks []entity.Task, du
 //////////////////////////////////////////////////
 
 // SendBirthday : Slack に誕生日通知を送信
-func (s slackGateway) SendBirthday(ctx context.Context, birthday entity.Birthday) (err error) {
-	var data entity.Slack
+func (s slackGateway) SendBirthday(ctx context.Context, birthday birthday.Birthday) (err error) {
+	var data mySlack.Slack
 	switch {
 	case app.IsPrd():
-		data = entity.Slack{
+		data = mySlack.Slack{
 			Username: "聖母マリア様",
 			Channel:  "2019新卒技術_雑談",
 		}
 	default:
-		data = entity.Slack{
+		data = mySlack.Slack{
 			Username: "まりお",
 			Channel:  "00_today_tasks",
 		}
@@ -89,8 +94,8 @@ func (s slackGateway) SendBirthday(ctx context.Context, birthday entity.Birthday
 //////////////////////////////////////////////////
 
 // SendLikeNotify : Slack にいいね（ブログ）通知を送信
-func (s slackGateway) SendLikeNotify(ctx context.Context, blog entity.Blog) (err error) {
-	data := entity.Slack{
+func (s slackGateway) SendLikeNotify(ctx context.Context, blog blog.Blog) (err error) {
+	data := mySlack.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
 		Text:     blog.CreateLikeMessage(),
@@ -106,7 +111,7 @@ func (s slackGateway) SendLikeNotify(ctx context.Context, blog entity.Blog) (err
 
 // SendRanking : Slack にアクセスラキングを送信
 func (s slackGateway) SendRanking(ctx context.Context, ranking string) (err error) {
-	data := entity.Slack{
+	data := mySlack.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
 		Text:     ranking,

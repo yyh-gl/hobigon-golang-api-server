@@ -4,9 +4,10 @@ import (
 	"context"
 	"os"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/task"
+
 	"github.com/adlio/trello"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 )
 
 //////////////////////////////////////////////////
@@ -70,23 +71,23 @@ func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 //////////////////////////////////////////////////
 
 // GetTasksFromList : リストからタスク一覧を取得
-func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList entity.TaskList, dueOverTaskList entity.TaskList, err error) {
+func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList task.TaskList, dueOverTaskList task.TaskList, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
-		return entity.TaskList{}, entity.TaskList{}, err
+		return task.TaskList{}, task.TaskList{}, err
 	}
 
 	allTask := convertToTasksModel(ctx, trelloTasks)
 
-	for _, task := range allTask.Tasks {
-		task.Board = list.Board.Name
-		task.List = list.Name
+	for _, t := range allTask.Tasks {
+		t.Board = list.Board.Name
+		t.List = list.Name
 
 		// 期限切れタスクを抽出
-		if task.Due != nil && task.IsDueOver() {
-			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, task)
+		if t.Due != nil && t.IsDueOver() {
+			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, t)
 		} else {
-			taskList.Tasks = append(taskList.Tasks, task)
+			taskList.Tasks = append(taskList.Tasks, t)
 		}
 	}
 	return taskList, dueOverTaskList, nil
@@ -97,17 +98,17 @@ func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 //////////////////////////////////////////////////
 
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
-func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList entity.TaskList) {
+func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList task.TaskList) {
 	for _, card := range trelloCards {
-		task := new(entity.Task)
-		task.Title = card.Name
-		task.Description = card.Desc
-		task.ShortURL = card.ShortURL
+		t := new(task.Task)
+		t.Title = card.Name
+		t.Description = card.Desc
+		t.ShortURL = card.ShortURL
 		if card.Due != nil {
-			task.Due = task.GetJSTDue(card.Due)
+			t.Due = t.GetJSTDue(card.Due)
 		}
-		task.OriginalModel = card
-		taskList.Tasks = append(taskList.Tasks, *task)
+		t.OriginalModel = card
+		taskList.Tasks = append(taskList.Tasks, *t)
 	}
 	return taskList
 }
@@ -117,10 +118,10 @@ func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskL
 //////////////////////////////////////////////////
 
 // MoveToWIP : 指定タスクを WIP リストに移動
-func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []entity.Task) (err error) {
-	for _, task := range tasks {
+func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []task.Task) (err error) {
+	for _, t := range tasks {
 		var wipListID string
-		switch task.Board {
+		switch t.Board {
 		case "Main":
 			wipListID = os.Getenv("MAIN_WIP_LIST_ID")
 		case "Tech":
@@ -129,7 +130,7 @@ func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []entity.Task) (err e
 			wipListID = os.Getenv("WORK_WIP_LIST_ID")
 		}
 
-		card := task.OriginalModel.(*trello.Card)
+		card := t.OriginalModel.(*trello.Card)
 		err = card.MoveToList(wipListID, trello.Defaults())
 		if err != nil {
 			// TODO: DB操作ではないので、途中で失敗した場合ロールバックできない問題を考える

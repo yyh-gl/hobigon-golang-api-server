@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
 )
 
 // BirthdayRepository : 誕生日用のリポジトリインターフェース
 type BirthdayRepository interface {
-	Create(ctx context.Context, birthday entity.Birthday) (*entity.Birthday, error)
-	SelectByDate(ctx context.Context, date string) (*entity.Birthday, error)
+	Create(ctx context.Context, birthday birthday.Birthday) (*birthday.Birthday, error)
+	SelectByDate(ctx context.Context, date string) (*birthday.Birthday, error)
 }

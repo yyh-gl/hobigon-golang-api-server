@@ -1,4 +1,4 @@
-package entity
+package task
 
 import (
 	"time"

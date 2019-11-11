@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/ranking"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/service"
@@ -40,7 +40,7 @@ func isContain(arr []string, str string) bool {
 }
 
 // GetAccessRanking : アクセスランキングを取得する関数
-func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList entity.AccessList, err error) {
+func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList ranking.AccessList, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3
@@ -81,9 +81,9 @@ func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg strin
 	}
 
 	// アクセス数が多い順にソート
-	accessList = entity.AccessList{}
+	accessList = ranking.AccessList{}
 	for endpoint, count := range accessCountPerEndpoint {
-		e := entity.Access{
+		e := ranking.Access{
 			Endpoint: endpoint,
 			Count:    count,
 		}

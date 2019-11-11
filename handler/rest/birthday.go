@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
 
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -34,9 +34,9 @@ func NewBirthdayHandler(bu usecase.BirthdayUseCase) BirthdayHandler {
 
 // TODO: OK, Error 部分は共通レスポンスにする
 type birthdayResponse struct {
-	OK       bool                `json:"ok"`
-	Error    string              `json:"error,omitempty"`
-	Birthday entity.BirthdayJSON `json:"birthday,omitempty"`
+	OK       bool                  `json:"ok"`
+	Error    string                `json:"error,omitempty"`
+	Birthday birthday.BirthdayJSON `json:"birthday,omitempty"`
 }
 
 //////////////////////////////////////////////////

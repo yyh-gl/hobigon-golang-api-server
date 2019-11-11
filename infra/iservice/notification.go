@@ -3,9 +3,10 @@ package iservice
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
+
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/entity"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/service"
 )
 
@@ -25,7 +26,7 @@ func NewNotificationService(sg gateway.SlackGateway) service.NotificationService
 }
 
 // SendBirthdayToSlackToSlack : 今日の誕生日を通知
-func (ns notificationService) SendTodayBirthdayToSlack(ctx context.Context, birthday entity.Birthday) (err error) {
+func (ns notificationService) SendTodayBirthdayToSlack(ctx context.Context, birthday birthday.Birthday) (err error) {
 	// 今日が誕生日であった場合にのみ Slack に通知
 	if birthday.Date().IsToday() {
 		if err = ns.sg.SendBirthday(ctx, birthday); err != nil {

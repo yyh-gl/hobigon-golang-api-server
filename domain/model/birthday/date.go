@@ -1,4 +1,4 @@
-package value
+package birthday
 
 import (
 	"time"

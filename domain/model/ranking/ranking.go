@@ -1,4 +1,4 @@
-package entity
+package ranking
 
 // Access : アクセス情報の構造体
 type Access struct {
