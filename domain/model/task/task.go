@@ -15,11 +15,6 @@ type Task struct {
 	OriginalModel interface{} `json:"-"`
 }
 
-// TaskList : タスク用ドメインモデルの配列
-type TaskList struct {
-	Tasks []Task
-}
-
 // GetJSTDue : 日本時間の期限を取得
 func (t Task) GetJSTDue(utcDue *time.Time) *time.Time {
 	jst := getJSTNow()
@@ -45,16 +40,6 @@ func (t Task) IsTodayTask() (isTodayTask bool) {
 		return true
 	}
 	return false
-}
-
-// GetTodayTasks : タスクリストから今日のタスクを取得
-func (tl TaskList) GetTodayTasks() (todayTasks []Task) {
-	for _, task := range tl.Tasks {
-		if task.IsTodayTask() {
-			todayTasks = append(todayTasks, task)
-		}
-	}
-	return todayTasks
 }
 
 // getJSTNow : 現在時刻を日本時間で取得

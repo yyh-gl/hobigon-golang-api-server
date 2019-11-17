@@ -71,10 +71,10 @@ func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 //////////////////////////////////////////////////
 
 // GetTasksFromList : リストからタスク一覧を取得
-func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList task.TaskList, dueOverTaskList task.TaskList, err error) {
+func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList task.List, dueOverTaskList task.List, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
-		return task.TaskList{}, task.TaskList{}, err
+		return task.List{}, task.List{}, err
 	}
 
 	allTask := convertToTasksModel(ctx, trelloTasks)
@@ -98,7 +98,7 @@ func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 //////////////////////////////////////////////////
 
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
-func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList task.TaskList) {
+func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList task.List) {
 	for _, card := range trelloCards {
 		t := new(task.Task)
 		t.Title = card.Name
