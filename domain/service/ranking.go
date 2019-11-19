@@ -8,5 +8,5 @@ import (
 
 // RankingService : ランキング用サービスのインターフェース
 type RankingService interface {
-	GetAccessRanking(ctx context.Context) (string, ranking.AccessList, error)
+	GetAccessRanking(ctx context.Context) (string, ranking.Ranking, error)
 }
