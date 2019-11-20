@@ -7,7 +7,7 @@ import (
 // time.Time のレイアウト
 const layout = "0102"
 
-// Date : Amazon の欲しい物リストを表す値オブジェクト
+// Date : 誕生日に関する日付を表す値オブジェクト
 type Date struct {
 	value string
 }
