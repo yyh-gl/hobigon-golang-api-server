@@ -3,7 +3,7 @@ FROM golang:1.13.5-alpine AS build
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
 
 RUN apk add --no-cache ca-certificates git make gcc libc-dev \
-    && go get -v github.com/yyh-gl/realize \
+    && go get github.com/yyh-gl/realize \
     && go get github.com/tj/robo \
     && go get github.com/golangci/golangci-lint/cmd/golangci-lint
 
