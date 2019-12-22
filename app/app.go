@@ -35,12 +35,12 @@ const (
 
 // Init : アプリ全体で使用する機能を初期化
 func Init(logFilename string) {
-	Logger = getLogger(logFilename)
-	DB = getGormConnect()
+	Logger = newLogger(logFilename)
+	DB = newGormConnect()
 }
 
-// getLogger : ロガーを取得
-func getLogger(filename string) *log.Logger {
+// newLogger : ロガーを生成
+func newLogger(filename string) *log.Logger {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
 	// ログ出力先を設定
@@ -61,8 +61,8 @@ func getLogger(filename string) *log.Logger {
 	return logger
 }
 
-// getGormConnect : DB コネクションを取得
-func getGormConnect() *gorm.DB {
+// newGormConnect : DB コネクションを生成
+func newGormConnect() *gorm.DB {
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
 	PASSWORD := os.Getenv("MYSQL_PASSWORD")
