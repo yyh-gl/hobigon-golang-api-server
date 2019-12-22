@@ -7,7 +7,7 @@ variables:
 api-build-local:
   summary: APIサーバをローカルかつLinux用にビルド
   command: |
-    cd ./cmd/api
+    cd ./cmd/api/di
     wire
     cd -
     GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go ./cmd/api/wire_gen.go
@@ -15,7 +15,7 @@ api-build-local:
 api-build-prod:
   summary: APIサーバをProductionかつLinux用にビルド
   command: |
-    cd ./cmd/api
+    cd ./cmd/api/di
     wire
     cd -
     GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go ./cmd/api/wire_gen.go
@@ -51,3 +51,10 @@ deploy:
 lint:
   summary: Docker経由でLint実行
   command: docker-compose exec -T app golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
+
+test:
+  summary: Docker経由でテスト実行
+  command: |
+    docker-compose exec app mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp && echo "mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp"
+    docker-compose exec -T app go test ./...
+    docker-compose exec app mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go && echo "mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go"
