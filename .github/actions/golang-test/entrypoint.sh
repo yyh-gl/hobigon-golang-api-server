@@ -15,5 +15,7 @@ if [[ "$1" == "lint" ]]; then
     echo "############################"
     golangci-lint --version
     echo
-    golangci-lint run --tests --disable-all --enable=goimports --enable=golint --enable=govet --enable=errcheck ./...
+    mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp && echo "mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp\n"
+    golangci-lint run ./...
+    mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go && echo "mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go\n"
 fi

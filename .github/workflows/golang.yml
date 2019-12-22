@@ -17,4 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Test
-        run: go test ./...
+        run: |
+          mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp && echo "mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp\n"
+          go test ./...
+          mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go && echo "mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go\n"
