@@ -18,7 +18,7 @@ api-build-prod:
     cd ./cmd/api
     wire
     cd -
-    GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go
+    GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/api/bin/api-server ./cmd/api/main.go ./cmd/api/wire_gen.go
 
 cli-build-local:
   summary: CLIをローカルかつLinux用にビルド
