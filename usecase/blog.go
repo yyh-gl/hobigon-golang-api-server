@@ -3,10 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
-
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
@@ -43,7 +42,7 @@ func (bu blogUseCase) Create(ctx context.Context, title string) (*blog.Blog, err
 	blog := blog.NewBlog(title)
 	createdBlog, err := bu.br.Create(ctx, *blog)
 	if err != nil {
-		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
+		return nil, errors.Errorf("blogRepository.Create()内でのエラー: %w", err)
 	}
 
 	return createdBlog, nil
@@ -58,10 +57,10 @@ func (bu blogUseCase) Show(ctx context.Context, title string) (*blog.Blog, error
 	blog, err := bu.br.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
-		case "record not found":
+		case ErrRecordNotFound:
 			return nil, err
 		default:
-			return nil, errors.Wrap(err, "blogRepository.SelectByTitle()内でのエラー")
+			return nil, errors.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
 		}
 	}
 
@@ -80,7 +79,7 @@ func (bu blogUseCase) Like(ctx context.Context, title string) (*blog.Blog, error
 		case "record not found":
 			return nil, err
 		default:
-			return nil, errors.Wrap(err, "blogRepository.SelectByTitle()内でのエラー")
+			return nil, errors.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
 		}
 	}
 

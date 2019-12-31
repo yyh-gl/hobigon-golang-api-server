@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/context"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -33,11 +32,9 @@ func NewBlogHandler(bu usecase.BlogUseCase) BlogHandler {
 	}
 }
 
-// TODO: OK, Error 部分は共通レスポンスにする
-type blogResponse struct {
-	OK    bool          `json:"ok"`
-	Error string        `json:"error,omitempty"`
-	Blog  blog.BlogJSON `json:"blog,omitempty"`
+// response : ブログ用共通正常時レスポンス
+type response struct {
+	Blog blog.BlogJSON `json:"blog"`
 }
 
 //////////////////////////////////////////////////
@@ -52,26 +49,21 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	logger := app.Logger
 
-	res := blogResponse{
-		OK: true,
-	}
-
+	errRes := new(errorResponse)
 	req, err := decodeRequest(r, request{})
 	if err != nil {
 		logger.Println(err)
-
-		res.OK = false
-		res.Error = err.Error()
+		errRes.Detail = err.Error()
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	defer func() { _ = r.Body.Close() }()
 
-	var b *blog.Blog
-	if res.OK {
+	res := new(response)
+	if errRes.Detail == "" {
+		b := new(blog.Blog)
 		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {
-			res.OK = false
-			res.Error = err.Error()
+			errRes.Detail = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
 		} else {
 			// JSON 形式に変換
@@ -98,24 +90,18 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ps := context.FetchRequestParams(ctx)
 
-	res := blogResponse{
-		OK: true,
-	}
-
+	res := new(response)
+	errRes := new(errorResponse)
 	b, err := bh.bu.Show(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
-		res.OK = false
-		res.Error = err.Error()
-
-		switch err.Error() {
-		case "record not found":
+		errRes.Detail = err.Error()
+		if errRes.Detail == usecase.ErrRecordNotFound {
 			// レコードが存在しないときは空の情報を返す
 			w.WriteHeader(http.StatusNotFound)
-		default:
-			w.WriteHeader(http.StatusInternalServerError)
 		}
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		// JSON 形式に変換
 		res.Blog = b.JSONSerialize()
@@ -139,24 +125,18 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ps := context.FetchRequestParams(ctx)
 
-	res := blogResponse{
-		OK: true,
-	}
-
+	res := new(response)
+	errRes := new(errorResponse)
 	b, err := bh.bu.Like(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
-		res.OK = false
-		res.Error = err.Error()
-
-		switch err.Error() {
-		case "record not found":
+		errRes.Detail = err.Error()
+		if errRes.Detail == usecase.ErrRecordNotFound {
 			// レコードが存在しないときは空の情報を返す
 			w.WriteHeader(http.StatusNotFound)
-		default:
-			w.WriteHeader(http.StatusInternalServerError)
 		}
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		// JSON 形式に変換
 		res.Blog = b.JSONSerialize()

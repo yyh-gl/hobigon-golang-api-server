@@ -78,9 +78,9 @@ func (b Blog) CreateLikeMessage() string {
 //////////////////////////////////////////////////
 
 type blogJSONFields struct {
-	ID        uint       `json:"id"`
-	Title     string     `json:"title"`
-	Count     *int       `json:"count"`
+	ID        uint       `json:"id,omitempty"`
+	Title     string     `json:"title,omitempty"`
+	Count     *int       `json:"count,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`

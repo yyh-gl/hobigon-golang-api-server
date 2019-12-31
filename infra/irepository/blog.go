@@ -43,7 +43,7 @@ func (br blogRepository) Create(ctx context.Context, blog blog.Blog) (*blog.Blog
 
 	err := br.db.Create(&blogDTO).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.Create(blog)内でのエラー")
+		return nil, errors.Errorf("gorm.Create(blog)内でのエラー: %w", err)
 	}
 
 	createdBlog := blogDTO.ConvertToDomainModel(ctx)
@@ -59,7 +59,10 @@ func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*blog
 	blogDTO := imodel.BlogDTO{}
 	err := br.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.First(blog)内でのエラー")
+		if err.Error() == repository.ErrNotFound {
+			return nil, err
+		}
+		return nil, errors.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}
 
 	blog := blogDTO.ConvertToDomainModel(ctx)
@@ -81,7 +84,10 @@ func (br blogRepository) Update(ctx context.Context, blog blog.Blog) (*blog.Blog
 
 	err := br.db.Save(&blogDTO).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.Save(blog)内でのエラー")
+		if err.Error() == repository.ErrNotFound {
+			return nil, err
+		}
+		return nil, errors.Errorf("gorm.Save(blog)内でのエラー: %w", err)
 	}
 
 	updatedBlog := blogDTO.ConvertToDomainModel(ctx)
