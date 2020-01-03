@@ -11,6 +11,7 @@ require (
 	github.com/google/wire v0.4.0
 	github.com/jinzhu/gorm v1.9.10
 	github.com/julienschmidt/httprouter v1.2.0
+	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/parnurzeal/gorequest v0.2.15 // indirect
 	github.com/pkg/errors v0.8.1

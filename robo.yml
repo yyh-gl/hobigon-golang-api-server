@@ -6,7 +6,7 @@ variables:
 
 api-build-local:
   summary: APIサーバをローカルかつLinux用にビルド
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go ./cmd/api/wire_gen.go
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/api/bin/api-server ./cmd/api/main.go ./cmd/api/wire_gen.go
 
 api-build-prod:
   summary: APIサーバをProductionかつLinux用にビルド

@@ -21,13 +21,13 @@ services:
       LOG_PATH: "./logs"
     env_file:
       - .secret_env
-    depends_on:
-      - db
-  db:
-    image: mysql:8.0.17
-    ports:
-      - '13306:3306'
-    volumes:
-      - ./docker/mysql:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql
+#    depends_on:
+#      - db
+#  db:
+#    image: mysql:8.0.17
+#    ports:
+#      - '13306:3306'
+#    volumes:
+#      - ./docker/mysql:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: mysql

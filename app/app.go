@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
-
-	"github.com/jinzhu/gorm"
 	// justifying
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 )
 
 // TODO: api と cli で分ける（それぞれの main の中に入れてしまってもいいかも）
@@ -36,7 +36,11 @@ const (
 // Init : アプリ全体で使用する機能を初期化
 func Init(logFilename string) {
 	Logger = newLogger(logFilename)
-	DB = newGormConnect()
+	if IsPrd() {
+		DB = newMySQLConnect()
+	} else {
+		DB = newSQLiteConnect()
+	}
 }
 
 // newLogger : ロガーを生成
@@ -50,19 +54,17 @@ func newLogger(filename string) *log.Logger {
 		panic("cannnot open " + logPath + "/" + filename + ": " + err.Error())
 	}
 
-	env := os.Getenv("APP_ENV")
-	switch env {
-	case "production":
+	if IsPrd() {
 		logger.SetOutput(logfile)
-	default:
+	} else {
 		logger.SetOutput(io.MultiWriter(logfile, os.Stdout))
 	}
 
 	return logger
 }
 
-// newGormConnect : DB コネクションを生成
-func newGormConnect() *gorm.DB {
+// newMySQLConnect : DB（MySQL）コネクションを生成
+func newMySQLConnect() *gorm.DB {
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
 	PASSWORD := os.Getenv("MYSQL_PASSWORD")
@@ -74,6 +76,20 @@ func newGormConnect() *gorm.DB {
 	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
 
 	db, err := gorm.Open(DBMS, CONNECT)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// マイグレーション実行
+	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
+
+	return db
+}
+
+// newSQLiteConnect : DB（SQLite）コネクションを生成
+func newSQLiteConnect() *gorm.DB {
+	DBMS := "sqlite3"
+	db, err := gorm.Open(DBMS, "test.db")
 	if err != nil {
 		panic(err.Error())
 	}
