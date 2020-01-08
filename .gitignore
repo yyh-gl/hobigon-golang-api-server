@@ -4,4 +4,4 @@ docker/mysql
 docker/**/bin
 dist
 .secret_env
-test.db
+test/test.db
