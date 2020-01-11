@@ -23,7 +23,8 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
+	r.GlobalOPTIONS = http.HandlerFunc(corsHandler)
+	//r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 
 	// ブログ関連のAPI
 	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
@@ -47,7 +48,7 @@ func main() {
 	app.Logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
-func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func corsHandler(w http.ResponseWriter, _ *http.Request) {
 	switch {
 	case app.IsPrd():
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
@@ -57,7 +58,7 @@ func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	}
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func wrapHandler(h http.Handler) httprouter.Handle {
