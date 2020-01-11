@@ -22,7 +22,7 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.GlobalOPTIONS = http.HandlerFunc(preflightHandler)
+	r.GlobalOPTIONS = wrapHandler(preflightHandler)
 
 	// ブログ関連のAPI
 	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(blogHandler.Create))
@@ -46,26 +46,14 @@ func main() {
 	app.Logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
-func preflightHandler(w http.ResponseWriter, _ *http.Request) {
-	switch {
-	case app.IsPrd():
-		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
-	case app.IsDev() || app.IsTest():
-		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
-		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
-	}
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	w.WriteHeader(http.StatusNoContent)
-}
-
+// wrapHandler : 全ハンドラー共通処理
 func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// リクエスト内容をログ出力
 		// TODO: Body の内容を記録
 		app.Logger.Print("[AccessLog] " + r.Method + " " + r.URL.String())
 
-		// 共通ヘッダー設定
+		// CORS用ヘッダーを付与
 		switch {
 		case app.IsPrd():
 			w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
@@ -78,4 +66,9 @@ func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 
 		h.ServeHTTP(w, r)
 	}
+}
+
+// preflightHandler : preflight用のハンドラー
+func preflightHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
 }
