@@ -7,7 +7,6 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/context"
 )
 
 func main() {
@@ -24,21 +23,20 @@ func main() {
 	// ルーティング設定
 	r := httprouter.New()
 	r.GlobalOPTIONS = http.HandlerFunc(corsHandler)
-	//r.OPTIONS("/*path", corsHandler) // CORS用の pre-flight 設定
 
 	// ブログ関連のAPI
-	r.POST("/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
-	r.GET("/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(blogHandler.Show)))
-	r.POST("/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
+	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(blogHandler.Show)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
 
 	// 誕生日関連のAPI
-	r.POST("/api/v1/birthday", wrapHandler(http.HandlerFunc(birthdayHandler.Create)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(http.HandlerFunc(birthdayHandler.Create)))
 
 	// 通知系API
-	r.POST("/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayTasksToSlack)))
-	// TODO: 誕生日の人が複数いたときに対応
-	r.POST("/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayBirthdayToSlack)))
-	r.POST("/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(notificationHandler.NotifyAccessRankingToSlack)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayTasksToSlack)))
+	//// TODO: 誕生日の人が複数いたときに対応
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayBirthdayToSlack)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(notificationHandler.NotifyAccessRankingToSlack)))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
@@ -61,12 +59,8 @@ func corsHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func wrapHandler(h http.Handler) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		ctx := r.Context()
-		ctx = context.InjectRequestParams(ctx, ps)
-		r = r.WithContext(ctx)
-
+func wrapHandler(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// リクエスト内容をログ出力
 		// TODO: Body の内容を記録
 		app.Logger.Print("[AccessLog] " + r.Method + " " + r.URL.String())

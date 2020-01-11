@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/julienschmidt/httprouter"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/context"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
@@ -95,13 +96,14 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	ctx := r.Context()
-	pss := context.FetchRequestParams(ctx)
+	// TODO: httprouterに依存することについて考える
+	ps := httprouter.ParamsFromContext(ctx)
 
 	res := blogResponse{
 		OK: true,
 	}
 
-	b, err := bh.bu.Show(ctx, pss.ByName("title"))
+	b, err := bh.bu.Show(ctx, ps.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
@@ -136,7 +138,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	ctx := r.Context()
-	ps := context.FetchRequestParams(ctx)
+	ps := httprouter.ParamsFromContext(ctx)
 
 	res := blogResponse{
 		OK: true,
