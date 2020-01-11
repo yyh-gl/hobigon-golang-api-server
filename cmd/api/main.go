@@ -80,5 +80,7 @@ func wrapHandler(h http.Handler) httprouter.Handle {
 		}
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
+
+		h.ServeHTTP(w, r)
 	}
 }
