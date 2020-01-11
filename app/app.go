@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	// justifying
 	"github.com/jinzhu/gorm"
+	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
@@ -28,11 +28,12 @@ const (
 	// CliContextKey : cli.Context を context.Context にセットするさいのキー
 	CliContextKey contextKey = iota
 
-	// ログファイル名
+	// APILogFilename : APIサーバ関連のログファイル名
 	APILogFilename string = "api.log"
-	CLiLogFilename string = "cli.log"
+	// CLILogFilename : CLI関連のログファイル名
+	CLILogFilename string = "cli.log"
 
-	// SQLite3 データファイル
+	// SQLiteDBFile : SQLite3のローカル用DBデータ
 	SQLiteDBFile string = "local.db"
 )
 

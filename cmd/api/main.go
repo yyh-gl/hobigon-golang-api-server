@@ -14,7 +14,7 @@ func main() {
 	// システム共通で使用するものを用意
 	//  -> logger, DB
 	app.Init(app.APILogFilename)
-	defer app.DB.Close()
+	defer func() { _ = app.DB.Close() }()
 
 	// 依存関係を定義
 	blogHandler := initBlogHandler()

@@ -16,7 +16,7 @@ import (
 func main() {
 	// システム共通で使用するものを用意
 	//  -> logger, DB
-	app.Init(app.CLiLogFilename)
+	app.Init(app.CLILogFilename)
 
 	logger := app.Logger
 
