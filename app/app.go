@@ -24,13 +24,16 @@ var (
 // コンテキストにセットするさいのキー用の型
 type contextKey int
 
-// CliContextKey : cli.Context を context.Context にセットするさいのキー
-const CliContextKey contextKey = iota
-
-// ログファイル名
 const (
+	// CliContextKey : cli.Context を context.Context にセットするさいのキー
+	CliContextKey contextKey = iota
+
+	// ログファイル名
 	APILogFilename string = "api.log"
 	CLiLogFilename string = "cli.log"
+
+	// SQLite3 データファイル
+	SQLiteDBFile string = "local.db"
 )
 
 // Init : アプリ全体で使用する機能を初期化
@@ -46,6 +49,11 @@ func Init(logFilename string) {
 // newLogger : ロガーを生成
 func newLogger(filename string) *log.Logger {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
+
+	if IsTest() {
+		logger.SetOutput(os.Stdout)
+		return logger
+	}
 
 	// ログ出力先を設定
 	logPath := os.Getenv("LOG_PATH")
@@ -65,17 +73,17 @@ func newLogger(filename string) *log.Logger {
 
 // newMySQLConnect : DB（MySQL）コネクションを生成
 func newMySQLConnect() *gorm.DB {
-	DBMS := "mysql"
-	USER := os.Getenv("MYSQL_USER")
-	PASSWORD := os.Getenv("MYSQL_PASSWORD")
-	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
-	DATABASE := os.Getenv("MYSQL_DATABASE")
+	dbms := "mysql"
+	user := os.Getenv("MYSQL_USER")
+	password := os.Getenv("MYSQL_PASSWORD")
+	protocol := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
+	database := os.Getenv("MYSQL_DATABASE")
 
 	// charset=utf8mb4 により文字コードを utf8mb4 に変更
 	// parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DATABASE + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
+	CONNECT := user + ":" + password + "@" + protocol + "/" + database + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
 
-	db, err := gorm.Open(DBMS, CONNECT)
+	db, err := gorm.Open(dbms, CONNECT)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -87,9 +95,15 @@ func newMySQLConnect() *gorm.DB {
 }
 
 // newSQLiteConnect : DB（SQLite）コネクションを生成
-func newSQLiteConnect() *gorm.DB {
-	DBMS := "sqlite3"
-	db, err := gorm.Open(DBMS, "test.db")
+func newSQLiteConnect() (db *gorm.DB) {
+	dbms := "sqlite3"
+
+	var err error
+	if IsDev() {
+		db, err = gorm.Open(dbms, SQLiteDBFile)
+	} else if IsTest() {
+		db, err = gorm.Open("sqlite3", ":memory:")
+	}
 	if err != nil {
 		panic(err.Error())
 	}
@@ -98,6 +112,16 @@ func newSQLiteConnect() *gorm.DB {
 	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
 
 	return db
+}
+
+// IsDev : 実行環境が Development かどうかを確認
+func IsDev() bool {
+	return os.Getenv("APP_ENV") == "develop"
+}
+
+// IsTest : 実行環境が Test かどうかを確認
+func IsTest() bool {
+	return os.Getenv("APP_ENV") == "test"
 }
 
 // IsPrd : 実行環境が Production かどうかを確認

@@ -14,6 +14,7 @@ func main() {
 	// システム共通で使用するものを用意
 	//  -> logger, DB
 	app.Init(app.APILogFilename)
+	defer app.DB.Close()
 
 	// 依存関係を定義
 	blogHandler := initBlogHandler()
@@ -47,9 +48,13 @@ func main() {
 }
 
 func corsHandler(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
-	//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
-	//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
+	switch {
+	case app.IsPrd():
+		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+	case app.IsDev() || app.IsTest():
+		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
+		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
+	}
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(http.StatusOK)
@@ -66,12 +71,14 @@ func wrapHandler(h http.Handler) httprouter.Handle {
 		app.Logger.Print("[AccessLog] " + r.Method + " " + r.URL.String())
 
 		// 共通ヘッダー設定
-		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
-		//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
-		//w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
+		switch {
+		case app.IsPrd():
+			w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+		case app.IsDev() || app.IsTest():
+			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
+			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
+		}
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
-
-		h.ServeHTTP(w, r)
 	}
 }
