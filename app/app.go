@@ -89,8 +89,7 @@ func newMySQLConnect() *gorm.DB {
 		panic(err.Error())
 	}
 
-	// マイグレーション実行
-	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
+	migrate(db)
 
 	return db
 }
@@ -109,10 +108,14 @@ func newSQLiteConnect() (db *gorm.DB) {
 		panic(err.Error())
 	}
 
-	// マイグレーション実行
-	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
+	migrate(db)
 
 	return db
+}
+
+// migrate : マイグレーション実施
+func migrate(db *gorm.DB) {
+	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
 }
 
 // IsDev : 実行環境が Development かどうかを確認
