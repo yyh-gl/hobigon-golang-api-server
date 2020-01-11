@@ -25,18 +25,18 @@ func main() {
 	r.GlobalOPTIONS = http.HandlerFunc(corsHandler)
 
 	// ブログ関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(http.HandlerFunc(blogHandler.Create)))
-	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(http.HandlerFunc(blogHandler.Show)))
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(http.HandlerFunc(blogHandler.Like)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(blogHandler.Create))
+	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(blogHandler.Show))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(blogHandler.Like))
 
 	// 誕生日関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(http.HandlerFunc(birthdayHandler.Create)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(birthdayHandler.Create))
 
 	// 通知系API
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayTasksToSlack)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(notificationHandler.NotifyTodayTasksToSlack))
 	//// TODO: 誕生日の人が複数いたときに対応
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(http.HandlerFunc(notificationHandler.NotifyTodayBirthdayToSlack)))
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(http.HandlerFunc(notificationHandler.NotifyAccessRankingToSlack)))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(notificationHandler.NotifyTodayBirthdayToSlack))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(notificationHandler.NotifyAccessRankingToSlack))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")
@@ -59,7 +59,7 @@ func corsHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func wrapHandler(h http.Handler) http.HandlerFunc {
+func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// リクエスト内容をログ出力
 		// TODO: Body の内容を記録
