@@ -22,7 +22,7 @@ func main() {
 
 	// ルーティング設定
 	r := httprouter.New()
-	r.GlobalOPTIONS = http.HandlerFunc(corsHandler)
+	r.GlobalOPTIONS = http.HandlerFunc(preflightHandler)
 
 	// ブログ関連のAPI
 	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(blogHandler.Create))
@@ -46,7 +46,7 @@ func main() {
 	app.Logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
-func corsHandler(w http.ResponseWriter, _ *http.Request) {
+func preflightHandler(w http.ResponseWriter, _ *http.Request) {
 	switch {
 	case app.IsPrd():
 		w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
