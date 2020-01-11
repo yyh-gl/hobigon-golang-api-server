@@ -3,12 +3,12 @@ services:
   app:
     build:
       context: "."
-      dockerfile: "./docker/api/Dockerfile"
-      target: build
+      dockerfile: "./docker/api/Dockerfile.local"
     ports:
       - '3000:3000'
     volumes:
       - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
+    working_dir: "/go/src/github.com/yyh-gl/hobigon-golang-api-server"
     command: ["sh", "-c", "realize start --run"]
     environment:
       APP_ENV: "develop"
