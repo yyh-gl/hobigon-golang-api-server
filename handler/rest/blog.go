@@ -95,13 +95,13 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	logger := app.Logger
 
 	ctx := r.Context()
-	ps := context.FetchRequestParams(ctx)
+	pss := context.FetchRequestParams(ctx)
 
 	res := blogResponse{
 		OK: true,
 	}
 
-	b, err := bh.bu.Show(ctx, ps.ByName("title"))
+	b, err := bh.bu.Show(ctx, pss.ByName("title"))
 	if err != nil {
 		logger.Println(err)
 
