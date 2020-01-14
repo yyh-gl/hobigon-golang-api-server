@@ -9,7 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
-	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/igateway"
@@ -20,31 +20,25 @@ import (
 
 // Injectors from wire.go:
 
-func initApp() *di.Container {
-	gormDB := db.NewDB()
-	blogRepository := irepository.NewBlogRepository(gormDB)
-	slackGateway := igateway.NewSlackGateway()
-	blogUseCase := usecase.NewBlogUseCase(blogRepository, slackGateway)
-	blogHandler := rest.NewBlogHandler(blogUseCase)
-	birthdayRepository := irepository.NewBirthdayRepository(gormDB)
-	birthdayUseCase := usecase.NewBirthdayUseCase(birthdayRepository)
-	birthdayHandler := rest.NewBirthdayHandler(birthdayUseCase)
+func initApp() *di.ContainerCLI {
 	taskGateway := igateway.NewTaskGateway()
+	slackGateway := igateway.NewSlackGateway()
+	gormDB := db.NewDB()
+	birthdayRepository := irepository.NewBirthdayRepository(gormDB)
 	notificationService := iservice.NewNotificationService(slackGateway)
 	rankingService := iservice.NewRankingService()
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
-	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
+	notificationHandler := cli.NewNotificationHandler(notificationUseCase)
 	logger := app.NewCLILogger()
-	container := &di.Container{
-		HandlerBlog:         blogHandler,
-		HandlerBirthday:     birthdayHandler,
+	containerCLI := &di.ContainerCLI{
 		HandlerNotification: notificationHandler,
 		DB:                  gormDB,
 		Logger:              logger,
 	}
-	return container
+	return containerCLI
 }
 
 // wire.go:
 
-var appSet = wire.NewSet(app.CLISet, infra.WireSet, usecase.WireSet, rest.WireSet)
+// TODO: infra, usecaseもapiとcliで分ける
+var appSet = wire.NewSet(app.CLISet, infra.WireSet, usecase.WireSet, cli.WireSet)

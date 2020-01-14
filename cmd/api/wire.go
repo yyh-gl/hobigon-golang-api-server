@@ -9,6 +9,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
+// TODO: infra, usecaseもapiとcliで分ける
 var appSet = wire.NewSet(
 	app.APISet,
 	infra.WireSet,
@@ -16,9 +17,9 @@ var appSet = wire.NewSet(
 	rest.WireSet,
 )
 
-func initApp() *di.Container {
+func initApp() *di.ContainerAPI {
 	wire.Build(
-		wire.Struct(new(di.Container), "*"),
+		wire.Struct(new(di.ContainerAPI), "*"),
 		appSet,
 	)
 	return nil

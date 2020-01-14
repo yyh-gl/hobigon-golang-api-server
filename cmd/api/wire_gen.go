@@ -20,7 +20,7 @@ import (
 
 // Injectors from wire.go:
 
-func initApp() *di.Container {
+func initApp() *di.ContainerAPI {
 	gormDB := db.NewDB()
 	blogRepository := irepository.NewBlogRepository(gormDB)
 	slackGateway := igateway.NewSlackGateway()
@@ -35,16 +35,17 @@ func initApp() *di.Container {
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
 	logger := app.NewAPILogger()
-	container := &di.Container{
+	containerAPI := &di.ContainerAPI{
 		HandlerBlog:         blogHandler,
 		HandlerBirthday:     birthdayHandler,
 		HandlerNotification: notificationHandler,
 		DB:                  gormDB,
 		Logger:              logger,
 	}
-	return container
+	return containerAPI
 }
 
 // wire.go:
 
+// TODO: infra, usecaseもapiとcliで分ける
 var appSet = wire.NewSet(app.APISet, infra.WireSet, usecase.WireSet, rest.WireSet)
