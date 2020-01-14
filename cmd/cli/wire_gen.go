@@ -34,7 +34,7 @@ func initApp() *di.Container {
 	rankingService := iservice.NewRankingService()
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
-	logger := app.NewAPILogger()
+	logger := app.NewCLILogger()
 	container := &di.Container{
 		HandlerBlog:         blogHandler,
 		HandlerBirthday:     birthdayHandler,
@@ -47,4 +47,4 @@ func initApp() *di.Container {
 
 // wire.go:
 
-var appSet = wire.NewSet(app.APISet, infra.WireSet, usecase.WireSet, rest.WireSet)
+var appSet = wire.NewSet(app.CLISet, infra.WireSet, usecase.WireSet, rest.WireSet)

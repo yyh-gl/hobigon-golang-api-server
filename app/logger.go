@@ -19,6 +19,12 @@ func NewAPILogger() *log.Logger {
 	return logger
 }
 
+// NewCLILogger : CLI用のロガーを生成
+func NewCLILogger() *log.Logger {
+	logger := newLogger(CLILogFilename)
+	return logger
+}
+
 // newLogger : 指定ファイルを出力先とするロガーを生成
 func newLogger(filename string) *log.Logger {
 	logger := log.New(os.Stderr, "", log.LstdFlags)

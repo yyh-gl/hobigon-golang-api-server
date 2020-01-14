@@ -2,6 +2,10 @@ package app
 
 import "github.com/google/wire"
 
-var WireSet = wire.NewSet(
+var APISet = wire.NewSet(
 	NewAPILogger,
+)
+
+var CLISet = wire.NewSet(
+	NewCLILogger,
 )

@@ -10,7 +10,7 @@ import (
 )
 
 var appSet = wire.NewSet(
-	app.APISet,
+	app.CLISet,
 	infra.WireSet,
 	usecase.WireSet,
 	rest.WireSet,

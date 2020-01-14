@@ -14,11 +14,11 @@ api-build-prod:
 
 cli-build-local:
   summary: CLIをローカルかつLinux用にビルド
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/cli/bin/hobi ./cmd/cli/main.go
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/cli/bin/hobi ./cmd/cli/main.go ./cmd/cli/wire_gen.go
 
 cli-build-prod:
   summary: CLIをProductionかつLinux用にビルド
-  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/hobi ./cmd/cli/main.go
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/hobi ./cmd/cli/main.go ./cmd/cli/wire_gen.go
 
 all-build-local:
   summary: APIサーバおよびCLIをローカルかつLinux用にビルド
@@ -40,10 +40,17 @@ deploy:
     git commit -m "[`date +'%Y/%m/%d %H:%M:%S'`] 最新版デプロイ"
     git push origin master
 
-wire:
+wire-api:
   summary: cmd/api 配下で wire コマンド実行
   command: |
     cd ./cmd/api
+    wire
+    cd -
+
+wire-cli:
+  summary: cmd/cli 配下で wire コマンド実行
+  command: |
+    cd ./cmd/cli
     wire
     cd -
 
