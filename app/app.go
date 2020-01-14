@@ -5,21 +5,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
 	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 )
 
 // TODO: api と cli で分ける（それぞれの main の中に入れてしまってもいいかも）
 
-var (
-	// Logger : システム共通ロガー
-	Logger *log.Logger
-	// DB : システム共通 DB クライアント
-	DB *gorm.DB
-)
+// Logger : システム共通ロガー
+var Logger *log.Logger
 
 // コンテキストにセットするさいのキー用の型
 type contextKey int
@@ -32,23 +26,10 @@ const (
 	APILogFilename string = "api.log"
 	// CLILogFilename : CLI関連のログファイル名
 	CLILogFilename string = "cli.log"
-
-	// SQLiteDBFile : SQLite3のローカル用DBデータ
-	SQLiteDBFile string = "local.db"
 )
 
-// Init : アプリ全体で使用する機能を初期化
-func Init(logFilename string) {
-	Logger = newLogger(logFilename)
-	if IsPrd() {
-		DB = newMySQLConnect()
-	} else {
-		DB = newSQLiteConnect()
-	}
-}
-
-// newLogger : ロガーを生成
-func newLogger(filename string) *log.Logger {
+// NewLogger : ロガーを生成
+func NewLogger(filename string) *log.Logger {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
 	if IsTest() {
@@ -70,52 +51,6 @@ func newLogger(filename string) *log.Logger {
 	}
 
 	return logger
-}
-
-// newMySQLConnect : DB（MySQL）コネクションを生成
-func newMySQLConnect() *gorm.DB {
-	dbms := "mysql"
-	user := os.Getenv("MYSQL_USER")
-	password := os.Getenv("MYSQL_PASSWORD")
-	protocol := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
-	database := os.Getenv("MYSQL_DATABASE")
-
-	// charset=utf8mb4 により文字コードを utf8mb4 に変更
-	// parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := user + ":" + password + "@" + protocol + "/" + database + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
-
-	db, err := gorm.Open(dbms, CONNECT)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	migrate(db)
-
-	return db
-}
-
-// newSQLiteConnect : DB（SQLite）コネクションを生成
-func newSQLiteConnect() (db *gorm.DB) {
-	dbms := "sqlite3"
-
-	var err error
-	if IsDev() {
-		db, err = gorm.Open(dbms, SQLiteDBFile)
-	} else if IsTest() {
-		db, err = gorm.Open("sqlite3", ":memory:")
-	}
-	if err != nil {
-		panic(err.Error())
-	}
-
-	migrate(db)
-
-	return db
-}
-
-// migrate : マイグレーション実施
-func migrate(db *gorm.DB) {
-	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
 }
 
 // IsDev : 実行環境が Development かどうかを確認

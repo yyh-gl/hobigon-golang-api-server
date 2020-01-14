@@ -6,7 +6,11 @@
 package main
 
 import (
+	"github.com/google/wire"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/igateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/irepository"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/iservice"
@@ -15,28 +19,29 @@ import (
 
 // Injectors from wire.go:
 
-func initBlogHandler() rest.BlogHandler {
-	blogRepository := irepository.NewBlogRepository()
+func initApp() *di.Container {
+	gormDB := db.NewDB()
+	blogRepository := irepository.NewBlogRepository(gormDB)
 	slackGateway := igateway.NewSlackGateway()
 	blogUseCase := usecase.NewBlogUseCase(blogRepository, slackGateway)
 	blogHandler := rest.NewBlogHandler(blogUseCase)
-	return blogHandler
-}
-
-func initBirthdayHandler() rest.BirthdayHandler {
-	birthdayRepository := irepository.NewBirthdayRepository()
+	birthdayRepository := irepository.NewBirthdayRepository(gormDB)
 	birthdayUseCase := usecase.NewBirthdayUseCase(birthdayRepository)
 	birthdayHandler := rest.NewBirthdayHandler(birthdayUseCase)
-	return birthdayHandler
-}
-
-func initNotificationHandler() rest.NotificationHandler {
 	taskGateway := igateway.NewTaskGateway()
-	slackGateway := igateway.NewSlackGateway()
-	birthdayRepository := irepository.NewBirthdayRepository()
 	notificationService := iservice.NewNotificationService(slackGateway)
 	rankingService := iservice.NewRankingService()
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
-	return notificationHandler
+	container := &di.Container{
+		HandlerBlog:         blogHandler,
+		HandlerBirthday:     birthdayHandler,
+		HandlerNotification: notificationHandler,
+		DB:                  gormDB,
+	}
+	return container
 }
+
+// wire.go:
+
+var appSet = wire.NewSet(infra.WireSet, usecase.WireSet, rest.WireSet)

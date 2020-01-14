@@ -10,33 +10,33 @@ import (
 )
 
 func main() {
-	// システム共通で使用するものを用意
-	//  -> logger, DB
-	app.Init(app.APILogFilename)
-	defer func() { _ = app.DB.Close() }()
+	// ロガー初期化
+	app.Logger = app.NewLogger(app.APILogFilename)
 
 	// 依存関係を定義
-	blogHandler := initBlogHandler()
-	birthdayHandler := initBirthdayHandler()
-	notificationHandler := initNotificationHandler()
+	//blogHandler := initBlogHandler()
+	//birthdayHandler := initBirthdayHandler()
+	//notificationHandler := initNotificationHandler()
+	diContainer := initApp()
+	defer func() { _ = diContainer.DB.Close() }()
 
 	// ルーティング設定
 	r := httprouter.New()
 	r.GlobalOPTIONS = wrapHandler(preflightHandler)
 
 	// ブログ関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(blogHandler.Create))
-	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(blogHandler.Show))
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(blogHandler.Like))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create))
+	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(diContainer.HandlerBlog.Show))
+	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(diContainer.HandlerBlog.Like))
 
 	// 誕生日関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(birthdayHandler.Create))
+	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create))
 
 	// 通知系API
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(notificationHandler.NotifyTodayTasksToSlack))
-	//// TODO: 誕生日の人が複数いたときに対応
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(notificationHandler.NotifyTodayBirthdayToSlack))
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(notificationHandler.NotifyAccessRankingToSlack))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack))
+	// TODO: 誕生日の人が複数いたときに対応
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack))
+	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack))
 
 	fmt.Println("========================")
 	fmt.Println("Server Start >> http://localhost:3000")

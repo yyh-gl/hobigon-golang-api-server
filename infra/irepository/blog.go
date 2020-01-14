@@ -3,14 +3,14 @@ package irepository
 import (
 	"context"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/db"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 
 	"github.com/pkg/errors"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 
-	"github.com/jinzhu/gorm"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
 )
 
@@ -19,13 +19,13 @@ import (
 //////////////////////////////////////////////////
 
 type blogRepository struct {
-	db *gorm.DB
+	db *db.DB
 }
 
 // NewBlogRepository : ブログ用のリポジトリを取得
-func NewBlogRepository() repository.BlogRepository {
+func NewBlogRepository(db *db.DB) repository.BlogRepository {
 	return &blogRepository{
-		db: app.DB,
+		db: db,
 	}
 }
 

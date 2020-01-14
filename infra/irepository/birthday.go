@@ -3,13 +3,10 @@ package irepository
 import (
 	"context"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
-
 	"github.com/pkg/errors"
-
-	"github.com/jinzhu/gorm"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra/imodel"
 )
 
@@ -18,13 +15,13 @@ import (
 //////////////////////////////////////////////////
 
 type birthdayRepository struct {
-	db *gorm.DB
+	db *db.DB
 }
 
 // NewBirthdayRepository : 誕生日用のリポジトリを取得
-func NewBirthdayRepository() repository.BirthdayRepository {
+func NewBirthdayRepository(db *db.DB) repository.BirthdayRepository {
 	return &birthdayRepository{
-		db: app.DB,
+		db: db,
 	}
 }
 
