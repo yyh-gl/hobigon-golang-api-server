@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+
 	"github.com/julienschmidt/httprouter"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
@@ -50,15 +51,13 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Title string `json:"title"`
 	}
 
-	logger := app.Logger
-
 	res := blogResponse{
 		OK: true,
 	}
 
 	req, err := decodeRequest(r, request{})
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
@@ -70,6 +69,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if res.OK {
 		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {
+			app.Logger.Println(err)
 			res.OK = false
 			res.Error = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
@@ -81,7 +81,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -93,8 +93,6 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Show : ブログ情報を1件取得
 func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
-	logger := app.Logger
-
 	ctx := r.Context()
 	// TODO: httprouterに依存することについて考える
 	ps := httprouter.ParamsFromContext(ctx)
@@ -105,7 +103,7 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	b, err := bh.bu.Show(ctx, ps.ByName("title"))
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
@@ -123,7 +121,7 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -135,8 +133,6 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 // Like : 指定ブログにいいねをプラス1
 func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
-	logger := app.Logger
-
 	ctx := r.Context()
 	ps := httprouter.ParamsFromContext(ctx)
 
@@ -146,7 +142,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 
 	b, err := bh.bu.Like(ctx, ps.ByName("title"))
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
@@ -164,7 +160,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

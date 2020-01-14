@@ -7,6 +7,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
 	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/infra"
@@ -33,15 +34,17 @@ func initApp() *di.Container {
 	rankingService := iservice.NewRankingService()
 	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
 	notificationHandler := rest.NewNotificationHandler(notificationUseCase)
+	logger := app.NewAPILogger()
 	container := &di.Container{
 		HandlerBlog:         blogHandler,
 		HandlerBirthday:     birthdayHandler,
 		HandlerNotification: notificationHandler,
 		DB:                  gormDB,
+		Logger:              logger,
 	}
 	return container
 }
 
 // wire.go:
 
-var appSet = wire.NewSet(infra.WireSet, usecase.WireSet, rest.WireSet)
+var appSet = wire.NewSet(app.WireSet, infra.WireSet, usecase.WireSet, rest.WireSet)

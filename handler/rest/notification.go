@@ -46,21 +46,19 @@ type notificationResponse struct {
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (snh notificationHandler) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
-	logger := app.Logger
-
 	res := notificationResponse{
 		OK: true,
 	}
 
 	if err := snh.nu.NotifyTodayTasksToSlack(r.Context()); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
 		return
 	}
@@ -72,21 +70,19 @@ func (snh notificationHandler) NotifyTodayTasksToSlack(w http.ResponseWriter, r 
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (snh notificationHandler) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	logger := app.Logger
-
 	res := notificationResponse{
 		OK: true,
 	}
 
 	if err := snh.nu.NotifyTodayBirthdayToSlack(r.Context()); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
 		return
 	}
@@ -98,21 +94,19 @@ func (snh notificationHandler) NotifyTodayBirthdayToSlack(w http.ResponseWriter,
 
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
 func (snh notificationHandler) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
-	logger := app.Logger
-
 	res := notificationResponse{
 		OK: true,
 	}
 
 	if err := snh.nu.NotifyAccessRanking(r.Context()); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
 		return
 	}

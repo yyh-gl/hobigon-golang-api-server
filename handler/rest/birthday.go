@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/domain/model/birthday"
 
 	"github.com/pkg/errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
@@ -51,15 +52,13 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		WishList string    `json:"wish_list"`
 	}
 
-	logger := app.Logger
-
 	res := birthdayResponse{
 		OK: true,
 	}
 
 	req, err := decodeRequest(r, request{})
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 
 		res.OK = false
 		res.Error = err.Error()
@@ -73,7 +72,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		date, err := time.Parse("2006-01-02T15:04:05.000000Z", req["date"].(string))
 		if err != nil {
 			e := errors.Wrap(err, "time.Parse()内でのエラー")
-			logger.Println(e)
+			app.Logger.Println(e)
 
 			res.OK = false
 			res.Error = err.Error()
@@ -83,7 +82,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		if res.OK {
 			birthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
-				logger.Println(err)
+				app.Logger.Println(err)
 
 				res.OK = false
 				res.Error = err.Error()
@@ -97,7 +96,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		logger.Println(err)
+		app.Logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

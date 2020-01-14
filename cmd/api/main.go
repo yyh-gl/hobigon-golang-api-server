@@ -10,15 +10,13 @@ import (
 )
 
 func main() {
-	// ロガー初期化
-	app.Logger = app.NewLogger(app.APILogFilename)
-
 	// 依存関係を定義
-	//blogHandler := initBlogHandler()
-	//birthdayHandler := initBirthdayHandler()
-	//notificationHandler := initNotificationHandler()
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
+
+	// ロガー設定
+	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
+	app.Logger = diContainer.Logger
 
 	// ルーティング設定
 	r := httprouter.New()
