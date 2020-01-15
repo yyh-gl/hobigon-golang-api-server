@@ -9,9 +9,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Logger : システム共通ロガー
 var Logger *log.Logger
 
-// コンテキストにセットするさいのキー用の型
+// contextKey : コンテキストにセットするさいのキー用の型
 type contextKey int
 
 // CLIContextKey : cli.Context を context.Context にセットするさいのキー
