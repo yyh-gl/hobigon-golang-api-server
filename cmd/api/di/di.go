@@ -3,9 +3,9 @@ package di
 import (
 	"log"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/handler/rest"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/db"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 )
 
 type ContainerAPI struct {
