@@ -14,8 +14,8 @@ var Logger *log.Logger
 // コンテキストにセットするさいのキー用の型
 type contextKey int
 
-// CliContextKey : cli.Context を context.Context にセットするさいのキー
-const CliContextKey contextKey = iota
+// CLIContextKey : cli.Context を context.Context にセットするさいのキー
+const CLIContextKey contextKey = iota
 
 // IsDev : 実行環境が Development かどうかを確認
 func IsDev() bool {

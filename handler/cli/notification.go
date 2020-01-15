@@ -39,7 +39,7 @@ func (snh notificationHandler) NotifyTodayTasksToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CliContextKey, c)
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if err := snh.nu.NotifyTodayTasksToSlack(ctx); err != nil {
 		logger.Println(err)
@@ -57,7 +57,7 @@ func (snh notificationHandler) NotifyTodayBirthdayToSlack(c *cli.Context) error 
 	logger := app.Logger
 
 	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CliContextKey, c)
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if err := snh.nu.NotifyTodayBirthdayToSlack(ctx); err != nil {
 		logger.Println(err)
@@ -75,7 +75,7 @@ func (snh notificationHandler) NotifyAccessRankingToSlack(c *cli.Context) error 
 	logger := app.Logger
 
 	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CliContextKey, c)
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if err := snh.nu.NotifyAccessRanking(ctx); err != nil {
 		logger.Println(err)
