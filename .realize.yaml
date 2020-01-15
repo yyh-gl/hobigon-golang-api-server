@@ -35,3 +35,5 @@ schema:
         - .idea
         - logs
         - docker
+        - cmd/api/wire_gen.go
+        - cmd/cli/wire_gen.go

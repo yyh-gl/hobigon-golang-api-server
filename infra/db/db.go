@@ -17,10 +17,10 @@ type DB = gorm.DB
 
 // NewDB : DBコネクションを生成
 func NewDB() (db *DB) {
-	if app.IsPrd() {
-		db = newMySQLConnect()
-	} else {
+	if app.IsTest() {
 		db = newSQLiteConnect()
+	} else {
+		db = newMySQLConnect()
 	}
 	return db
 }
@@ -48,15 +48,8 @@ func newMySQLConnect() *DB {
 }
 
 // newSQLiteConnect : DB（SQLite）コネクションを生成
-func newSQLiteConnect() (db *DB) {
-	dbms := "sqlite3"
-
-	var err error
-	if app.IsDev() {
-		db, err = gorm.Open(dbms, sqliteDBFile)
-	} else if app.IsTest() {
-		db, err = gorm.Open("sqlite3", ":memory:")
-	}
+func newSQLiteConnect() *DB {
+	db, err := gorm.Open("sqlite3", ":memory:")
 	if err != nil {
 		panic(err.Error())
 	}
