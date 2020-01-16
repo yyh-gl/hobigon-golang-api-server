@@ -3,10 +3,6 @@ package app
 import (
 	"log"
 	"os"
-
-	// justifying
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Logger : システム共通ロガー

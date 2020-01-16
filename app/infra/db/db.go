@@ -3,14 +3,16 @@ package db
 import (
 	"os"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
-
 	"github.com/jinzhu/gorm"
+	// justifying
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	//_ "github.com/mattn/go-sqlite3"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/imodel"
 )
 
 // sqliteDBFile : SQLite3のローカル用DBデータ
-const sqliteDBFile string = "local.db"
+//const sqliteDBFile string = "local.db"
 
 // DB : DBコネクション->infra以外でORMライブラリを意識させないための中間層
 type DB = gorm.DB
@@ -18,7 +20,7 @@ type DB = gorm.DB
 // NewDB : DBコネクションを生成
 func NewDB() (db *DB) {
 	if app.IsTest() {
-		db = newSQLiteConnect()
+		//db = newSQLiteConnect()
 	} else {
 		db = newMySQLConnect()
 	}
@@ -48,16 +50,16 @@ func newMySQLConnect() *DB {
 }
 
 // newSQLiteConnect : DB（SQLite）コネクションを生成
-func newSQLiteConnect() *DB {
-	db, err := gorm.Open("sqlite3", ":memory:")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	migrate(db)
-
-	return db
-}
+//func newSQLiteConnect() *DB {
+//	db, err := gorm.Open("sqlite3", ":memory:")
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//
+//	migrate(db)
+//
+//	return db
+//}
 
 // migrate : マイグレーション実施
 func migrate(db *DB) {
