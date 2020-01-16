@@ -5,3 +5,4 @@ docker/**/bin
 dist
 .secret_env
 local.db
+tmp
