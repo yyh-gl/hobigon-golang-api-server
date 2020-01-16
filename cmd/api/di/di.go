@@ -8,6 +8,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 )
 
+// ContainerAPI : API用DIコンテナ
 type ContainerAPI struct {
 	HandlerBlog         rest.BlogHandler
 	HandlerBirthday     rest.BirthdayHandler
@@ -17,6 +18,7 @@ type ContainerAPI struct {
 	Logger *log.Logger
 }
 
+// ContainerCLI : CLI用DIコンテナ
 type ContainerCLI struct {
 	HandlerNotification cli.NotificationHandler
 
