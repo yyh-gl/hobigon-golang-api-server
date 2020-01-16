@@ -36,7 +36,7 @@ func main() {
 	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack))
 	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack))
 
-	fmt.Println("========================")
+	fmt.Println("==============a==========")
 	fmt.Println("Server Start >> http://localhost:3000")
 	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 	fmt.Println("========================")
