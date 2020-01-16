@@ -2,8 +2,12 @@ package usecase
 
 import "github.com/google/wire"
 
-var WireSet = wire.NewSet(
+var APISet = wire.NewSet(
 	NewNotificationUseCase,
 	NewBirthdayUseCase,
 	NewBlogUseCase,
+)
+
+var CLISet = wire.NewSet(
+	NewNotificationUseCase,
 )

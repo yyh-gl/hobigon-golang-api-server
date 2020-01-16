@@ -9,11 +9,10 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
 )
 
-// TODO: infra, usecaseもapiとcliで分ける
 var appSet = wire.NewSet(
 	app.APISet,
-	infra.WireSet,
-	usecase.WireSet,
+	infra.APISet,
+	usecase.APISet,
 	rest.WireSet,
 )
 

@@ -8,9 +8,18 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
 )
 
-var WireSet = wire.NewSet(
+var APISet = wire.NewSet(
 	db.NewDB,
 	irepository.NewBlogRepository,
+	irepository.NewBirthdayRepository,
+	igateway.NewSlackGateway,
+	igateway.NewTaskGateway,
+	iservice.NewNotificationService,
+	iservice.NewRankingService,
+)
+
+var CLISet = wire.NewSet(
+	db.NewDB,
 	irepository.NewBirthdayRepository,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,
