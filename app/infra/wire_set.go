@@ -13,8 +13,8 @@ var APISet = wire.NewSet(
 	db.NewDB,
 	irepository.NewBlog,
 	irepository.NewBirthday,
-	igateway.NewSlackGateway,
-	igateway.NewTaskGateway,
+	igateway.NewSlack,
+	igateway.NewTask,
 	iservice.NewNotification,
 	iservice.NewRanking,
 )
@@ -23,8 +23,8 @@ var APISet = wire.NewSet(
 var CLISet = wire.NewSet(
 	db.NewDB,
 	irepository.NewBirthday,
-	igateway.NewSlackGateway,
-	igateway.NewTaskGateway,
+	igateway.NewSlack,
+	igateway.NewTask,
 	iservice.NewNotification,
 	iservice.NewRanking,
 )

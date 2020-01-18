@@ -18,11 +18,11 @@ type Blog interface {
 
 type blog struct {
 	r  repository.Blog
-	sg gateway.SlackGateway
+	sg gateway.Slack
 }
 
 // NewBlog : Blog用ユースケースを取得
-func NewBlog(r repository.Blog, sg gateway.SlackGateway) Blog {
+func NewBlog(r repository.Blog, sg gateway.Slack) Blog {
 	return &blog{
 		r:  r,
 		sg: sg,

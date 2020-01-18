@@ -21,8 +21,8 @@ type Notification interface {
 }
 
 type notification struct {
-	tg gateway.TaskGateway
-	sg gateway.SlackGateway
+	tg gateway.Task
+	sg gateway.Slack
 	r  repository.Birthday
 	ns service.Notification
 	rs service.Ranking
@@ -30,8 +30,8 @@ type notification struct {
 
 // NewNotification : Notification用ユースケースを取得
 func NewNotification(
-	tg gateway.TaskGateway,
-	sg gateway.SlackGateway,
+	tg gateway.Task,
+	sg gateway.Slack,
 	r repository.Birthday,
 	ns service.Notification,
 	rs service.Ranking,

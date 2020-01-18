@@ -10,11 +10,11 @@ import (
 )
 
 type notification struct {
-	g gateway.SlackGateway
+	g gateway.Slack
 }
 
 // NewNotification : Notification用ドメインサービスを取得
-func NewNotification(g gateway.SlackGateway) service.Notification {
+func NewNotification(g gateway.Slack) service.Notification {
 	return &notification{
 		g: g,
 	}

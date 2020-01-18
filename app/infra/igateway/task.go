@@ -6,33 +6,25 @@ import (
 
 	"github.com/adlio/trello"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
-//////////////////////////////////////////////////
-// NewTaskGateway
-//////////////////////////////////////////////////
-
-type taskGateway struct {
+type task struct {
 	APIKey   string
 	APIToken string
 }
 
-// NewTaskGateway : タスク用のゲートウェイを取得
-func NewTaskGateway() gateway.TaskGateway {
-	return &taskGateway{
+// NewTask : タスク用のゲートウェイを取得
+func NewTask() gateway.Task {
+	return &task{
 		APIKey:   os.Getenv("TRELLO_API_KEY"),
 		APIToken: os.Getenv("TRELLO_API_TOKEN"),
 	}
 }
 
-//////////////////////////////////////////////////
-// getBoard
-//////////////////////////////////////////////////
-
 // getBoard : ボード情報を取得
-func (tg taskGateway) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
-	client := trello.NewClient(tg.APIKey, tg.APIToken)
+func (t task) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
+	client := trello.NewClient(t.APIKey, t.APIToken)
 	board, err = client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
 		return nil, err
@@ -40,13 +32,9 @@ func (tg taskGateway) getBoard(ctx context.Context, boardID string) (board *trel
 	return board, nil
 }
 
-//////////////////////////////////////////////////
-// GetListsByBoardID
-//////////////////////////////////////////////////
-
 // GetListsByBoardID : ボードIDからリスト情報を取得
-func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
-	board, err := tg.getBoard(ctx, boardID)
+func (t task) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
+	board, err := t.getBoard(ctx, boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -65,15 +53,11 @@ func (tg taskGateway) GetListsByBoardID(ctx context.Context, boardID string) (li
 	return lists, nil
 }
 
-//////////////////////////////////////////////////
-// GetTasksFromList
-//////////////////////////////////////////////////
-
 // GetTasksFromList : リストからタスク一覧を取得
-func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (taskList task.List, dueOverTaskList task.List, err error) {
+func (t task) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.List, dueOverTaskList model.List, err error) {
 	trelloTasks, err := list.GetCards(trello.Defaults())
 	if err != nil {
-		return task.List{}, task.List{}, err
+		return model.List{}, model.List{}, err
 	}
 
 	allTask := convertToTasksModel(ctx, trelloTasks)
@@ -92,14 +76,10 @@ func (tg taskGateway) GetTasksFromList(ctx context.Context, list trello.List) (t
 	return taskList, dueOverTaskList, nil
 }
 
-//////////////////////////////////////////////////
-// convertToTasksModel
-//////////////////////////////////////////////////
-
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
-func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList task.List) {
+func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.List) {
 	for _, card := range trelloCards {
-		t := new(task.Task)
+		t := new(model.Task)
 		t.Title = card.Name
 		t.Description = card.Desc
 		t.ShortURL = card.ShortURL
@@ -112,12 +92,8 @@ func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskL
 	return taskList
 }
 
-//////////////////////////////////////////////////
-// MoveToWIP
-//////////////////////////////////////////////////
-
 // MoveToWIP : 指定タスクを WIP リストに移動
-func (tg taskGateway) MoveToWIP(ctx context.Context, tasks []task.Task) (err error) {
+func (t task) MoveToWIP(ctx context.Context, tasks []model.Task) (err error) {
 	for _, t := range tasks {
 		var wipListID string
 		switch t.Board {
