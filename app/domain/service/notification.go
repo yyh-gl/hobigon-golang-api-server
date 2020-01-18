@@ -6,7 +6,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 )
 
-// NotificationService : 通知用サービスのインターフェース
-type NotificationService interface {
+// Notification : Notification用ドメインサービスのインターフェース
+type Notification interface {
 	SendTodayBirthdayToSlack(ctx context.Context, birthday birthday.Birthday) error
 }

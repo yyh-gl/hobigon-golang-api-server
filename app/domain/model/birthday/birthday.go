@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// TODO: ドメイン貧血症を治す
+// TODO: ドメインモデル貧血症を治す
 
 // Birthday : 誕生日を表すドメインモデル
 type Birthday struct {

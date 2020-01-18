@@ -9,24 +9,16 @@ import (
 	"strings"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/ranking"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/ranking"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/service"
 )
 
-//////////////////////////////////////////////////
-// NewRankingService
-//////////////////////////////////////////////////
+type ranking struct{}
 
-type rankingService struct{}
-
-// NewRankingService : ランキング用のサービスを取得
-func NewRankingService() service.RankingService {
-	return &rankingService{}
+// NewRanking : Ranking用ドメインサービスを取得
+func NewRanking() service.Ranking {
+	return &ranking{}
 }
-
-//////////////////////////////////////////////////
-// GetAccessRanking
-//////////////////////////////////////////////////
 
 // isContain : 文字列の配列に指定文字列が存在するか確認
 func isContain(arr []string, str string) bool {
@@ -39,7 +31,7 @@ func isContain(arr []string, str string) bool {
 }
 
 // GetAccessRanking : アクセスランキングを取得する関数
-func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList ranking.Ranking, err error) {
+func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList model.Ranking, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3
@@ -80,9 +72,9 @@ func (rs rankingService) GetAccessRanking(ctx context.Context) (rankingMsg strin
 	}
 
 	// アクセス数が多い順にソート
-	accessList = ranking.Ranking{}
+	accessList = model.Ranking{}
 	for endpoint, count := range accessCountPerEndpoint {
-		e := ranking.Access{
+		e := model.Access{
 			Endpoint: endpoint,
 			Count:    count,
 		}

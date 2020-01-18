@@ -5,30 +5,26 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/service"
 )
 
-//////////////////////////////////////////////////
-// NewNotificationService
-//////////////////////////////////////////////////
-
-type notificationService struct {
-	sg gateway.SlackGateway
+type notification struct {
+	g gateway.SlackGateway
 }
 
-// NewNotificationService : 通知用のサービスを取得
-func NewNotificationService(sg gateway.SlackGateway) service.NotificationService {
-	return &notificationService{
-		sg: sg,
+// NewNotification : Notification用ドメインサービスを取得
+func NewNotification(g gateway.SlackGateway) service.Notification {
+	return &notification{
+		g: g,
 	}
 }
 
 // SendBirthdayToSlackToSlack : 今日の誕生日を通知
-func (ns notificationService) SendTodayBirthdayToSlack(ctx context.Context, birthday birthday.Birthday) (err error) {
+func (n notification) SendTodayBirthdayToSlack(ctx context.Context, birthday model.Birthday) (err error) {
 	// 今日が誕生日であった場合にのみ Slack に通知
 	if birthday.Date().IsToday() {
-		if err = ns.sg.SendBirthday(ctx, birthday); err != nil {
+		if err = n.g.SendBirthday(ctx, birthday); err != nil {
 			return errors.Wrap(err, "slackGateway.SendBirthday()内でのエラー")
 		}
 	}

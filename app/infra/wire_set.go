@@ -15,8 +15,8 @@ var APISet = wire.NewSet(
 	irepository.NewBirthday,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,
-	iservice.NewNotificationService,
-	iservice.NewRankingService,
+	iservice.NewNotification,
+	iservice.NewRanking,
 )
 
 // CLISet : infra層のWireSet（CLI用）
@@ -25,6 +25,6 @@ var CLISet = wire.NewSet(
 	irepository.NewBirthday,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,
-	iservice.NewNotificationService,
-	iservice.NewRankingService,
+	iservice.NewNotification,
+	iservice.NewRanking,
 )

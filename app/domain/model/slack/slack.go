@@ -8,7 +8,7 @@ import (
 )
 
 // Slack : Slack 用のドメインモデル
-// TODO: ドメイン貧血症を治す
+// TODO: ドメインモデル貧血症を治す
 type Slack struct {
 	Username string
 	Channel  string

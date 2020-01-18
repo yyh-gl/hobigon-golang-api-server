@@ -24,7 +24,7 @@ type notification struct {
 	tg gateway.TaskGateway
 	sg gateway.SlackGateway
 	r  repository.Birthday
-	ns service.NotificationService
+	ns service.Notification
 	rs service.RankingService
 }
 
@@ -33,7 +33,7 @@ func NewNotification(
 	tg gateway.TaskGateway,
 	sg gateway.SlackGateway,
 	r repository.Birthday,
-	ns service.NotificationService,
+	ns service.Notification,
 	rs service.RankingService,
 ) Notification {
 	return &notification{

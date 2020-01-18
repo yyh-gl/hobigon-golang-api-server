@@ -8,76 +8,60 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
-//////////////////////////////////////////////////
-// NewNotificationHandler
-//////////////////////////////////////////////////
-
-// NotificationHandler : Slack 通知用のハンドラーインターフェース
-type NotificationHandler interface {
+// Notification : Notification用CLIサービスのインターフェース
+type Notification interface {
 	NotifyTodayTasksToSlack(c *cli.Context) error
 	NotifyTodayBirthdayToSlack(c *cli.Context) error
 	NotifyAccessRankingToSlack(c *cli.Context) error
 }
 
-type notificationHandler struct {
-	nu usecase.Notification
+type notification struct {
+	u usecase.Notification
 }
 
-// NewNotificationHandler : Slack 通知用のハンドラーを取得
-func NewNotificationHandler(nu usecase.Notification) NotificationHandler {
-	return &notificationHandler{
-		nu: nu,
+// NewNotification : Notification用CLIサービスを取得
+func NewNotification(u usecase.Notification) Notification {
+	return &notification{
+		u: u,
 	}
 }
-
-//////////////////////////////////////////////////
-// NotifyTodayTasksToSlack
-//////////////////////////////////////////////////
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
-func (snh notificationHandler) NotifyTodayTasksToSlack(c *cli.Context) error {
+func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := snh.nu.NotifyTodayTasksToSlack(ctx); err != nil {
+	if err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
 	return nil
 }
-
-//////////////////////////////////////////////////
-// NotifyTodayBirthdayToSlack
-//////////////////////////////////////////////////
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
-func (snh notificationHandler) NotifyTodayBirthdayToSlack(c *cli.Context) error {
+func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := snh.nu.NotifyTodayBirthdayToSlack(ctx); err != nil {
+	if err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
 	return nil
 }
 
-//////////////////////////////////////////////////
-// NotifyAccessRankingToSlack
-//////////////////////////////////////////////////
-
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
-func (snh notificationHandler) NotifyAccessRankingToSlack(c *cli.Context) error {
+func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
 	logger := app.Logger
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := snh.nu.NotifyAccessRanking(ctx); err != nil {
+	if err := n.u.NotifyAccessRanking(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
