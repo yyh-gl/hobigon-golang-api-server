@@ -2,10 +2,10 @@ package rest
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -56,7 +56,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	req, err := decodeRequest(r, request{})
 	if err != nil {
-		app.Logger.Println(err)
+		app.Logger.Println(fmt.Errorf("decodeRequest()でエラー: %w", err))
 
 		res.OK = false
 		res.Error = err.Error()
@@ -69,8 +69,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		// TODO: フォーマット部分を定数化
 		date, err := time.Parse("2006-01-02T15:04:05.000000Z", req["date"].(string))
 		if err != nil {
-			e := errors.Wrap(err, "time.Parse()内でのエラー")
-			app.Logger.Println(e)
+			app.Logger.Println(fmt.Errorf("time.Parse()内でエラー: %w", err))
 
 			res.OK = false
 			res.Error = err.Error()
@@ -80,7 +79,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		if res.OK {
 			birthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
-				app.Logger.Println(err)
+				app.Logger.Println(fmt.Errorf("BookUseCase.Create()でエラー: %w", err))
 
 				res.OK = false
 				res.Error = err.Error()
@@ -94,7 +93,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		app.Logger.Println(err)
+		app.Logger.Println(fmt.Errorf("json.NewEncoder().Encode()でエラー: %w", err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
