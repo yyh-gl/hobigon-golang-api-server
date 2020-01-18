@@ -48,6 +48,7 @@ func main() {
 func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// リクエスト内容をログ出力
+		// TODO: Bodyの内容を出力
 		app.Logger.Println("[AccessLog] " + r.Method + " " + r.URL.String())
 
 		// CORS用ヘッダーを付与
