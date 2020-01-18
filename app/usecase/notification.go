@@ -27,7 +27,7 @@ type NotificationUseCase interface {
 type notificationUseCase struct {
 	tg gateway.TaskGateway
 	sg gateway.SlackGateway
-	br repository.BirthdayRepository
+	br repository.Birthday
 	ns service.NotificationService
 	rs service.RankingService
 }
@@ -36,7 +36,7 @@ type notificationUseCase struct {
 func NewNotificationUseCase(
 	tg gateway.TaskGateway,
 	sg gateway.SlackGateway,
-	br repository.BirthdayRepository,
+	br repository.Birthday,
 	ns service.NotificationService,
 	rs service.RankingService,
 ) NotificationUseCase {

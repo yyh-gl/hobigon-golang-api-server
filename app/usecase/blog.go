@@ -5,42 +5,34 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 )
 
-//////////////////////////////////////////////////
-// NewBlogUseCase
-//////////////////////////////////////////////////
-
-// BlogUseCase : ブログ用のユースケースインターフェース
-type BlogUseCase interface {
-	Create(context.Context, string) (*blog.Blog, error)
-	Show(context.Context, string) (*blog.Blog, error)
-	Like(context.Context, string) (*blog.Blog, error)
+// Blog : Blog用ユースケースのインターフェース
+type Blog interface {
+	Create(context.Context, string) (*model.Blog, error)
+	Show(context.Context, string) (*model.Blog, error)
+	Like(context.Context, string) (*model.Blog, error)
 }
 
-type blogUseCase struct {
-	br repository.BlogRepository
+type blog struct {
+	r  repository.Blog
 	sg gateway.SlackGateway
 }
 
-// NewBlogUseCase : ブログ用のユースケースを取得
-func NewBlogUseCase(br repository.BlogRepository, sg gateway.SlackGateway) BlogUseCase {
-	return &blogUseCase{
-		br: br,
+// NewBlog : Blog用ユースケースを取得
+func NewBlog(r repository.Blog, sg gateway.SlackGateway) Blog {
+	return &blog{
+		r:  r,
 		sg: sg,
 	}
 }
 
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
-
 // Create : ブログ情報を新規作成
-func (bu blogUseCase) Create(ctx context.Context, title string) (*blog.Blog, error) {
-	blog := blog.NewBlog(title)
-	createdBlog, err := bu.br.Create(ctx, *blog)
+func (b blog) Create(ctx context.Context, title string) (*model.Blog, error) {
+	blog := model.NewBlog(title)
+	createdBlog, err := b.r.Create(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
 	}
@@ -48,13 +40,9 @@ func (bu blogUseCase) Create(ctx context.Context, title string) (*blog.Blog, err
 	return createdBlog, nil
 }
 
-//////////////////////////////////////////////////
-// Show
-//////////////////////////////////////////////////
-
 // Show : ブログ情報を1件取得
-func (bu blogUseCase) Show(ctx context.Context, title string) (*blog.Blog, error) {
-	blog, err := bu.br.SelectByTitle(ctx, title)
+func (b blog) Show(ctx context.Context, title string) (*model.Blog, error) {
+	blog, err := b.r.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
 		case "record not found":
@@ -67,13 +55,9 @@ func (bu blogUseCase) Show(ctx context.Context, title string) (*blog.Blog, error
 	return blog, nil
 }
 
-//////////////////////////////////////////////////
-// Like
-//////////////////////////////////////////////////
-
 // Like : 指定ブログにいいねをプラス1
-func (bu blogUseCase) Like(ctx context.Context, title string) (*blog.Blog, error) {
-	blog, err := bu.br.SelectByTitle(ctx, title)
+func (b blog) Like(ctx context.Context, title string) (*model.Blog, error) {
+	blog, err := b.r.SelectByTitle(ctx, title)
 	if err != nil {
 		switch err.Error() {
 		case "record not found":
@@ -85,13 +69,13 @@ func (bu blogUseCase) Like(ctx context.Context, title string) (*blog.Blog, error
 
 	// Count をプラス1
 	blog.CountUp()
-	blog, err = bu.br.Update(ctx, *blog)
+	blog, err = b.r.Update(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "blogRepository.Update()内でのエラー")
 	}
 
 	// Slack に通知
-	err = bu.sg.SendLikeNotify(ctx, *blog)
+	err = b.sg.SendLikeNotify(ctx, *blog)
 	if err != nil {
 		return nil, errors.Wrap(err, "slackGateway.SendLikeNotify()内でのエラー")
 	}

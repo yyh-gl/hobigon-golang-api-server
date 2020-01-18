@@ -11,7 +11,7 @@ import (
 // APISet : infra層のWireSet（API用）
 var APISet = wire.NewSet(
 	db.NewDB,
-	irepository.NewBlogRepository,
+	irepository.NewBlog,
 	irepository.NewBirthday,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,

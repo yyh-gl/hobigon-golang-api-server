@@ -11,18 +11,18 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
-// BirthdayHandler : ブログ用のハンドラーインターフェース
-type BirthdayHandler interface {
+// Birthday : Birthday用REST Handlerのインターフェース
+type Birthday interface {
 	Create(w http.ResponseWriter, r *http.Request)
 }
 
-type birthdayHandler struct {
+type birthday struct {
 	bu usecase.Birthday
 }
 
-// NewBirthdayHandler : ブログ用のハンドラーを取得
-func NewBirthdayHandler(bu usecase.Birthday) BirthdayHandler {
-	return &birthdayHandler{
+// NewBirthday : Birthday用REST Handlerを取得
+func NewBirthday(bu usecase.Birthday) Birthday {
+	return &birthday{
 		bu: bu,
 	}
 }
@@ -35,7 +35,7 @@ type birthdayResponse struct {
 }
 
 // Create : 誕生日データを新規作成
-func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Name     string    `json:"name"`
 		Date     time.Time `json:"date"`
@@ -69,7 +69,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if res.OK {
-			createdBirthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
+			createdBirthday, err := b.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
 				app.Logger.Println(fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err))
 

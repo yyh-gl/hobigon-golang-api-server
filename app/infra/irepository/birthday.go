@@ -15,7 +15,7 @@ type birthday struct {
 }
 
 // NewBirthday : 誕生日用のリポジトリを取得
-func NewBirthday(db *db.DB) repository.BirthdayRepository {
+func NewBirthday(db *db.DB) repository.Birthday {
 	return &birthday{
 		db: db,
 	}

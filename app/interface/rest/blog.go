@@ -7,45 +7,37 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
-//////////////////////////////////////////////////
-// NewBlogHandler
-//////////////////////////////////////////////////
-
-// BlogHandler : ブログ用のハンドラーインターフェース
-type BlogHandler interface {
+// Blog : Blog用REST Handlerのインターフェース
+type Blog interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	Show(w http.ResponseWriter, r *http.Request)
 	Like(w http.ResponseWriter, r *http.Request)
 }
 
-type blogHandler struct {
-	bu usecase.BlogUseCase
+type blog struct {
+	u usecase.Blog
 }
 
-// NewBlogHandler : ブログ用のハンドラーを取得
-func NewBlogHandler(bu usecase.BlogUseCase) BlogHandler {
-	return &blogHandler{
-		bu: bu,
+// NewBlog : Blog用REST Handlerを取得
+func NewBlog(u usecase.Blog) Blog {
+	return &blog{
+		u: u,
 	}
 }
 
 // TODO: OK, Error 部分は共通レスポンスにする
 type blogResponse struct {
-	OK    bool          `json:"ok"`
-	Error string        `json:"error,omitempty"`
-	Blog  blog.BlogJSON `json:"blog,omitempty"`
+	OK    bool           `json:"ok"`
+	Error string         `json:"error,omitempty"`
+	Blog  model.BlogJSON `json:"blog,omitempty"`
 }
 
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
-
 // Create : ブログ情報を新規作成
-func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Title string `json:"title"`
 	}
@@ -64,9 +56,9 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer func() { _ = r.Body.Close() }()
 
-	var b *blog.Blog
+	var newBlog *model.Blog
 	if res.OK {
-		b, err = bh.bu.Create(r.Context(), req["title"].(string))
+		newBlog, err = b.u.Create(r.Context(), req["title"].(string))
 		if err != nil {
 			app.Logger.Println(fmt.Errorf("BlogUseCase.Create()でエラー: %w", err))
 
@@ -75,7 +67,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		} else {
 			// JSON 形式に変換
-			res.Blog = b.JSONSerialize()
+			res.Blog = newBlog.JSONSerialize()
 		}
 	}
 
@@ -87,12 +79,8 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//////////////////////////////////////////////////
-// Show
-//////////////////////////////////////////////////
-
 // Show : ブログ情報を1件取得
-func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
+func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	// TODO: httprouterに依存することについて考える
 	ps := httprouter.ParamsFromContext(ctx)
@@ -101,7 +89,7 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 		OK: true,
 	}
 
-	b, err := bh.bu.Show(ctx, ps.ByName("title"))
+	blog, err := b.u.Show(ctx, ps.ByName("title"))
 	if err != nil {
 		app.Logger.Println(err)
 
@@ -117,7 +105,7 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// JSON 形式に変換
-		res.Blog = b.JSONSerialize()
+		res.Blog = blog.JSONSerialize()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
@@ -127,12 +115,8 @@ func (bh blogHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//////////////////////////////////////////////////
-// Like
-//////////////////////////////////////////////////
-
 // Like : 指定ブログにいいねをプラス1
-func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
+func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ps := httprouter.ParamsFromContext(ctx)
 
@@ -140,7 +124,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 		OK: true,
 	}
 
-	b, err := bh.bu.Like(ctx, ps.ByName("title"))
+	blog, err := b.u.Like(ctx, ps.ByName("title"))
 	if err != nil {
 		app.Logger.Println(err)
 
@@ -156,7 +140,7 @@ func (bh blogHandler) Like(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// JSON 形式に変換
-		res.Blog = b.JSONSerialize()
+		res.Blog = blog.JSONSerialize()
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

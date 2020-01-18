@@ -4,23 +4,19 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/imodel"
 )
 
-//////////////////////////////////////////////////
-// NewBlogRepository
-//////////////////////////////////////////////////
-
-type blogRepository struct {
+type blog struct {
 	db *db.DB
 }
 
-// NewBlogRepository : ブログ用のリポジトリを取得
-func NewBlogRepository(db *db.DB) repository.BlogRepository {
-	return &blogRepository{
+// NewBlog : Blog用リポジトリを取得
+func NewBlog(db *db.DB) repository.Blog {
+	return &blog{
 		db: db,
 	}
 }
@@ -30,14 +26,14 @@ func NewBlogRepository(db *db.DB) repository.BlogRepository {
 //////////////////////////////////////////////////
 
 // Create : ブログ情報を新規作成
-func (br blogRepository) Create(ctx context.Context, blog blog.Blog) (*blog.Blog, error) {
+func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
 		Title: blog.Title(),
 		Count: blog.Count(),
 	}
 
-	err := br.db.Create(&blogDTO).Error
+	err := b.db.Create(&blogDTO).Error
 	if err != nil {
 		return nil, errors.Wrap(err, "gorm.Create(blog)内でのエラー")
 	}
@@ -51,9 +47,9 @@ func (br blogRepository) Create(ctx context.Context, blog blog.Blog) (*blog.Blog
 //////////////////////////////////////////////////
 
 // SelectByTitle : タイトルからブログ情報を1件取得
-func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*blog.Blog, error) {
+func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, error) {
 	blogDTO := imodel.BlogDTO{}
-	err := br.db.First(&blogDTO, "title=?", title).Error
+	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
 		return nil, errors.Wrap(err, "gorm.First(blog)内でのエラー")
 	}
@@ -67,7 +63,7 @@ func (br blogRepository) SelectByTitle(ctx context.Context, title string) (*blog
 //////////////////////////////////////////////////
 
 // Update : ブログ情報を1件更新
-func (br blogRepository) Update(ctx context.Context, blog blog.Blog) (*blog.Blog, error) {
+func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
 		ID:    blog.ID(),
@@ -75,7 +71,7 @@ func (br blogRepository) Update(ctx context.Context, blog blog.Blog) (*blog.Blog
 		Count: blog.Count(),
 	}
 
-	err := br.db.Save(&blogDTO).Error
+	err := b.db.Save(&blogDTO).Error
 	if err != nil {
 		return nil, errors.Wrap(err, "gorm.Save(blog)内でのエラー")
 	}

@@ -6,7 +6,7 @@ import "github.com/google/wire"
 var APISet = wire.NewSet(
 	NewNotificationUseCase,
 	NewBirthdayUseCase,
-	NewBlogUseCase,
+	NewBlog,
 )
 
 // CLISet : usecase層のWireSet（CLI用）

@@ -9,18 +9,18 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 )
 
-// Birthday : Birthdayユースケースのインターフェース
+// Birthday : Birthday用ユースケースのインターフェース
 type Birthday interface {
 	Create(ctx context.Context, name string, date time.Time, wishList string) (*model.Birthday, error)
 }
 
 type birthday struct {
-	r repository.BirthdayRepository
+	r repository.Birthday
 }
 
-// NewBirthdayUseCase : 通知用のユースケースを取得
+// NewBirthdayUseCase : Birthday用ユースケースを取得
 func NewBirthdayUseCase(
-	r repository.BirthdayRepository,
+	r repository.Birthday,
 ) Birthday {
 	return &birthday{
 		r: r,
