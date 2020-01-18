@@ -1,6 +1,6 @@
 package task
 
-// List : タスク用ドメインモデルの配列
+// List : タスクリストを表すドメインモデル
 type List struct {
 	Tasks []Task
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Task : タスク用のドメインモデル
+// Task : タスクを表すドメインモデル
 type Task struct {
 	Title         string      `json:"title"`
 	Description   string      `json:"description"`
