@@ -12,7 +12,7 @@ import (
 type ContainerAPI struct {
 	HandlerBlog         rest.Blog
 	HandlerBirthday     rest.Birthday
-	HandlerNotification rest.NotificationHandler
+	HandlerNotification rest.Notification
 
 	DB     *db.DB
 	Logger *log.Logger

@@ -8,49 +8,37 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
-//////////////////////////////////////////////////
-// NewNotificationHandler
-//////////////////////////////////////////////////
-
-// NotificationHandler : Slack 通知用のハンドラーインターフェース
-type NotificationHandler interface {
+// Notification : Notification用REST Handlerのインターフェース
+type Notification interface {
 	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request)
 }
 
-type notificationHandler struct {
-	nu usecase.NotificationUseCase
+type notification struct {
+	u usecase.Notification
 }
 
-// NewNotificationHandler : Slack 通知用のハンドラーを取得
-func NewNotificationHandler(nu usecase.NotificationUseCase) NotificationHandler {
-	return &notificationHandler{
-		nu: nu,
+// NewNotification : Notification用REST Handlerを取得
+func NewNotification(u usecase.Notification) Notification {
+	return &notification{
+		u: u,
 	}
 }
 
-//////////////////////////////////////////////////
-// 通知系共通処理
-//////////////////////////////////////////////////
-
-// 通知系 API の共通レスポンス
-type notificationResponse struct {
+// response : 通知系 API の共通レスポンス
+type response struct {
 	OK    bool   `json:"ok"`
 	Error string `json:"error,omitempty"`
 }
 
-//////////////////////////////////////////////////
-// NotifyTodayTasksToSlack
-//////////////////////////////////////////////////
-
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
-func (snh notificationHandler) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
+func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
+	res := response{
 		OK: true,
 	}
 
-	if err := snh.nu.NotifyTodayTasksToSlack(r.Context()); err != nil {
+	if err := n.u.NotifyTodayTasksToSlack(r.Context()); err != nil {
 		app.Logger.Println(err)
 
 		res.OK = false
@@ -63,18 +51,14 @@ func (snh notificationHandler) NotifyTodayTasksToSlack(w http.ResponseWriter, r 
 		return
 	}
 }
-
-//////////////////////////////////////////////////
-// NotifyTodayBirthdayToSlack
-//////////////////////////////////////////////////
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
-func (snh notificationHandler) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
+func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
+	res := response{
 		OK: true,
 	}
 
-	if err := snh.nu.NotifyTodayBirthdayToSlack(r.Context()); err != nil {
+	if err := n.u.NotifyTodayBirthdayToSlack(r.Context()); err != nil {
 		app.Logger.Println(err)
 
 		res.OK = false
@@ -88,17 +72,13 @@ func (snh notificationHandler) NotifyTodayBirthdayToSlack(w http.ResponseWriter,
 	}
 }
 
-//////////////////////////////////////////////////
-// NotifyAccessRankingToSlack
-//////////////////////////////////////////////////
-
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
-func (snh notificationHandler) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
+func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
+	res := response{
 		OK: true,
 	}
 
-	if err := snh.nu.NotifyAccessRanking(r.Context()); err != nil {
+	if err := n.u.NotifyAccessRanking(r.Context()); err != nil {
 		app.Logger.Println(err)
 
 		res.OK = false
