@@ -79,7 +79,7 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		if res.OK {
 			birthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
-				app.Logger.Println(fmt.Errorf("BookUseCase.Create()でエラー: %w", err))
+				app.Logger.Println(fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err))
 
 				res.OK = false
 				res.Error = err.Error()

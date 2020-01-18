@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -55,7 +56,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	req, err := decodeRequest(r, request{})
 	if err != nil {
-		app.Logger.Println(err)
+		app.Logger.Println(fmt.Errorf("decodeRequest()でエラー: %w", err))
 
 		res.OK = false
 		res.Error = err.Error()
@@ -67,7 +68,8 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if res.OK {
 		b, err = bh.bu.Create(r.Context(), req["title"].(string))
 		if err != nil {
-			app.Logger.Println(err)
+			app.Logger.Println(fmt.Errorf("BlogUseCase.Create()でエラー: %w", err))
+
 			res.OK = false
 			res.Error = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
@@ -79,7 +81,7 @@ func (bh blogHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		app.Logger.Println(err)
+		app.Logger.Println(fmt.Errorf("json.NewEncoder().Encode()でエラー: %w", err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

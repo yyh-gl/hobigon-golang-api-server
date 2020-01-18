@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("Server Start >> http://localhost:3000")
 	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 	fmt.Println("========================")
-	app.Logger.Print("Server Start")
+	app.Logger.Println("Server Start")
 	app.Logger.Fatal(http.ListenAndServe(":3000", r))
 }
 
@@ -48,8 +48,7 @@ func main() {
 func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// リクエスト内容をログ出力
-		// TODO: Body の内容を記録
-		app.Logger.Print("[AccessLog] " + r.Method + " " + r.URL.String())
+		app.Logger.Println("[AccessLog] " + r.Method + " " + r.URL.String())
 
 		// CORS用ヘッダーを付与
 		switch {
