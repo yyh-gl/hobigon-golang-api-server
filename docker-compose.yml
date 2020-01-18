@@ -31,3 +31,5 @@ services:
       - ./docker/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mysql
+    security_opt:
+      - seccomp:unconfined
