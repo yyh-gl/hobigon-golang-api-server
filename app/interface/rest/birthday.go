@@ -7,13 +7,9 @@ import (
 	"time"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
-
-//////////////////////////////////////////////////
-// NewBirthdayHandler
-//////////////////////////////////////////////////
 
 // BirthdayHandler : ブログ用のハンドラーインターフェース
 type BirthdayHandler interface {
@@ -21,11 +17,11 @@ type BirthdayHandler interface {
 }
 
 type birthdayHandler struct {
-	bu usecase.BirthdayUseCase
+	bu usecase.Birthday
 }
 
 // NewBirthdayHandler : ブログ用のハンドラーを取得
-func NewBirthdayHandler(bu usecase.BirthdayUseCase) BirthdayHandler {
+func NewBirthdayHandler(bu usecase.Birthday) BirthdayHandler {
 	return &birthdayHandler{
 		bu: bu,
 	}
@@ -33,14 +29,10 @@ func NewBirthdayHandler(bu usecase.BirthdayUseCase) BirthdayHandler {
 
 // TODO: OK, Error 部分は共通レスポンスにする
 type birthdayResponse struct {
-	OK       bool                  `json:"ok"`
-	Error    string                `json:"error,omitempty"`
-	Birthday birthday.BirthdayJSON `json:"birthday,omitempty"`
+	OK       bool           `json:"ok"`
+	Error    string         `json:"error,omitempty"`
+	Birthday model.Birthday `json:"birthday,omitempty"`
 }
-
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
 
 // Create : 誕生日データを新規作成
 func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
@@ -77,17 +69,15 @@ func (bh birthdayHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if res.OK {
-			birthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
+			createdBirthday, err := bh.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
 			if err != nil {
 				app.Logger.Println(fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err))
 
 				res.OK = false
 				res.Error = err.Error()
 				w.WriteHeader(http.StatusInternalServerError)
-			} else {
-				// JSON 形式に変換
-				res.Birthday = birthday.JSONSerialize()
 			}
+			res.Birthday = *createdBirthday
 		}
 	}
 

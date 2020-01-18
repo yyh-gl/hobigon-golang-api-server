@@ -12,7 +12,7 @@ import (
 var APISet = wire.NewSet(
 	db.NewDB,
 	irepository.NewBlogRepository,
-	irepository.NewBirthdayRepository,
+	irepository.NewBirthday,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,
 	iservice.NewNotificationService,
@@ -22,7 +22,7 @@ var APISet = wire.NewSet(
 // CLISet : infra層のWireSet（CLI用）
 var CLISet = wire.NewSet(
 	db.NewDB,
-	irepository.NewBirthdayRepository,
+	irepository.NewBirthday,
 	igateway.NewSlackGateway,
 	igateway.NewTaskGateway,
 	iservice.NewNotificationService,

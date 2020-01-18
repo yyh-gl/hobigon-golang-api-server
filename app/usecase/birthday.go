@@ -2,50 +2,42 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	"github.com/pkg/errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 )
 
-//////////////////////////////////////////////////
-// NewBirthdayUseCase
-//////////////////////////////////////////////////
-
-// BirthdayUseCase : 誕生日用のユースケースインターフェース
-type BirthdayUseCase interface {
-	Create(ctx context.Context, name string, date time.Time, wishList string) (*birthday.Birthday, error)
+// Birthday : Birthdayユースケースのインターフェース
+type Birthday interface {
+	Create(ctx context.Context, name string, date time.Time, wishList string) (*model.Birthday, error)
 }
 
-type birthdayUseCase struct {
-	br repository.BirthdayRepository
+type birthday struct {
+	r repository.BirthdayRepository
 }
 
 // NewBirthdayUseCase : 通知用のユースケースを取得
 func NewBirthdayUseCase(
-	br repository.BirthdayRepository,
-) BirthdayUseCase {
-	return &birthdayUseCase{
-		br: br,
+	r repository.BirthdayRepository,
+) Birthday {
+	return &birthday{
+		r: r,
 	}
 }
 
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
-
 // Create : 誕生日データを新規作成
-func (bu birthdayUseCase) Create(ctx context.Context, name string, date time.Time, wishList string) (*birthday.Birthday, error) {
+func (b birthday) Create(ctx context.Context, name string, date time.Time, wishList string) (*model.Birthday, error) {
 	// 新しい Birthday データを作成
-	birthday, err := birthday.NewBirthday(name, date, wishList)
+	newBirthday, err := model.NewBirthday(name, date, wishList)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewBirthday()内でのエラー")
+		return nil, fmt.Errorf("birthday.New()内でエラー: %w", err)
 	}
 
-	createdBirthday, err := bu.br.Create(ctx, *birthday)
+	createdBirthday, err := b.r.Create(ctx, *newBirthday)
 	if err != nil {
-		return nil, errors.Wrap(err, "birthdayRepository.Create()内でのエラー")
+		return nil, fmt.Errorf("birthdayRepository.Create()内でエラー: %w", err)
 	}
 	return createdBirthday, nil
 }

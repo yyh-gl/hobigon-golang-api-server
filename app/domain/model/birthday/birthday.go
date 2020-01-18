@@ -1,48 +1,51 @@
 package birthday
 
 import (
+	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
-//////////////////////////////////////////////////
-// Birthday
-//////////////////////////////////////////////////
+// TODO: ドメイン貧血症を治す
 
-// Birthday : 誕生日用のドメインモデル
+// Birthday : 誕生日を表すドメインモデル
 type Birthday struct {
-	id        uint
-	name      string
-	date      Date
-	wishList  WishList
-	createdAt *time.Time
-	updatedAt *time.Time
-	deletedAt *time.Time
+	fields
 }
 
-// NewBirthday : Birthday ドメインモデルを生成
+type fields struct {
+	ID        uint       `json:"id,omitempty"`
+	Name      string     `json:"name,omitempty"`
+	Date      Date       `json:"date,omitempty"`
+	WishList  WishList   `json:"wish_list,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+}
+
+// NewBirthday : Birthdayドメインモデルを生成
 func NewBirthday(name string, date time.Time, wishList string) (*Birthday, error) {
 	// Date を生成
 	d, err := NewDate(date)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewDate()内でのエラー")
+		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
 	}
 
 	// WishList を生成
 	wl, err := NewWishList(wishList)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewWishList()内でのエラー")
+		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)
 	}
 
 	return &Birthday{
-		name:     name,
-		date:     *d,
-		wishList: *wl,
+		fields{
+			Name:     name,
+			Date:     *d,
+			WishList: *wl,
+		},
 	}, nil
 }
 
-// NewBirthdayWithFullParams : パラメータ全指定で Birthday ドメインモデルを生成
+// NewBirthdayWithFullParams : パラメータ全指定でBirthdayドメインモデルを生成
 func NewBirthdayWithFullParams(
 	id uint,
 	name string,
@@ -55,78 +58,48 @@ func NewBirthdayWithFullParams(
 	// Date を生成
 	d, err := NewDate(date)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewDate()内でのエラー")
+		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
 	}
 
 	// WishList を生成
 	wl, err := NewWishList(wishList)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewWishList()内でのエラー")
+		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)
 	}
 
 	return &Birthday{
-		id:        id,
-		name:      name,
-		date:      *d,
-		wishList:  *wl,
-		createdAt: createdAt,
-		updatedAt: updatedAt,
-		deletedAt: deletedAt,
+		fields{
+			ID:        id,
+			Name:      name,
+			Date:      *d,
+			WishList:  *wl,
+			CreatedAt: createdAt,
+			UpdatedAt: updatedAt,
+			DeletedAt: deletedAt,
+		},
 	}, nil
 }
 
 // Name : name のゲッター
 func (b Birthday) Name() string {
-	return b.name
+	return b.fields.Name
 }
 
 // Date : date のゲッター
 func (b Birthday) Date() Date {
-	return b.date
+	return b.fields.Date
 }
 
 // WishList : wishList のゲッター
 func (b Birthday) WishList() WishList {
-	return b.wishList
+	return b.fields.WishList
 }
 
 // CreateBirthdayMessage : 誕生日メッセージを生成
 func (b Birthday) CreateBirthdayMessage() string {
-	wishList := b.wishList.String()
-	if b.wishList.IsNull() {
+	wishList := b.fields.WishList.String()
+	if b.fields.WishList.IsNull() {
 		wishList = "Amazon の欲しい物リスト教えて！"
 	}
-	return "今日は *" + b.name + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
-}
-
-//////////////////////////////////////////////////
-// BirthdayJSON
-//////////////////////////////////////////////////
-
-type birthdayJSONFields struct {
-	ID        uint       `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"`
-	Date      string     `json:"date,omitempty"`
-	WishList  string     `json:"wish_list,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-}
-
-// BirthdayJSON : 誕生日用の JSON レスポンス形式の定義
-type BirthdayJSON struct {
-	birthdayJSONFields
-}
-
-// JSONSerialize : JSON タグを含む構造体を返却
-func (b Birthday) JSONSerialize() BirthdayJSON {
-	return BirthdayJSON{birthdayJSONFields{
-		ID:        b.id,
-		Name:      b.name,
-		Date:      b.date.String(),
-		WishList:  b.wishList.String(),
-		CreatedAt: b.createdAt,
-		UpdatedAt: b.updatedAt,
-		DeletedAt: b.deletedAt,
-	}}
+	return "今日は *" + b.fields.Name + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
 }
