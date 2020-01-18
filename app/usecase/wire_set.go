@@ -5,7 +5,7 @@ import "github.com/google/wire"
 // APISet : usecase層のWireSet（API用）
 var APISet = wire.NewSet(
 	NewNotification,
-	NewBirthdayUseCase,
+	NewBirthday,
 	NewBlog,
 )
 

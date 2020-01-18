@@ -18,8 +18,8 @@ type birthday struct {
 	r repository.Birthday
 }
 
-// NewBirthdayUseCase : Birthday用ユースケースを取得
-func NewBirthdayUseCase(
+// NewBirthday : Birthday用ユースケースを取得
+func NewBirthday(
 	r repository.Birthday,
 ) Birthday {
 	return &birthday{

@@ -3,6 +3,7 @@ package ranking
 // TODO: ドメインモデル貧血症を治す
 
 // Ranking : ランキングを表すドメインモデル
+// TODO: ドメインモデルらしくする
 type Ranking []Access
 
 // Len : AccessList の配列数を取得

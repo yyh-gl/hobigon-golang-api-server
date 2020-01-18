@@ -5,6 +5,7 @@ import (
 )
 
 // Task : タスクを表すドメインモデル
+// TODO: ドメインモデル貧血症を治す
 type Task struct {
 	Title         string      `json:"title"`
 	Description   string      `json:"description"`
