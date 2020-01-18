@@ -9,9 +9,16 @@ export GO111MODULE=on
 go mod tidy
 go mod verify
 
-echo "############################"
-echo "# Running GolangCI-Lint... #"
-echo "############################"
-golangci-lint --version
-echo
-golangci-lint run ./...
+if [[ "$1" == "lint" ]]; then
+  echo "############################"
+  echo "# Running GolangCI-Lint... #"
+  echo "############################"
+  golangci-lint --version
+  echo
+  golangci-lint run ./...
+elif [[ "$1" == "test" ]]; then
+  echo "############################"
+  echo "# Running Go Test... #"
+  echo "############################"
+  go test ./...
+fi
