@@ -9,7 +9,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Lint
-        uses: ./.github/actions/golang-test lint
+        uses: ./.github/actions/golang-test
+        with:
+          args: lint
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -17,4 +19,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Test
-        uses: ./.github/actions/golang-test test
+        uses: ./.github/actions/golang-test
+        with:
+          args: test
