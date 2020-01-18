@@ -26,15 +26,16 @@ func NewNotification(u usecase.Notification) Notification {
 	}
 }
 
-// response : 通知系 API の共通レスポンス
-type response struct {
+// notificationResponse : Birthday用共通レスポンス
+// TODO: OK, Error 部分は共通レスポンスにする
+type notificationResponse struct {
 	OK    bool   `json:"ok"`
 	Error string `json:"error,omitempty"`
 }
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
-	res := response{
+	res := notificationResponse{
 		OK: true,
 	}
 
@@ -54,7 +55,7 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	res := response{
+	res := notificationResponse{
 		OK: true,
 	}
 
@@ -74,7 +75,7 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
 func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
-	res := response{
+	res := notificationResponse{
 		OK: true,
 	}
 

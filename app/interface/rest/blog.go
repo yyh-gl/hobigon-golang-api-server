@@ -29,11 +29,12 @@ func NewBlog(u usecase.Blog) Blog {
 	}
 }
 
+// blogResponse : Blog用共通レスポンス
 // TODO: OK, Error 部分は共通レスポンスにする
 type blogResponse struct {
-	OK    bool           `json:"ok"`
-	Error string         `json:"error,omitempty"`
-	Blog  model.BlogJSON `json:"blog,omitempty"`
+	OK    bool       `json:"ok"`
+	Error string     `json:"error,omitempty"`
+	Blog  model.Blog `json:"blog,omitempty"`
 }
 
 // Create : ブログ情報を新規作成
@@ -56,9 +57,9 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer func() { _ = r.Body.Close() }()
 
-	var newBlog *model.Blog
+	var createdBlog *model.Blog
 	if res.OK {
-		newBlog, err = b.u.Create(r.Context(), req["title"].(string))
+		createdBlog, err = b.u.Create(r.Context(), req["title"].(string))
 		if err != nil {
 			app.Logger.Println(fmt.Errorf("BlogUseCase.Create()でエラー: %w", err))
 
@@ -66,8 +67,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 			res.Error = err.Error()
 			w.WriteHeader(http.StatusInternalServerError)
 		} else {
-			// JSON 形式に変換
-			res.Blog = newBlog.JSONSerialize()
+			res.Blog = *createdBlog
 		}
 	}
 
@@ -104,8 +104,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	} else {
-		// JSON 形式に変換
-		res.Blog = blog.JSONSerialize()
+		res.Blog = *blog
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
@@ -139,8 +138,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	} else {
-		// JSON 形式に変換
-		res.Blog = blog.JSONSerialize()
+		res.Blog = *blog
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

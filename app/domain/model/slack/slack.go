@@ -7,7 +7,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
-// Slack : Slack 用のドメインモデル
+// Slack : Slackを表すドメインモデル
 // TODO: ドメインモデル貧血症を治す
 type Slack struct {
 	Username string

@@ -2,7 +2,7 @@ package ranking
 
 // TODO: ドメインモデル貧血症を治す
 
-// Ranking : アクセス情報の配列（=ランキング）構造体
+// Ranking : ランキングを表すドメインモデル
 type Ranking []Access
 
 // Len : AccessList の配列数を取得

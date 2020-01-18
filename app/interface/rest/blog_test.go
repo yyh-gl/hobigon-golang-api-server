@@ -7,9 +7,9 @@ import (
 )
 
 type blogResponse struct {
-	OK    bool          `json:"ok"`
-	Error string        `json:"error,omitempty"`
-	Blog  blog.BlogJSON `json:"blog,omitempty"`
+	OK    bool      `json:"ok"`
+	Error string    `json:"error,omitempty"`
+	Blog  blog.Blog `json:"blog,omitempty"`
 }
 
 func TestBlogHandler_Create(t *testing.T) {

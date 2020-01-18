@@ -25,7 +25,7 @@ type notification struct {
 	sg gateway.SlackGateway
 	r  repository.Birthday
 	ns service.Notification
-	rs service.RankingService
+	rs service.Ranking
 }
 
 // NewNotification : Notification用ユースケースを取得
@@ -34,7 +34,7 @@ func NewNotification(
 	sg gateway.SlackGateway,
 	r repository.Birthday,
 	ns service.Notification,
-	rs service.RankingService,
+	rs service.Ranking,
 ) Notification {
 	return &notification{
 		tg: tg,

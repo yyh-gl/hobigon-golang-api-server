@@ -27,6 +27,7 @@ func NewBirthday(bu usecase.Birthday) Birthday {
 	}
 }
 
+// birthdayResponse : Birthday用共通レスポンス
 // TODO: OK, Error 部分は共通レスポンスにする
 type birthdayResponse struct {
 	OK       bool           `json:"ok"`
@@ -76,8 +77,9 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 				res.OK = false
 				res.Error = err.Error()
 				w.WriteHeader(http.StatusInternalServerError)
+			} else {
+				res.Birthday = *createdBirthday
 			}
-			res.Birthday = *createdBirthday
 		}
 	}
 
