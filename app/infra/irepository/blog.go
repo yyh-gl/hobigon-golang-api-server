@@ -21,10 +21,6 @@ func NewBlog(db *db.DB) repository.Blog {
 	}
 }
 
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
-
 // Create : ブログ情報を新規作成
 func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
@@ -42,10 +38,6 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 	return createdBlog, nil
 }
 
-//////////////////////////////////////////////////
-// SelectByTitle
-//////////////////////////////////////////////////
-
 // SelectByTitle : タイトルからブログ情報を1件取得
 func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, error) {
 	blogDTO := imodel.BlogDTO{}
@@ -57,10 +49,6 @@ func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, err
 	blog := blogDTO.ConvertToDomainModel(ctx)
 	return blog, nil
 }
-
-//////////////////////////////////////////////////
-// Update
-//////////////////////////////////////////////////
 
 // Update : ブログ情報を1件更新
 func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {

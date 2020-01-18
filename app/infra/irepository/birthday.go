@@ -21,10 +21,6 @@ func NewBirthday(db *db.DB) repository.Birthday {
 	}
 }
 
-//////////////////////////////////////////////////
-// Create
-//////////////////////////////////////////////////
-
 // Create : 誕生日データを新規作成
 func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
 	// Birthday モデル を DTO に変換
@@ -47,10 +43,6 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 	}
 	return createdBirthday, nil
 }
-
-//////////////////////////////////////////////////
-// SelectByDate
-//////////////////////////////////////////////////
 
 // SelectByDate : 日付から誕生日を1件取得
 func (b birthday) SelectByDate(ctx context.Context, date string) (*model.Birthday, error) {
