@@ -1,9 +1,12 @@
 package rest_test
 
 import (
+	"encoding/json"
 	"testing"
 
+	"github.com/bmizerany/assert"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 
 type blogResponse struct {
@@ -12,42 +15,56 @@ type blogResponse struct {
 	Blog  blog.Blog `json:"blog,omitempty"`
 }
 
-func TestBlogHandler_Create(t *testing.T) {
-	//test.ResetTable(test.BlogTable)
+func createBlog(c *test.Client, title string) {
+	body := `
+{
+  "title": "` + title + `"
+}
+`
+	_ = c.Post(c.DIContainer.HandlerBlog.Create, "/api/v1/blogs", body)
+}
 
-	//type params struct {
-	//	Title string `json:"title"`
-	//}
-	//
-	//testCases := []struct {
-	//	title string
-	//	want  string
-	//	err   error
-	//}{
-	//	{ // 正常系
-	//		title: "sample-blog-title",
-	//		want:  "sample-blog-title",
-	//		err:   nil,
-	//	},
-	//	//{ // 異常系：タイトルを渡さない
-	//	//	title: "",
-	//	//	want:  "",
-	//	//	err:   errors.New("unexpected end of JSON input"),
-	//	//},
-	//}
-	//
-	//url := "http://localhost:3000/api/v1/blogs"
-	//for _, tc := range testCases {
-	//	p := params{Title: tc.title}
-	//	resp := test.Post(url, p)
-	//	res := new(blogResponse)
-	//	_ = json.Unmarshal(resp, &res)
-	//
-	//	assert.Equal(t, tc.want, res.Blog.Title)
-	//	if res.Error != "" {
-	//		assert.Equal(t, tc.err.Error(), res.Error)
-	//	}
-	//}
+func TestBlogHandler_Create(t *testing.T) {
+	c := test.NewClient()
+	defer func() { _ = c.DIContainer.DB.Close() }()
+
+	testCases := []struct {
+		title string
+		want  string
+		err   string
+	}{
+		{ // 正常系
+			title: "sample-blog-title",
+			want:  "sample-blog-title",
+			err:   "",
+		},
+		{ // 異常系：タイトルを渡さない
+			title: "",
+			want:  "",
+			err:   "バリデーションエラー：タイトルは必須です",
+		},
+		{ // 異常系：duplicate
+			title: "duplicate-blog-title",
+			want:  "",
+			err:   "blogRepository.Create()内でのエラー: gorm.Create(blog)内でのエラー: UNIQUE constraint failed: blog_posts.title",
+		},
+	}
+
+	// 重複データ登録時に使用するテストデータを追加
+	createBlog(c, "duplicate-blog-title")
+
+	for _, tc := range testCases {
+		body := `{
+  "title": "` + tc.title + `"
+}`
+
+		rec := c.Post(c.DIContainer.HandlerBlog.Create, "/api/v1/blogs", body)
+		resp := new(blogResponse)
+		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
+
+		assert.Equal(t, tc.want, resp.Blog.Title())
+		assert.Equal(t, tc.err, resp.Error)
+	}
 }
 
 func TestBlogHandler_Show(t *testing.T) {
