@@ -8,6 +8,7 @@ require (
 	github.com/google/wire v0.4.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/julienschmidt/httprouter v1.3.0
+	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/parnurzeal/gorequest v0.2.16 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/urfave/cli v1.22.2
