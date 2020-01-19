@@ -39,6 +39,7 @@ type blogResponse struct {
 
 // Create : ブログ情報を新規作成
 func (b blog) Create(w http.ResponseWriter, r *http.Request) {
+	// TODO: validator 導入
 	type request struct {
 		Title string `json:"title"`
 	}
@@ -56,6 +57,12 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	defer func() { _ = r.Body.Close() }()
+
+	// TODO: DBの制約にも追加
+	if req["title"] == "" {
+		res.OK = false
+		res.Error = "バリデーションエラー：タイトルは必須です"
+	}
 
 	var createdBlog *model.Blog
 	if res.OK {
