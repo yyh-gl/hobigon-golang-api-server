@@ -13,7 +13,7 @@ import (
 
 // Client : REST Handlerのテストに関する機能を提供するインターフェース
 type Client struct {
-	app         *httprouter.Router
+	router      *httprouter.Router
 	DIContainer *di.ContainerAPI
 }
 
@@ -29,31 +29,32 @@ func NewClient() *Client {
 	r := httprouter.New()
 
 	return &Client{
-		app:         r,
+		router:      r,
 		DIContainer: diContainer,
 	}
 }
 
-func (c Client) Get(handler func(http.ResponseWriter, *http.Request), path string) *httptest.ResponseRecorder {
-	router := httprouter.New()
-	router.HandlerFunc(http.MethodGet, path, handler)
+func (c *Client) AddRoute(method string, path string, handler func(http.ResponseWriter, *http.Request)) {
+	handle, _, _ := c.router.Lookup(method, path)
+	if handle == nil {
+		c.router.HandlerFunc(method, path, handler)
+	}
+}
 
+func (c Client) Get(handler func(http.ResponseWriter, *http.Request), path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(http.MethodGet, path, nil)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	req.Header.Add("Accept", "application/json")
 	rec := httptest.NewRecorder()
-	router.ServeHTTP(rec, req)
+	c.router.ServeHTTP(rec, req)
 	return rec
 }
 
-func (c Client) Post(handler func(http.ResponseWriter, *http.Request), path string, json string) *httptest.ResponseRecorder {
-	router := httprouter.New()
-	router.HandlerFunc(http.MethodPost, path, handler)
-
-	req, _ := http.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte(json)))
+func (c Client) Post(path string, body string) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte(body)))
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	req.Header.Add("Accept", "application/json")
 	rec := httptest.NewRecorder()
-	router.ServeHTTP(rec, req)
+	c.router.ServeHTTP(rec, req)
 	return rec
 }
