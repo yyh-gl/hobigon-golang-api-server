@@ -34,6 +34,7 @@ func NewClient() *Client {
 	}
 }
 
+// TODO: ルーティング設定に関する処理を関数化して、メイン処理とテストで共有する
 func (c *Client) AddRoute(method string, path string, handler func(http.ResponseWriter, *http.Request)) {
 	handle, _, _ := c.router.Lookup(method, path)
 	if handle == nil {
