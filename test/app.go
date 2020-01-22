@@ -42,7 +42,7 @@ func (c *Client) AddRoute(method string, path string, handler func(http.Response
 	}
 }
 
-func (c Client) Get(handler func(http.ResponseWriter, *http.Request), path string) *httptest.ResponseRecorder {
+func (c Client) Get(path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(http.MethodGet, path, nil)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	req.Header.Add("Accept", "application/json")
