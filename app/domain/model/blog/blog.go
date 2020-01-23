@@ -13,7 +13,7 @@ type Blog struct {
 type fields struct {
 	ID        uint       `json:"id"`
 	Title     string     `json:"title"`
-	Count     *int       `json:"count"`
+	Count     *int       `json:"count"` // TODO: ポインタをやめて、値オブジェクトでデフォルト値を入れるようにする
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
