@@ -58,7 +58,7 @@ func TestBlogHandler_Create(t *testing.T) {
 
 	for _, tc := range testCases {
 		body := `{
-  "title": "` + tc.title + `"
+ "title": "` + tc.title + `"
 }`
 		rec := c.Post("/api/v1/blogs", body)
 		resp := new(blogResponse)
@@ -85,6 +85,11 @@ func TestBlogHandler_Show(t *testing.T) {
 			want:  "sample-blog-title",
 			err:   "",
 		},
+		{ // 正常系：存在しないブログ
+			title: "sample-blog-title2",
+			want:  "",
+			err:   "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+		},
 		{ // 異常系：タイトルを渡さない
 			title: "",
 			want:  "",
@@ -96,7 +101,7 @@ func TestBlogHandler_Show(t *testing.T) {
 	createBlog(c, "sample-blog-title")
 
 	for _, tc := range testCases {
-		rec := c.Get(c.DIContainer.HandlerBlog.Show, "/api/v1/blogs/"+tc.title)
+		rec := c.Get("/api/v1/blogs/" + tc.title)
 		resp := new(blogResponse)
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
@@ -106,43 +111,49 @@ func TestBlogHandler_Show(t *testing.T) {
 }
 
 func TestBlogHandler_Like(t *testing.T) {
-	//testCases := []struct {
-	//	title string
-	//	want  string
-	//	err   error
-	//}{
-	//	{ // 正常系
-	//		title: "sample-blog-title",
-	//		want:  "sample-blog-title",
-	//		err:   nil,
-	//	},
-	//	{ // 正常系：存在しないタイトル
-	//		title: "no-exist-sample-blog-title",
-	//		want:  "",
-	//		// TODO: record not found にする
-	//		err: errors.New("blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found"),
-	//	},
-	//}
-	//for _, tc := range testCases {
-	//	url := fmt.Sprintf("http://localhost:3000/api/v1/blogs/%s", tc.title)
-	//	resp, _ := http.Get(url)
-	//	defer resp.Body.Close()
-	//	byteArray, _ := ioutil.ReadAll(resp.Body)
-	//
-	//	before := new(blogResponse)
-	//	_ = json.Unmarshal(byteArray, &before)
-	//
-	//	url = fmt.Sprintf("http://localhost:3000/api/v1/blogs/%s/like", tc.title)
-	//	resp, _ = http.Get(url)
-	//	defer resp.Body.Close()
-	//	byteArray, _ = ioutil.ReadAll(resp.Body)
-	//
-	//	after := new(blogResponse)
-	//	_ = json.Unmarshal(byteArray, &after)
-	//
-	//	assert.Equal(t, before.Blog.Count, *after.Blog.Count+1)
-	//	if after.Error != "" {
-	//		assert.Equal(t, tc.err.Error(), after.Error)
-	//	}
-	//}
+	c := test.NewClient()
+	defer func() { _ = c.DIContainer.DB.Close() }()
+
+	c.AddRoute(http.MethodPost, "/api/v1/blogs/:title/like", c.DIContainer.HandlerBlog.Like)
+
+	testCases := []struct {
+		title     string
+		wantTitle string
+		wantCount int
+		err       string
+	}{
+		{ // 正常系
+			title:     "sample-blog-title",
+			wantTitle: "sample-blog-title",
+			wantCount: 1,
+			err:       "",
+		},
+		{ // 正常系：存在しないブログ
+			title:     "sample-blog-title2",
+			wantTitle: "",
+			wantCount: 0,
+			err:       "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+		},
+		{ // 異常系：タイトルを渡さない
+			title:     "",
+			wantTitle: "",
+			wantCount: 0,
+			err:       "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+		},
+	}
+
+	// テストデータを追加
+	createBlog(c, "sample-blog-title")
+
+	for _, tc := range testCases {
+		rec := c.Post("/api/v1/blogs/"+tc.title+"/like", "")
+		resp := new(blogResponse)
+		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
+
+		assert.Equal(t, tc.wantTitle, resp.Blog.Title())
+		if tc.wantCount != 0 {
+			assert.Equal(t, tc.wantCount, *resp.Blog.Count())
+		}
+		assert.Equal(t, tc.err, resp.Error)
+	}
 }
