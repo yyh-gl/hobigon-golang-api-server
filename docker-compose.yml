@@ -9,7 +9,7 @@ services:
     volumes:
       - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
     working_dir: "/go/src/github.com/yyh-gl/hobigon-golang-api-server"
-    command: ["sh", "-c", "air"]
+    command: ["sh", "-c", "realize start --run"]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"
