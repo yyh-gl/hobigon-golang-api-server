@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
@@ -44,7 +45,10 @@ func (b blog) Create(ctx context.Context, title string) (*model.Blog, error) {
 func (b blog) Show(ctx context.Context, title string) (*model.Blog, error) {
 	blog, err := b.r.SelectByTitle(ctx, title)
 	if err != nil {
-		return nil, errors.Wrap(err, "blogRepository.SelectByTitle()内でのエラー")
+		if errors.Is(err, repository.ErrRecordNotFound) {
+			return nil, ErrBlogNotFound
+		}
+		return nil, fmt.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
 	}
 	return blog, nil
 }
@@ -53,12 +57,10 @@ func (b blog) Show(ctx context.Context, title string) (*model.Blog, error) {
 func (b blog) Like(ctx context.Context, title string) (*model.Blog, error) {
 	blog, err := b.r.SelectByTitle(ctx, title)
 	if err != nil {
-		switch err.Error() {
-		case "record not found":
-			return nil, err
-		default:
-			return nil, errors.Wrap(err, "blogRepository.SelectByTitle()内でのエラー")
+		if errors.Is(err, repository.ErrRecordNotFound) {
+			return nil, ErrBlogNotFound
 		}
+		return nil, fmt.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
 	}
 
 	// Count をプラス1

@@ -14,5 +14,6 @@ require (
 	github.com/parnurzeal/gorequest v0.2.16 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/urfave/cli v1.22.2
+	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 	moul.io/http2curl v1.0.0 // indirect
 )

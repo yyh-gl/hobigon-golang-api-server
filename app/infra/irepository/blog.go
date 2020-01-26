@@ -2,8 +2,12 @@ package irepository
 
 import (
 	"context"
+	"fmt"
+
+	"github.com/jinzhu/gorm"
 
 	"github.com/pkg/errors"
+
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
@@ -31,7 +35,7 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 	err := b.db.Create(&blogDTO).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.Create(blog)内でのエラー")
+		return nil, fmt.Errorf("gorm.Create(blog)内でのエラー: %w", err)
 	}
 
 	createdBlog := blogDTO.ConvertToDomainModel(ctx)
@@ -43,10 +47,10 @@ func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, err
 	blogDTO := imodel.BlogDTO{}
 	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
-		if errors.Is(err, repository.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, repository.ErrRecordNotFound
 		}
-		return nil, errors.Wrap(err, "gorm.First(blog)内でのエラー")
+		return nil, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}
 
 	blog := blogDTO.ConvertToDomainModel(ctx)
@@ -64,7 +68,7 @@ func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 	err := b.db.Save(&blogDTO).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.Save(blog)内でのエラー")
+		return nil, fmt.Errorf("gorm.Save(blog)内でのエラー: %w", err)
 	}
 
 	updatedBlog := blogDTO.ConvertToDomainModel(ctx)

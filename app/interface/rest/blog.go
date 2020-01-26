@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -92,8 +91,8 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 		errInfo := fmt.Errorf("BlogUseCase.Show()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		if errors.Is(errInfo, usecase.ErrRecordNotFound) {
-			DoResponse(w, resp, http.StatusNotFound)
+		if errors.Is(err, usecase.ErrBlogNotFound) {
+			DoResponse(w, resp, http.StatusNoContent)
 			return
 		}
 
@@ -120,7 +119,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 
 		errRes.Error = errInfo.Error()
 
-		if errRes.Error == usecase.ErrRecordNotFound {
+		if errors.Is(err, usecase.ErrBlogNotFound) {
 			DoResponse(w, resp, http.StatusNoContent)
 			return
 		}
