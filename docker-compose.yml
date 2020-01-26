@@ -3,13 +3,13 @@ services:
   app:
     build:
       context: "."
-      dockerfile: "./docker/api/Dockerfile"
-      target: build
+      dockerfile: "./docker/api/Dockerfile.local"
     ports:
       - '3000:3000'
     volumes:
       - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
-    command: ["sh", "-c", "realize start --run"]
+    working_dir: "/go/src/github.com/yyh-gl/hobigon-golang-api-server"
+    command: ["sh", "-c", "air"]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"
@@ -24,10 +24,12 @@ services:
     depends_on:
       - db
   db:
-    image: mysql:8.0.17
+    image: mysql:8.0.19
     ports:
       - '13306:3306'
     volumes:
       - ./docker/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mysql
+    security_opt:
+      - seccomp:unconfined

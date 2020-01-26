@@ -1,0 +1,69 @@
+package cli
+
+import (
+	"context"
+
+	"github.com/urfave/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
+)
+
+// Notification : Notification用CLIサービスのインターフェース
+type Notification interface {
+	NotifyTodayTasksToSlack(c *cli.Context) error
+	NotifyTodayBirthdayToSlack(c *cli.Context) error
+	NotifyAccessRankingToSlack(c *cli.Context) error
+}
+
+type notification struct {
+	u usecase.Notification
+}
+
+// NewNotification : Notification用CLIサービスを取得
+func NewNotification(u usecase.Notification) Notification {
+	return &notification{
+		u: u,
+	}
+}
+
+// NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
+func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
+	logger := app.Logger
+
+	ctx := context.TODO()
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
+
+	if err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
+		logger.Println(err)
+		return err
+	}
+	return nil
+}
+
+// NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
+func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
+	logger := app.Logger
+
+	ctx := context.TODO()
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
+
+	if err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
+		logger.Println(err)
+		return err
+	}
+	return nil
+}
+
+// NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
+func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
+	logger := app.Logger
+
+	ctx := context.TODO()
+	ctx = context.WithValue(ctx, app.CLIContextKey, c)
+
+	if err := n.u.NotifyAccessRanking(ctx); err != nil {
+		logger.Println(err)
+		return err
+	}
+	return nil
+}

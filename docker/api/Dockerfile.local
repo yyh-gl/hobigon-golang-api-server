@@ -1,0 +1,8 @@
+FROM golang:1.13.6-alpine
+
+RUN apk add --no-cache ca-certificates git make gcc libc-dev
+
+RUN go get -u github.com/cosmtrek/air
+RUN go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+RUN go get -u github.com/google/wire/cmd/wire
+RUN go get -u github.com/tj/robo

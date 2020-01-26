@@ -10,12 +10,15 @@ go mod tidy
 go mod verify
 
 if [[ "$1" == "lint" ]]; then
-    echo "############################"
-    echo "# Running GolangCI-Lint... #"
-    echo "############################"
-    golangci-lint --version
-    echo
-    mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp && echo "mv ./cmd/api/wire_gen.go ./cmd/api/wire_gen.go.tmp"
-    golangci-lint run ./...
-    mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go && echo "mv ./cmd/api/wire_gen.go.tmp ./cmd/api/wire_gen.go"
+  echo "############################"
+  echo "# Running GolangCI-Lint... #"
+  echo "############################"
+  golangci-lint --version
+  echo
+  golangci-lint run ./...
+elif [[ "$1" == "test" ]]; then
+  echo "############################"
+  echo "# Running Go Test... #"
+  echo "############################"
+  go test ./...
 fi

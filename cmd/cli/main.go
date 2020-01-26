@@ -6,19 +6,16 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	myCLI "github.com/yyh-gl/hobigon-golang-api-server/handler/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/igateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/irepository"
-	"github.com/yyh-gl/hobigon-golang-api-server/infra/iservice"
-	"github.com/yyh-gl/hobigon-golang-api-server/usecase"
 )
 
 func main() {
-	// システム共通で使用するものを用意
-	//  -> logger, DB
-	app.Init(app.CLiLogFilename)
+	// 依存関係を定義
+	diContainer := initApp()
+	defer func() { _ = diContainer.DB.Close() }()
 
-	logger := app.Logger
+	// ロガー設定
+	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
+	app.Logger = diContainer.Logger
 
 	cliApp := cli.NewApp()
 
@@ -29,43 +26,31 @@ func main() {
 	// コマンドオプションを設定
 	cliApp.Flags = []cli.Flag{}
 
-	// 依存関係を定義
-	taskGateway := igateway.NewTaskGateway()
-	slackGateway := igateway.NewSlackGateway()
-
-	birthdayRepository := irepository.NewBirthdayRepository()
-
-	notificationService := iservice.NewNotificationService(slackGateway)
-	rankingService := iservice.NewRankingService()
-
-	notificationUseCase := usecase.NewNotificationUseCase(taskGateway, slackGateway, birthdayRepository, notificationService, rankingService)
-	notificationHandler := myCLI.NewNotificationHandler(notificationUseCase)
-
 	// コマンドを設定
 	cliApp.Commands = []cli.Command{
 		{
 			Name:    "notify-today-tasks",
 			Aliases: []string{"ntt"},
 			Usage:   "Notify the today's tasks to Slack",
-			Action:  notificationHandler.NotifyTodayTasksToSlack,
+			Action:  diContainer.HandlerNotification.NotifyTodayTasksToSlack,
 		},
 		{
 			Name:    "notify-today-birthday",
 			Aliases: []string{"ntb"},
 			Usage:   "Notify the today's birthday to Slack",
-			Action:  notificationHandler.NotifyTodayBirthdayToSlack,
+			Action:  diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
 		},
 		{
 			Name:    "notify-access-ranking",
 			Aliases: []string{"nar"},
 			Usage:   "Notify the access ranking to Slack",
-			Action:  notificationHandler.NotifyAccessRankingToSlack,
+			Action:  diContainer.HandlerNotification.NotifyAccessRankingToSlack,
 		},
 	}
 
-	logger.Print("[CLI-ExecuteLog] $ hobi " + os.Args[1])
+	app.Logger.Print("[CLI-ExecuteLog] $ hobi " + os.Args[1])
 
 	if err := cliApp.Run(os.Args); err != nil {
-		logger.Panic(errors.Wrap(err, "cliApp.Run()内でのエラー"))
+		app.Logger.Panic(errors.Wrap(err, "cliApp.Run()内でのエラー"))
 	}
 }
