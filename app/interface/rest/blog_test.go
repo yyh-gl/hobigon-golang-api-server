@@ -44,12 +44,12 @@ func TestBlogHandler_Create(t *testing.T) {
 		{ // 異常系：タイトルを渡さない
 			title: "",
 			want:  "",
-			err:   "バリデーションエラー：タイトルは必須です",
+			err:   "バリデーションエラー：titleは必須です",
 		},
 		{ // 異常系：duplicate
 			title: "duplicate-blog-title",
 			want:  "",
-			err:   "blogRepository.Create()内でのエラー: gorm.Create(blog)内でのエラー: UNIQUE constraint failed: blog_posts.title",
+			err:   "BlogUseCase.Create()でエラー: blogRepository.Create()内でのエラー: gorm.Create(blog)内でのエラー: UNIQUE constraint failed: blog_posts.title",
 		},
 	}
 
@@ -76,9 +76,10 @@ func TestBlogHandler_Show(t *testing.T) {
 	c.AddRoute(http.MethodGet, "/api/v1/blogs/:title", c.DIContainer.HandlerBlog.Show)
 
 	testCases := []struct {
-		title string
-		want  string
-		err   string
+		title          string
+		want           string
+		wantStatusCode int
+		err            string
 	}{
 		{ // 正常系
 			title: "sample-blog-title",
@@ -88,7 +89,7 @@ func TestBlogHandler_Show(t *testing.T) {
 		{ // 正常系：存在しないブログ
 			title: "sample-blog-title2",
 			want:  "",
-			err:   "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+			err:   "",
 		},
 		{ // 異常系：タイトルを渡さない
 			title: "",
@@ -132,13 +133,13 @@ func TestBlogHandler_Like(t *testing.T) {
 			title:     "sample-blog-title2",
 			wantTitle: "",
 			wantCount: 0,
-			err:       "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+			err:       "",
 		},
 		{ // 異常系：タイトルを渡さない
 			title:     "",
 			wantTitle: "",
 			wantCount: 0,
-			err:       "blogRepository.SelectByTitle()内でのエラー: gorm.First(blog)内でのエラー: record not found",
+			err:       "",
 		},
 	}
 
