@@ -1,13 +1,9 @@
 package rest
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
-	"github.com/go-playground/validator/v10"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -23,15 +19,13 @@ type Blog interface {
 }
 
 type blog struct {
-	usecase   usecase.Blog
-	validator *validator.Validate
+	usecase usecase.Blog
 }
 
 // NewBlog : Blog用REST Handlerを取得
-func NewBlog(u usecase.Blog, v *validator.Validate) Blog {
+func NewBlog(u usecase.Blog) Blog {
 	return &blog{
-		usecase:   u,
-		validator: v,
+		usecase: u,
 	}
 }
 
@@ -49,27 +43,8 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	errRes := errorResponse{}
 
 	req := request{}
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		errInfo := fmt.Errorf("ioutil.ReadAll()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusInternalServerError)
-		return
-	}
-
-	if err = json.Unmarshal(body, &req); err != nil {
-		errInfo := fmt.Errorf("json.Unmarshal()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusInternalServerError)
-		return
-	}
-
-	if err = b.validator.Struct(req); err != nil {
-		errInfo := fmt.Errorf("バリデーションエラー: %w", err)
+	if err := bindReqWithValidate(r, &req); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
 		errRes.Error = errInfo.Error()
