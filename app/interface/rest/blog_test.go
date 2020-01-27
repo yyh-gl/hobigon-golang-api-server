@@ -44,7 +44,7 @@ func TestBlogHandler_Create(t *testing.T) {
 		{ // 異常系：タイトルを渡さない
 			title: "",
 			want:  "",
-			err:   "バリデーションエラー：titleは必須です",
+			err:   "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'required' tag",
 		},
 		{ // 異常系：duplicate
 			title: "duplicate-blog-title",
