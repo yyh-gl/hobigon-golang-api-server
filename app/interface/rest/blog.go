@@ -1,9 +1,13 @@
 package rest
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -19,13 +23,15 @@ type Blog interface {
 }
 
 type blog struct {
-	u usecase.Blog
+	usecase   usecase.Blog
+	validator *validator.Validate
 }
 
 // NewBlog : Blog用REST Handlerを取得
-func NewBlog(u usecase.Blog) Blog {
+func NewBlog(u usecase.Blog, v *validator.Validate) Blog {
 	return &blog{
-		u: u,
+		usecase:   u,
+		validator: v,
 	}
 }
 
@@ -36,32 +42,42 @@ type blogResponse struct {
 
 // Create : ブログ情報を新規作成
 func (b blog) Create(w http.ResponseWriter, r *http.Request) {
-	// TODO: validator 導入
 	type request struct {
-		Title string `json:"title"`
+		Title string `json:"title" validate:"required"`
 	}
 
-	errRes := new(errorResponse)
+	errRes := errorResponse{}
 
-	req, err := decodeRequest(r, request{})
+	req := request{}
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		errInfo := fmt.Errorf("decodeRequest()でエラー: %w", err)
+		errInfo := fmt.Errorf("ioutil.ReadAll()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
 		errRes.Error = errInfo.Error()
 		DoResponse(w, errRes, http.StatusInternalServerError)
 		return
 	}
-	defer func() { _ = r.Body.Close() }()
 
-	// TODO: DBの制約にも追加
-	if req["title"] == "" {
-		errRes.Error = "バリデーションエラー：titleは必須です"
+	if err = json.Unmarshal(body, &req); err != nil {
+		errInfo := fmt.Errorf("json.Unmarshal()でエラー: %w", err)
+		app.Logger.Println(errInfo)
+
+		errRes.Error = errInfo.Error()
+		DoResponse(w, errRes, http.StatusInternalServerError)
+		return
+	}
+
+	if err = b.validator.Struct(req); err != nil {
+		errInfo := fmt.Errorf("バリデーションエラー: %w", err)
+		app.Logger.Println(errInfo)
+
+		errRes.Error = errInfo.Error()
 		DoResponse(w, errRes, http.StatusBadRequest)
 		return
 	}
 
-	blog, err := b.u.Create(r.Context(), req["title"].(string))
+	blog, err := b.usecase.Create(r.Context(), req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
@@ -86,7 +102,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 	resp := new(blogResponse)
 	errRes := new(errorResponse)
 
-	blog, err := b.u.Show(ctx, ps.ByName("title"))
+	blog, err := b.usecase.Show(ctx, ps.ByName("title"))
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Show()でエラー: %w", err)
 		app.Logger.Println(errInfo)
@@ -112,7 +128,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 
 	resp := new(blogResponse)
 	errRes := new(errorResponse)
-	blog, err := b.u.Like(ctx, ps.ByName("title"))
+	blog, err := b.usecase.Like(ctx, ps.ByName("title"))
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Like()でエラー: %w", err)
 		app.Logger.Println(errInfo)
