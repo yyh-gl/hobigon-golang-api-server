@@ -40,10 +40,10 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		Title string `json:"title" validate:"required"`
 	}
 
+	ctx := r.Context()
 	errRes := errorResponse{}
-
 	req := request{}
-	if err := bindReqWithValidate(r, &req); err != nil {
+	if err := bindReqWithValidate(ctx, &req, r); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
@@ -70,14 +70,24 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 // Show : ブログ情報を1件取得
 func (b blog) Show(w http.ResponseWriter, r *http.Request) {
+	type request struct {
+		Title string `validate:"required,max=50"`
+	}
+
 	ctx := r.Context()
-	// TODO: httprouterに依存することについて考える
-	ps := httprouter.ParamsFromContext(ctx)
+	errRes := errorResponse{}
+	req := request{}
+	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+		app.Logger.Println(errInfo)
 
-	resp := new(blogResponse)
-	errRes := new(errorResponse)
+		errRes.Error = errInfo.Error()
+		DoResponse(w, errRes, http.StatusBadRequest)
+		return
+	}
 
-	blog, err := b.usecase.Show(ctx, ps.ByName("title"))
+	resp := blogResponse{}
+	blog, err := b.usecase.Show(ctx, req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Show()でエラー: %w", err)
 		app.Logger.Println(errInfo)
