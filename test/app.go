@@ -17,6 +17,7 @@ type Client struct {
 	DIContainer *di.ContainerAPI
 }
 
+// NewClient : テスト用のクライアントを生成
 func NewClient() *Client {
 	// 依存関係を定義
 	diContainer := initTestApp()
@@ -34,6 +35,7 @@ func NewClient() *Client {
 	}
 }
 
+// AddRoute : テスト用ルーティングを追加
 // TODO: ルーティング設定に関する処理を関数化して、メイン処理とテストで共有する
 func (c *Client) AddRoute(method string, path string, handler func(http.ResponseWriter, *http.Request)) {
 	handle, _, _ := c.router.Lookup(method, path)
@@ -42,6 +44,7 @@ func (c *Client) AddRoute(method string, path string, handler func(http.Response
 	}
 }
 
+// Get : テスト用Getリクエスト
 func (c Client) Get(path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(http.MethodGet, path, nil)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
@@ -51,6 +54,7 @@ func (c Client) Get(path string) *httptest.ResponseRecorder {
 	return rec
 }
 
+// Post : テスト用Postリクエスト
 func (c Client) Post(path string, body string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(http.MethodPost, path, bytes.NewBuffer([]byte(body)))
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
