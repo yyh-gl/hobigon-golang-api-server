@@ -6,7 +6,7 @@ RUN apk add --no-cache ca-certificates git make gcc libc-dev
 
 COPY . .
 
-RUN robo api-build-local
+RUN robo api-build-prod
 
 FROM alpine AS app
 
