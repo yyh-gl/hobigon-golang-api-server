@@ -17,7 +17,7 @@ if [[ "$1" == "lint" ]]; then
   echo "############################"
   golangci-lint --version
   echo
-  golangci-lint run ./...
+  golangci-lint run --timeout 5m0s ./...
 elif [[ "$1" == "test" ]]; then
   echo "############################"
   echo "# Running Go Test... #"
