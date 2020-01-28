@@ -51,7 +51,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	blog, err := b.usecase.Create(r.Context(), req.Title)
+	blog, err := b.usecase.Create(ctx, req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
