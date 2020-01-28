@@ -27,3 +27,4 @@
   - Birthday, Blog については完了
 - 構造体初期化方法を下記方法で統一
   - `h := hoge{}`
+- `github.com/pkg/errors` パッケージを削除して標準パッケージの `errors` のみを使うようにする
