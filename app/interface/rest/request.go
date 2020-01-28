@@ -13,7 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// !! deprecate !1
+// !! deprecate !!
 // decodeRequest : リクエストボディの内容を構造体にマッピング
 func decodeRequest(r *http.Request, req interface{}) (map[string]interface{}, error) {
 	body, err := ioutil.ReadAll(r.Body)
