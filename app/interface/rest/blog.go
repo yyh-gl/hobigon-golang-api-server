@@ -37,7 +37,7 @@ type blogResponse struct {
 // Create : ブログ情報を新規作成
 func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		Title string `json:"title" validate:"required"`
+		Title string `json:"title" validate:"required,max=50"`
 	}
 
 	ctx := r.Context()
