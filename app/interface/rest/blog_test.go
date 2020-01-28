@@ -151,10 +151,23 @@ func TestBlogHandler_Like(t *testing.T) {
 			wantCount: 0,
 			err:       "",
 		},
+		{ // 正常系：50文字タイトル
+			title:     "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			wantTitle: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			wantCount: 1,
+			err:       "",
+		},
+		{ // 異常系：51文字タイトル
+			title:     "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
+			wantTitle: "",
+			wantCount: 0,
+			err:       "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
+		},
 	}
 
 	// テストデータを追加
 	createBlog(c, "sample-blog-title")
+	createBlog(c, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
 
 	for _, tc := range testCases {
 		rec := c.Post("/api/v1/blogs/"+tc.title+"/like", "")

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -41,8 +40,8 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	errRes := errorResponse{}
 	req := request{}
+	errRes := errorResponse{}
 	if err := bindReqWithValidate(ctx, &req, r); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
@@ -75,8 +74,8 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	errRes := errorResponse{}
 	req := request{}
+	errRes := errorResponse{}
 	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
@@ -108,12 +107,24 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 
 // Like : 指定ブログにいいねをプラス1
 func (b blog) Like(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	ps := httprouter.ParamsFromContext(ctx)
+	type request struct {
+		Title string `validate:"required,max=50"`
+	}
 
-	resp := new(blogResponse)
-	errRes := new(errorResponse)
-	blog, err := b.usecase.Like(ctx, ps.ByName("title"))
+	ctx := r.Context()
+	req := request{}
+	errRes := errorResponse{}
+	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+		app.Logger.Println(errInfo)
+
+		errRes.Error = errInfo.Error()
+		DoResponse(w, errRes, http.StatusBadRequest)
+		return
+	}
+
+	resp := blogResponse{}
+	blog, err := b.usecase.Like(ctx, req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Like()でエラー: %w", err)
 		app.Logger.Println(errInfo)
