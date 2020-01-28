@@ -3,7 +3,7 @@
 //go:generate wire
 //+build !wireinject
 
-package test
+package main
 
 import (
 	"github.com/google/wire"
@@ -20,7 +20,7 @@ import (
 
 // Injectors from wire.go:
 
-func initTestApp() *di.ContainerAPI {
+func initApp() *di.ContainerAPI {
 	gormDB := db.NewDB()
 	blog := irepository.NewBlog(gormDB)
 	slack := igateway.NewSlack()
@@ -47,4 +47,4 @@ func initTestApp() *di.ContainerAPI {
 
 // wire.go:
 
-var testAppSet = wire.NewSet(app.APISet, infra.APISet, usecase.APISet, rest.WireSet)
+var appSet = wire.NewSet(app.APISet, infra.APISet, usecase.APISet, rest.WireSet)

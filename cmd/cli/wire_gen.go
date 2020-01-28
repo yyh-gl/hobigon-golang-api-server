@@ -3,7 +3,7 @@
 //go:generate wire
 //+build !wireinject
 
-package test
+package main
 
 import (
 	"github.com/google/wire"
@@ -13,38 +13,31 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/igateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/irepository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
 )
 
 // Injectors from wire.go:
 
-func initTestApp() *di.ContainerAPI {
-	gormDB := db.NewDB()
-	blog := irepository.NewBlog(gormDB)
-	slack := igateway.NewSlack()
-	usecaseBlog := usecase.NewBlog(blog, slack)
-	restBlog := rest.NewBlog(usecaseBlog)
-	birthday := irepository.NewBirthday(gormDB)
-	usecaseBirthday := usecase.NewBirthday(birthday)
-	restBirthday := rest.NewBirthday(usecaseBirthday)
+func initApp() *di.ContainerCLI {
 	task := igateway.NewTask()
+	slack := igateway.NewSlack()
+	gormDB := db.NewDB()
+	birthday := irepository.NewBirthday(gormDB)
 	notification := iservice.NewNotification(slack)
 	ranking := iservice.NewRanking()
 	usecaseNotification := usecase.NewNotification(task, slack, birthday, notification, ranking)
-	restNotification := rest.NewNotification(usecaseNotification)
-	logger := app.NewAPILogger()
-	containerAPI := &di.ContainerAPI{
-		HandlerBlog:         restBlog,
-		HandlerBirthday:     restBirthday,
-		HandlerNotification: restNotification,
+	cliNotification := cli.NewNotification(usecaseNotification)
+	logger := app.NewCLILogger()
+	containerCLI := &di.ContainerCLI{
+		HandlerNotification: cliNotification,
 		DB:                  gormDB,
 		Logger:              logger,
 	}
-	return containerAPI
+	return containerCLI
 }
 
 // wire.go:
 
-var testAppSet = wire.NewSet(app.APISet, infra.APISet, usecase.APISet, rest.WireSet)
+var appSet = wire.NewSet(app.CLISet, infra.CLISet, usecase.CLISet, cli.WireSet)

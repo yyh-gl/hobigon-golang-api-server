@@ -1,3 +1,5 @@
+// +build wireinject
+
 package test
 
 import (
@@ -9,17 +11,17 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
 )
 
-var appSet = wire.NewSet(
+var testAppSet = wire.NewSet(
 	app.APISet,
 	infra.APISet,
 	usecase.APISet,
 	rest.WireSet,
 )
 
-func initApp() *di.ContainerAPI {
+func initTestApp() *di.ContainerAPI {
 	wire.Build(
 		wire.Struct(new(di.ContainerAPI), "*"),
-		appSet,
+		testAppSet,
 	)
 	return nil
 }
