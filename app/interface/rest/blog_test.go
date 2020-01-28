@@ -41,6 +41,16 @@ func TestBlogHandler_Create(t *testing.T) {
 			want:  "sample-blog-title",
 			err:   "",
 		},
+		{ // 正常系：50文字タイトル
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			want:  "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			err:   "",
+		},
+		{ // 異常系：51文字タイトル
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
+			want:  "",
+			err:   "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
+		},
 		{ // 異常系：タイトルを渡さない
 			title: "",
 			want:  "",
@@ -61,7 +71,7 @@ func TestBlogHandler_Create(t *testing.T) {
  "title": "` + tc.title + `"
 }`
 		rec := c.Post("/api/v1/blogs", body)
-		resp := new(blogResponse)
+		resp := blogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
 		assert.Equal(t, tc.want, resp.Blog.Title())
@@ -91,19 +101,25 @@ func TestBlogHandler_Show(t *testing.T) {
 			want:  "",
 			err:   "",
 		},
-		{ // 異常系：タイトルを渡さない
-			title: "",
-			want:  "",
+		{ // 正常系：50文字タイトル
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			want:  "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
 			err:   "",
+		},
+		{ // 異常系：51文字タイトル
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
+			want:  "",
+			err:   "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
 		},
 	}
 
 	// テストデータを追加
 	createBlog(c, "sample-blog-title")
+	createBlog(c, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
 
 	for _, tc := range testCases {
 		rec := c.Get("/api/v1/blogs/" + tc.title)
-		resp := new(blogResponse)
+		resp := blogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
 		assert.Equal(t, tc.want, resp.Blog.Title())
@@ -135,12 +151,6 @@ func TestBlogHandler_Like(t *testing.T) {
 			wantCount: 0,
 			err:       "",
 		},
-		{ // 異常系：タイトルを渡さない
-			title:     "",
-			wantTitle: "",
-			wantCount: 0,
-			err:       "",
-		},
 	}
 
 	// テストデータを追加
@@ -148,7 +158,7 @@ func TestBlogHandler_Like(t *testing.T) {
 
 	for _, tc := range testCases {
 		rec := c.Post("/api/v1/blogs/"+tc.title+"/like", "")
-		resp := new(blogResponse)
+		resp := blogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
 		assert.Equal(t, tc.wantTitle, resp.Blog.Title())
