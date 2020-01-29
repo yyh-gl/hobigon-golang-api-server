@@ -6,9 +6,7 @@ import (
 )
 
 // WishList : Amazon の欲しい物リストを表す値オブジェクト
-type WishList struct {
-	value string
-}
+type WishList string
 
 // NewWishList : WishList を生成
 func NewWishList(val string) (*WishList, error) {
@@ -17,15 +15,16 @@ func NewWishList(val string) (*WishList, error) {
 		return nil, errors.New("バリデーションエラー：【Birthday】WishList が \"https://\" から始まっていません")
 	}
 
-	return &WishList{value: val}, nil
+	wl := WishList(val)
+	return &wl, nil
 }
 
 // String : WishList の値を文字列として返却
 func (wl WishList) String() string {
-	return wl.value
+	return string(wl)
 }
 
 // IsNull : WishList の値が Null かどうか判定
 func (wl WishList) IsNull() bool {
-	return wl.value == ""
+	return wl == ""
 }
