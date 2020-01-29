@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -30,63 +29,41 @@ func NewBirthday(bu usecase.Birthday) Birthday {
 // birthdayResponse : Birthday用共通レスポンス
 // TODO: OK, Error 部分は共通レスポンスにする
 type birthdayResponse struct {
-	OK       bool           `json:"ok"`
-	Error    string         `json:"error,omitempty"`
-	Birthday model.Birthday `json:"birthday,omitempty"`
+	Birthday *model.Birthday `json:"birthday,omitempty"`
 }
 
 // Create : 誕生日データを新規作成
 func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		Name     string    `json:"name"`
-		Date     time.Time `json:"date"`
-		WishList string    `json:"wish_list"`
+		Name     string    `json:"name" validate:"required,max=30"`
+		Date     time.Time `json:"date" validate:"required"`
+		WishList string    `json:"wish_list" validate:"required,url"`
 	}
 
-	res := birthdayResponse{
-		OK: true,
-	}
+	ctx := r.Context()
+	req := request{}
+	errRes := errorResponse{}
+	if err := bindReqWithValidate(ctx, &req, r); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+		app.Logger.Println(errInfo)
 
-	req, err := decodeRequest(r, request{})
-	if err != nil {
-		app.Logger.Println(fmt.Errorf("decodeRequest()でエラー: %w", err))
-
-		res.OK = false
-		res.Error = err.Error()
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	defer func() { _ = r.Body.Close() }()
-
-	if res.OK {
-		// リクエストパラメータ内の date を time.Time 型に変換
-		// TODO: フォーマット部分を定数化
-		date, err := time.Parse("2006-01-02T15:04:05.000000Z", req["date"].(string))
-		if err != nil {
-			app.Logger.Println(fmt.Errorf("time.Parse()内でエラー: %w", err))
-
-			res.OK = false
-			res.Error = err.Error()
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-
-		if res.OK {
-			createdBirthday, err := b.bu.Create(r.Context(), req["name"].(string), date, req["wish_list"].(string))
-			if err != nil {
-				app.Logger.Println(fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err))
-
-				res.OK = false
-				res.Error = err.Error()
-				w.WriteHeader(http.StatusInternalServerError)
-			} else {
-				res.Birthday = *createdBirthday
-			}
-		}
-	}
-
-	err = json.NewEncoder(w).Encode(res)
-	if err != nil {
-		app.Logger.Println(fmt.Errorf("json.NewEncoder().Encode()でエラー: %w", err))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		errRes.Error = errInfo.Error()
+		DoResponse(w, errRes, http.StatusBadRequest)
 		return
 	}
+
+	birthday, err := b.bu.Create(ctx, req.Name, req.Date, req.WishList)
+	if err != nil {
+		errInfo := fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err)
+		app.Logger.Println(errInfo)
+
+		errRes.Error = errInfo.Error()
+		DoResponse(w, errRes, http.StatusInternalServerError)
+		return
+	}
+
+	resp := birthdayResponse{
+		Birthday: birthday,
+	}
+	DoResponse(w, resp, http.StatusCreated)
 }
