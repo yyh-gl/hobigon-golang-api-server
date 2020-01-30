@@ -12,7 +12,7 @@ type WishList string
 func NewWishList(val string) (*WishList, error) {
 	// WishList が空じゃない場合は "https://" で始まっていることをチェック
 	if val != "" && !strings.HasPrefix(val, "https://") {
-		return nil, errors.New("バリデーションエラー：【Birthday】WishList が \"https://\" から始まっていません")
+		return nil, errors.New("バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません")
 	}
 
 	wl := WishList(val)
