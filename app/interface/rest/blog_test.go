@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
-
 	"github.com/bmizerany/assert"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 
