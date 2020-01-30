@@ -1,18 +1,27 @@
 package birthday
 
 import (
+	"errors"
 	"time"
 )
 
-// time.Time のレイアウト
-const layout = "0102"
+const (
+	// 日付（文字列）の長さ
+	lengthDate = 4
+	// time.Time→文字列のレイアウト
+	layout = "0102"
+)
 
 // Date : 誕生日に関する日付を表す値オブジェクト
 type Date string
 
 // NewDate : Date を生成
-func NewDate(val time.Time) (*Date, error) {
-	d := Date(val.Format(layout))
+func NewDate(val string) (*Date, error) {
+	if len(val) != lengthDate {
+		return nil, errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")
+	}
+
+	d := Date(val)
 	return &d, nil
 }
 
