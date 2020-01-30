@@ -10,7 +10,7 @@ import (
 
 // Response : REST API 用の共通エラーレスポンス
 type errorResponse struct {
-	Error string `json:"error"`
+	Error string `json:"error,omitempty"`
 }
 
 // DoResponse : JSON形式でレスポンスを返す

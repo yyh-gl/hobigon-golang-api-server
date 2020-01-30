@@ -28,9 +28,10 @@ func NewBlog(u usecase.Blog) Blog {
 	}
 }
 
-// blogResponse : Blog用共通レスポンス
-type blogResponse struct {
+// BlogResponse : Blog用共通レスポンス
+type BlogResponse struct {
 	Blog *model.Blog `json:"blog,omitempty"`
+	errorResponse
 }
 
 // Create : ブログ情報を新規作成
@@ -41,13 +42,13 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	req := request{}
-	errRes := errorResponse{}
+	resp := BlogResponse{}
 	if err := bindReqWithValidate(ctx, &req, r); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusBadRequest)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusBadRequest)
 		return
 	}
 
@@ -56,14 +57,12 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		errInfo := fmt.Errorf("BlogUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusInternalServerError)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
+	resp.Blog = blog
 
-	resp := blogResponse{
-		Blog: blog,
-	}
 	DoResponse(w, resp, http.StatusCreated)
 }
 
@@ -75,17 +74,16 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	req := request{}
-	errRes := errorResponse{}
+	resp := BlogResponse{}
 	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusBadRequest)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusBadRequest)
 		return
 	}
 
-	resp := blogResponse{}
 	blog, err := b.usecase.Show(ctx, req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Show()でエラー: %w", err)
@@ -96,8 +94,8 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusInternalServerError)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
 
@@ -113,30 +111,29 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	req := request{}
-	errRes := errorResponse{}
+	resp := BlogResponse{}
 	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusBadRequest)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusBadRequest)
 		return
 	}
 
-	resp := blogResponse{}
 	blog, err := b.usecase.Like(ctx, req.Title)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Like()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
+		resp.Error = errInfo.Error()
 
 		if errors.Is(err, usecase.ErrBlogNotFound) {
 			DoResponse(w, resp, http.StatusNoContent)
 			return
 		}
 
-		DoResponse(w, errRes, http.StatusInternalServerError)
+		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
 

@@ -5,16 +5,11 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
+
 	"github.com/bmizerany/assert"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
-
-type blogResponse struct {
-	OK    bool      `json:"ok"`
-	Error string    `json:"error,omitempty"`
-	Blog  blog.Blog `json:"blog,omitempty"`
-}
 
 func createBlog(c *test.Client, title string) {
 	c.AddRoute(http.MethodPost, "/api/v1/blogs", c.DIContainer.HandlerBlog.Create)
@@ -71,11 +66,14 @@ func TestBlogHandler_Create(t *testing.T) {
  "title": "` + tc.title + `"
 }`
 		rec := c.Post("/api/v1/blogs", body)
-		resp := blogResponse{}
+		resp := rest.BlogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
-		assert.Equal(t, tc.want, resp.Blog.Title())
-		assert.Equal(t, tc.err, resp.Error)
+		if tc.err == "" {
+			assert.Equal(t, tc.want, resp.Blog.Title())
+		} else {
+			assert.Equal(t, tc.err, resp.Error)
+		}
 	}
 }
 
@@ -86,10 +84,9 @@ func TestBlogHandler_Show(t *testing.T) {
 	c.AddRoute(http.MethodGet, "/api/v1/blogs/:title", c.DIContainer.HandlerBlog.Show)
 
 	testCases := []struct {
-		title          string
-		want           string
-		wantStatusCode int
-		err            string
+		title string
+		want  string
+		err   string
 	}{
 		{ // 正常系
 			title: "sample-blog-title",
@@ -119,11 +116,14 @@ func TestBlogHandler_Show(t *testing.T) {
 
 	for _, tc := range testCases {
 		rec := c.Get("/api/v1/blogs/" + tc.title)
-		resp := blogResponse{}
+		resp := rest.BlogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
-		assert.Equal(t, tc.want, resp.Blog.Title())
-		assert.Equal(t, tc.err, resp.Error)
+		if tc.err == "" && tc.want != "" {
+			assert.Equal(t, tc.want, resp.Blog.Title())
+		} else {
+			assert.Equal(t, tc.err, resp.Error)
+		}
 	}
 }
 
@@ -171,13 +171,18 @@ func TestBlogHandler_Like(t *testing.T) {
 
 	for _, tc := range testCases {
 		rec := c.Post("/api/v1/blogs/"+tc.title+"/like", "")
-		resp := blogResponse{}
+		resp := rest.BlogResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
-		assert.Equal(t, tc.wantTitle, resp.Blog.Title())
-		if tc.wantCount != 0 {
-			assert.Equal(t, tc.wantCount, *resp.Blog.Count())
+		if tc.err == "" {
+			if tc.wantTitle != "" {
+				assert.Equal(t, tc.wantTitle, resp.Blog.Title())
+			}
+			if tc.wantCount != 0 {
+				assert.Equal(t, tc.wantCount, *resp.Blog.Count())
+			}
+		} else {
+			assert.Equal(t, tc.err, resp.Error)
 		}
-		assert.Equal(t, tc.err, resp.Error)
 	}
 }
