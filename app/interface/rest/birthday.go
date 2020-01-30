@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
@@ -26,29 +25,29 @@ func NewBirthday(bu usecase.Birthday) Birthday {
 	}
 }
 
-// birthdayResponse : Birthday用共通レスポンス
-// TODO: OK, Error 部分は共通レスポンスにする
-type birthdayResponse struct {
+// BirthdayResponse : Birthday用共通レスポンス
+type BirthdayResponse struct {
 	Birthday *model.Birthday `json:"birthday,omitempty"`
+	errorResponse
 }
 
 // Create : 誕生日データを新規作成
 func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		Name     string    `json:"name" validate:"required,max=30"`
-		Date     time.Time `json:"date" validate:"required"`
-		WishList string    `json:"wish_list" validate:"required,url"`
+		Name     string `json:"name" validate:"required,max=30"`
+		Date     string `json:"date" validate:"required,len=4"`
+		WishList string `json:"wish_list" validate:"required,url"`
 	}
 
 	ctx := r.Context()
 	req := request{}
-	errRes := errorResponse{}
+	resp := BirthdayResponse{}
 	if err := bindReqWithValidate(ctx, &req, r); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusBadRequest)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusBadRequest)
 		return
 	}
 
@@ -57,13 +56,11 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 		errInfo := fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		errRes.Error = errInfo.Error()
-		DoResponse(w, errRes, http.StatusInternalServerError)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
+	resp.Birthday = birthday
 
-	resp := birthdayResponse{
-		Birthday: birthday,
-	}
 	DoResponse(w, resp, http.StatusCreated)
 }

@@ -14,7 +14,7 @@ type Birthday struct {
 
 type fields struct {
 	ID        uint       `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"`
+	Name      string     `json:"name,omitempty"` // TODO: VOにする
 	Date      Date       `json:"date,omitempty"`
 	WishList  WishList   `json:"wish_list,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -23,7 +23,7 @@ type fields struct {
 }
 
 // NewBirthday : Birthdayドメインモデルを生成
-func NewBirthday(name string, date time.Time, wishList string) (*Birthday, error) {
+func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
 	// Date を生成
 	d, err := NewDate(date)
 	if err != nil {
@@ -49,7 +49,7 @@ func NewBirthday(name string, date time.Time, wishList string) (*Birthday, error
 func NewBirthdayWithFullParams(
 	id uint,
 	name string,
-	date time.Time,
+	date string,
 	wishList string,
 	createdAt *time.Time,
 	updatedAt *time.Time,
