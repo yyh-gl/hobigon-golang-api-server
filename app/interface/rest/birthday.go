@@ -36,7 +36,7 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Name     string `json:"name" validate:"required,max=30"`
 		Date     string `json:"date" validate:"required,len=4"`
-		WishList string `json:"wish_list" validate:"required,url"`
+		WishList string `json:"wish_list" validate:"required"` // TODO: URL形式のバリデーションを追加
 	}
 
 	ctx := r.Context()
