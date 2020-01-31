@@ -1,8 +1,7 @@
 package blog
 
 import (
-	"strconv"
-	"time"
+	"fmt"
 )
 
 // Blog : ブログを表すドメインモデル
@@ -11,68 +10,70 @@ type Blog struct {
 }
 
 type fields struct {
-	ID        uint       `json:"id"`
-	Title     string     `json:"title"` // TODO: VOにする
-	Count     *int       `json:"count"` // TODO: ポインタをやめて、VOでデフォルト値を入れるようにする
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	Title Title `json:"title"`
+	Count Count `json:"count"`
 }
 
 // NewBlog : Blog ドメインモデルを生成
-func NewBlog(title string) *Blog {
-	initCount := 0
+func NewBlog(title string) (*Blog, error) {
+	// Title を生成
+	t, err := NewTitle(title)
+	if err != nil {
+		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+	}
+
+	// Count を生成
+	c, err := NewCount()
+	if err != nil {
+		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+	}
+
 	return &Blog{
 		fields{
-			Title: title,
-			Count: &initCount,
+			Title: *t,
+			Count: *c,
 		},
-	}
+	}, nil
 }
 
 // NewBlogWithFullParams : パラメータ全指定で Blog ドメインモデルを生成
-func NewBlogWithFullParams(
-	id uint,
-	title string,
-	count *int,
-	createdAt *time.Time,
-	updatedAt *time.Time,
-	deletedAt *time.Time,
-) *Blog {
+func NewBlogWithFullParams(title string, count int) (*Blog, error) {
+	// Title を生成
+	t, err := NewTitle(title)
+	if err != nil {
+		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+	}
+
+	// Count を生成
+	c, err := NewCountWithArg(count)
+	if err != nil {
+		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+	}
+
 	return &Blog{
 		fields{
-			ID:        id,
-			Title:     title,
-			Count:     count,
-			CreatedAt: createdAt,
-			UpdatedAt: updatedAt,
-			DeletedAt: deletedAt,
+			Title: *t,
+			Count: *c,
 		},
-	}
-}
-
-// ID : id のゲッター
-func (b Blog) ID() uint {
-	return b.fields.ID
+	}, nil
 }
 
 // Title : title のゲッター
-func (b Blog) Title() string {
+func (b Blog) Title() Title {
 	return b.fields.Title
 }
 
 // Count : count のゲッター
-func (b Blog) Count() *int {
+func (b Blog) Count() Count {
 	return b.fields.Count
 }
 
 // CountUp : いいね数をプラス1
 func (b *Blog) CountUp() {
-	count := *b.fields.Count + 1
-	b.fields.Count = &count
+	b.fields.Count += 1
 }
 
 // CreateLikeMessage : いいね受信メッセージを生成
 func (b Blog) CreateLikeMessage() string {
-	return "【" + b.fields.Title + "】いいね！（Total: " + strconv.Itoa(*b.fields.Count) + "）"
+	return "【" + b.fields.Title.String() + "】いいね！（Total: " + b.fields.Count.String() + "）"
 }
