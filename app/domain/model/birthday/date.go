@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	// 日付（文字列）の長さ
-	lengthDate = 4
-	// time.Time→文字列のレイアウト
-	layout = "0102"
+	// defaultLength : 日付（文字列）の長さ
+	defaultLength = 4
+	// defaultLayout : time.Time→文字列のレイアウト
+	defaultLayout = "0102"
 )
 
 // Date : 誕生日に関する日付を表す値オブジェクト
@@ -17,7 +17,7 @@ type Date string
 
 // NewDate : Date を生成
 func NewDate(val string) (*Date, error) {
-	if len(val) != lengthDate {
+	if len(val) != defaultLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")
 	}
 
@@ -37,6 +37,6 @@ func (d Date) Equal(date Date) bool {
 
 // IsToday : 指定 Date が本日かどうか判定
 func (d Date) IsToday() bool {
-	today := time.Now().Format(layout)
+	today := time.Now().Format(defaultLayout)
 	return d.Equal(Date(today))
 }

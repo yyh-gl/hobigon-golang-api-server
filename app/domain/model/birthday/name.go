@@ -4,15 +4,15 @@ import (
 	"errors"
 )
 
-// MaxLengthName : 名前の長さ
-const MaxLengthName = 30
+// maxLength : 名前の長さ
+const maxLength = 30
 
 // Name : 誕生日の人の名前を表す値オブジェクト
 type Name string
 
 // NewName : Name を生成
 func NewName(val string) (*Name, error) {
-	if len(val) > MaxLengthName {
+	if len(val) > maxLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Nameは30文字以内です")
 	}
 
