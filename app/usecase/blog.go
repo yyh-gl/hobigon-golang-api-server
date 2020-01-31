@@ -67,7 +67,7 @@ func (b blog) Like(ctx context.Context, title string) (*model.Blog, error) {
 	}
 
 	// Count をプラス1
-	blog.CountUp()
+	blog = blog.CountUp()
 	blog, err = b.r.Update(ctx, *blog)
 	if err != nil {
 		return nil, fmt.Errorf("blogRepository.Update()内でのエラー: %w", err)
