@@ -105,3 +105,14 @@ func (b Birthday) CreateBirthdayMessage() string {
 func (b Birthday) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.f)
 }
+
+// UnmarshalJSON : Unmarshal用関数
+// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
+//        テストのためにだけに用意しているので、いっそう見直したい
+func (b *Birthday) UnmarshalJSON(data []byte) error {
+	err := json.Unmarshal(data, &b.f)
+	if err != nil {
+		return fmt.Errorf("Birthday.UnmarshalJSON()内でエラー: %w", err)
+	}
+	return nil
+}
