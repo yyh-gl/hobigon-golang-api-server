@@ -126,13 +126,12 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 		errInfo := fmt.Errorf("BlogUseCase.Like()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-
 		if errors.Is(err, usecase.ErrBlogNotFound) {
 			DoResponse(w, resp, http.StatusNoContent)
 			return
 		}
 
+		resp.Error = errInfo.Error()
 		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
