@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
+
 	"github.com/bmizerany/assert"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
@@ -124,7 +126,7 @@ func TestBirthdayHandler_Create(t *testing.T) {
 			wantName:     "",
 			wantDate:     "",
 			wantWishList: "",
-			err:          "BirthdayUseCase.Create()でエラー: birthday.New()内でエラー: NewWishList()内でエラー: バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません",
+			err:          "BirthdayUseCase.Create()でエラー: model.NewBirthday()内でエラー: NewWishList()内でエラー: バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません",
 		},
 	}
 
@@ -151,7 +153,9 @@ func TestBirthdayHandler_Create(t *testing.T) {
 			if tc.wantWishList != "" {
 				assert.Equal(t, tc.wantWishList, resp.Birthday.WishList().String())
 			}
+			assert.Equal(t, "", resp.Error)
 		} else {
+			assert.Equal(t, (*birthday.Birthday)(nil), resp.Birthday)
 			assert.Equal(t, tc.err, resp.Error)
 		}
 	}
