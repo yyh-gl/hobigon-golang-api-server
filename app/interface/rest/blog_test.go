@@ -166,7 +166,8 @@ func TestBlogHandler_Like(t *testing.T) {
 			title:     "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
 			wantTitle: "",
 			wantCount: 0,
-			err:       "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
+			// TODO: ドメインモデル用テストを作って、NewTitle()におけるバリデーションが動作するか確認
+			err: "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
 		},
 	}
 
