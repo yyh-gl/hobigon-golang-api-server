@@ -31,7 +31,7 @@ func (b birthday) Create(ctx context.Context, name string, date string, wishList
 	// 新しい Birthday データを作成
 	newBirthday, err := model.NewBirthday(name, date, wishList)
 	if err != nil {
-		return nil, fmt.Errorf("birthday.New()内でエラー: %w", err)
+		return nil, fmt.Errorf("model.NewBirthday()内でエラー: %w", err)
 	}
 
 	createdBirthday, err := b.r.Create(ctx, *newBirthday)
