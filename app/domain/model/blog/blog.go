@@ -85,3 +85,14 @@ func (b Blog) CreateLikeMessage() string {
 func (b Blog) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.f)
 }
+
+// UnmarshalJSON : Unmarshal用関数
+// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
+//        テストのためにだけに用意しているので、いっそう見直したい
+func (b *Blog) UnmarshalJSON(data []byte) error {
+	err := json.Unmarshal(data, &b.f)
+	if err != nil {
+		return fmt.Errorf("Blog.UnmarshalJSON()内でエラー: %w", err)
+	}
+	return nil
+}
