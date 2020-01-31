@@ -2,10 +2,11 @@ package blog
 
 import (
 	"errors"
+	"strconv"
 )
 
 // maxLength : 名前の長さ
-const maxLength = 30
+const maxLength = 50
 
 // Title : ブログのタイトルを表す値オブジェクト
 type Title string
@@ -13,7 +14,7 @@ type Title string
 // NewTitle : Title を生成
 func NewTitle(val string) (*Title, error) {
 	if len(val) > maxLength {
-		return nil, errors.New("バリデーションエラー：【Blog】Titleは30文字以内です")
+		return nil, errors.New("バリデーションエラー：【Blog】Titleは" + strconv.Itoa(maxLength) + "文字以内です")
 	}
 
 	n := Title(val)
