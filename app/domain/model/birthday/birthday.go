@@ -1,25 +1,21 @@
 package birthday
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
 )
 
 // TODO: ドメインモデル貧血症を治す
 
 // Birthday : 誕生日を表すドメインモデル
 type Birthday struct {
-	fields
+	f fields
 }
 
 type fields struct {
-	ID        uint       `json:"id,omitempty"`
-	Name      Name       `json:"name,omitempty"`
-	Date      Date       `json:"date,omitempty"`
-	WishList  WishList   `json:"wish_list,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	Name     Name     `json:"name,omitempty"`
+	Date     Date     `json:"date,omitempty"`
+	WishList WishList `json:"wish_list,omitempty"`
 }
 
 // NewBirthday : Birthdayドメインモデルを生成
@@ -52,15 +48,7 @@ func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
 }
 
 // NewBirthdayWithFullParams : パラメータ全指定でBirthdayドメインモデルを生成
-func NewBirthdayWithFullParams(
-	id uint,
-	name string,
-	date string,
-	wishList string,
-	createdAt *time.Time,
-	updatedAt *time.Time,
-	deletedAt *time.Time,
-) (*Birthday, error) {
+func NewBirthdayWithFullParams(name string, date string, wishList string) (*Birthday, error) {
 	// Name を生成
 	n, err := NewName(name)
 	if err != nil {
@@ -81,37 +69,39 @@ func NewBirthdayWithFullParams(
 
 	return &Birthday{
 		fields{
-			ID:        id,
-			Name:      *n,
-			Date:      *d,
-			WishList:  *wl,
-			CreatedAt: createdAt,
-			UpdatedAt: updatedAt,
-			DeletedAt: deletedAt,
+			Name:     *n,
+			Date:     *d,
+			WishList: *wl,
 		},
 	}, nil
 }
 
 // Name : name のゲッター
 func (b Birthday) Name() Name {
-	return b.fields.Name
+	return b.f.Name
 }
 
 // Date : date のゲッター
 func (b Birthday) Date() Date {
-	return b.fields.Date
+	return b.f.Date
 }
 
 // WishList : wishList のゲッター
 func (b Birthday) WishList() WishList {
-	return b.fields.WishList
+	return b.f.WishList
 }
 
 // CreateBirthdayMessage : 誕生日メッセージを生成
 func (b Birthday) CreateBirthdayMessage() string {
-	wishList := b.fields.WishList.String()
-	if b.fields.WishList.IsNull() {
+	wishList := b.f.WishList.String()
+	if b.f.WishList.IsNull() {
 		wishList = "Amazon の欲しい物リスト教えて！"
 	}
-	return "今日は *" + b.fields.Name.String() + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
+	return "今日は *" + b.f.Name.String() + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
+}
+
+// MarshalJSON : Marshal用関数
+// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
+func (b Birthday) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.f)
 }
