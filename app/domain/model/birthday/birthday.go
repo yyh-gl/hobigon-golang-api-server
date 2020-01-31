@@ -14,7 +14,7 @@ type Birthday struct {
 
 type fields struct {
 	ID        uint       `json:"id,omitempty"`
-	Name      string     `json:"name,omitempty"` // TODO: VOにする
+	Name      Name       `json:"name,omitempty"`
 	Date      Date       `json:"date,omitempty"`
 	WishList  WishList   `json:"wish_list,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -24,6 +24,12 @@ type fields struct {
 
 // NewBirthday : Birthdayドメインモデルを生成
 func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
+	// Name を生成
+	n, err := NewName(name)
+	if err != nil {
+		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
+	}
+
 	// Date を生成
 	d, err := NewDate(date)
 	if err != nil {
@@ -38,7 +44,7 @@ func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
 
 	return &Birthday{
 		fields{
-			Name:     name,
+			Name:     *n,
 			Date:     *d,
 			WishList: *wl,
 		},
@@ -55,6 +61,12 @@ func NewBirthdayWithFullParams(
 	updatedAt *time.Time,
 	deletedAt *time.Time,
 ) (*Birthday, error) {
+	// Name を生成
+	n, err := NewName(name)
+	if err != nil {
+		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
+	}
+
 	// Date を生成
 	d, err := NewDate(date)
 	if err != nil {
@@ -70,7 +82,7 @@ func NewBirthdayWithFullParams(
 	return &Birthday{
 		fields{
 			ID:        id,
-			Name:      name,
+			Name:      *n,
 			Date:      *d,
 			WishList:  *wl,
 			CreatedAt: createdAt,
@@ -81,7 +93,7 @@ func NewBirthdayWithFullParams(
 }
 
 // Name : name のゲッター
-func (b Birthday) Name() string {
+func (b Birthday) Name() Name {
 	return b.fields.Name
 }
 
@@ -101,5 +113,5 @@ func (b Birthday) CreateBirthdayMessage() string {
 	if b.fields.WishList.IsNull() {
 		wishList = "Amazon の欲しい物リスト教えて！"
 	}
-	return "今日は *" + b.fields.Name + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
+	return "今日は *" + b.fields.Name.String() + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
 }

@@ -143,7 +143,7 @@ func TestBirthdayHandler_Create(t *testing.T) {
 
 		if tc.err == "" {
 			if tc.wantName != "" {
-				assert.Equal(t, tc.wantName, resp.Birthday.Name())
+				assert.Equal(t, tc.wantName, resp.Birthday.Name().String())
 			}
 			if tc.wantDate != "" {
 				assert.Equal(t, tc.wantDate, resp.Birthday.Date().String())

@@ -25,7 +25,7 @@ func NewBirthday(db *db.DB) repository.Birthday {
 func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
 	// Birthday モデル を DTO に変換
 	birthdayDTO := imodel.BirthdayDTO{
-		Name:     birthday.Name(),
+		Name:     birthday.Name().String(),
 		Date:     birthday.Date().String(),
 		WishList: birthday.WishList().String(),
 	}
