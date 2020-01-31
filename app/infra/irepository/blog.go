@@ -5,9 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-
 	"github.com/pkg/errors"
-
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
@@ -29,8 +27,8 @@ func NewBlog(db *db.DB) repository.Blog {
 func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
-		Title: blog.Title(),
-		Count: blog.Count(),
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
 	}
 
 	err := b.db.Create(&blogDTO).Error
@@ -38,7 +36,10 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 		return nil, fmt.Errorf("gorm.Create(blog)内でのエラー: %w", err)
 	}
 
-	createdBlog := blogDTO.ConvertToDomainModel(ctx)
+	createdBlog, err := blogDTO.ConvertToDomainModel(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("blogDTO.ConvertToDomainModel(): %w", err)
+	}
 	return createdBlog, nil
 }
 
@@ -53,7 +54,10 @@ func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, err
 		return nil, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}
 
-	blog := blogDTO.ConvertToDomainModel(ctx)
+	blog, err := blogDTO.ConvertToDomainModel(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("blogDTO.ConvertToDomainModel(): %w", err)
+	}
 	return blog, nil
 }
 
@@ -61,9 +65,8 @@ func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, err
 func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
 	blogDTO := imodel.BlogDTO{
-		ID:    blog.ID(),
-		Title: blog.Title(),
-		Count: blog.Count(),
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
 	}
 
 	err := b.db.Save(&blogDTO).Error
@@ -71,6 +74,9 @@ func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 		return nil, fmt.Errorf("gorm.Save(blog)内でのエラー: %w", err)
 	}
 
-	updatedBlog := blogDTO.ConvertToDomainModel(ctx)
+	updatedBlog, err := blogDTO.ConvertToDomainModel(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("blogDTO.ConvertToDomainModel(): %w", err)
+	}
 	return updatedBlog, nil
 }

@@ -32,12 +32,15 @@ func NewBlog(r repository.Blog, sg gateway.Slack) Blog {
 
 // Create : ブログ情報を新規作成
 func (b blog) Create(ctx context.Context, title string) (*model.Blog, error) {
-	blog := model.NewBlog(title)
-	createdBlog, err := b.r.Create(ctx, *blog)
+	blog, err := model.NewBlog(title)
 	if err != nil {
-		return nil, errors.Wrap(err, "blogRepository.Create()内でのエラー")
+		return nil, fmt.Errorf("model.NewBlog()内でエラー: %w", err)
 	}
 
+	createdBlog, err := b.r.Create(ctx, *blog)
+	if err != nil {
+		return nil, fmt.Errorf("blogRepository.Create()内でのエラー: %w", err)
+	}
 	return createdBlog, nil
 }
 
@@ -67,13 +70,13 @@ func (b blog) Like(ctx context.Context, title string) (*model.Blog, error) {
 	blog.CountUp()
 	blog, err = b.r.Update(ctx, *blog)
 	if err != nil {
-		return nil, errors.Wrap(err, "blogRepository.Update()内でのエラー")
+		return nil, fmt.Errorf("blogRepository.Update()内でのエラー: %w", err)
 	}
 
 	// Slack に通知
 	err = b.sg.SendLikeNotify(ctx, *blog)
 	if err != nil {
-		return nil, errors.Wrap(err, "slackGateway.SendLikeNotify()内でのエラー")
+		return nil, fmt.Errorf("slackGateway.SendLikeNotify()内でのエラー: %w", err)
 	}
 
 	return blog, nil

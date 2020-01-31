@@ -2,16 +2,16 @@ package imodel
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 )
 
 // BlogDTO : ブログ用の DTO
 type BlogDTO struct {
-	ID        uint   `gorm:"primary_key;AUTO_INCREMENT"`
-	Title     string `gorm:"unique;not null"`
-	Count     *int   `gorm:"default:0;not null"`
+	Title     string `gorm:"primary_key;not null"`
+	Count     int    `gorm:"default:0;not null"`
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 	DeletedAt *time.Time
@@ -23,8 +23,10 @@ func (b BlogDTO) TableName() string {
 }
 
 // ConvertToDomainModel : ドメインモデルに変換
-func (b BlogDTO) ConvertToDomainModel(ctx context.Context) *blog.Blog {
-	return blog.NewBlogWithFullParams(
-		b.ID, b.Title, b.Count, b.CreatedAt, b.UpdatedAt, b.DeletedAt,
-	)
+func (b BlogDTO) ConvertToDomainModel(ctx context.Context) (*model.Blog, error) {
+	blog, err := model.NewBlogWithFullParams(b.Title, b.Count)
+	if err != nil {
+		return nil, fmt.Errorf("model.NewBlogWithFullParams()でエラー: %w", err)
+	}
+	return blog, nil
 }
