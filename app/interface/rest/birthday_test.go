@@ -74,7 +74,7 @@ func TestBirthdayHandler_Create(t *testing.T) {
 			wantWishList: "",
 			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Name' Error:Field validation for 'Name' failed on the 'required' tag",
 		},
-		{ // 異常系：51文字name
+		{ // 異常系：31文字name
 			name:         "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D1",
 			date:         "1205",
 			wishList:     "https://honzon.co.jp",
