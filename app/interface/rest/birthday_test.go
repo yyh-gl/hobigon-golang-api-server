@@ -45,6 +45,15 @@ func TestBirthdayHandler_Create(t *testing.T) {
 			wantWishList: "https://honzon.co.jp",
 			err:          "",
 		},
+		{ // 正常系：重複はOK
+			name:         "duplicate-name",
+			date:         "1205",
+			wishList:     "https://honzon.co.jp",
+			wantName:     "duplicate-name",
+			wantDate:     "1205",
+			wantWishList: "https://honzon.co.jp",
+			err:          "",
+		},
 		{ // 正常系：30文字name
 			name:         "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D",
 			date:         "1205",
@@ -128,6 +137,9 @@ func TestBirthdayHandler_Create(t *testing.T) {
 		rec := c.Post("/api/v1/birthday", body)
 		resp := rest.BirthdayResponse{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
+
+		// 重複データ登録時に使用するテストデータを追加
+		createBirthday(c, "duplicate-name", "1205", "https://honzon.co.jp")
 
 		if tc.err == "" {
 			if tc.wantName != "" {
