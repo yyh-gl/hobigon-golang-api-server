@@ -14,7 +14,7 @@ func NewCount() (*Count, error) {
 	return &n, nil
 }
 
-// NewCount : 引数の値をもとに Count を生成
+// NewCountWithArg : 引数の値をもとに Count を生成
 func NewCountWithArg(val int) (*Count, error) {
 	n := Count(val)
 	return &n, nil
