@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+
 	"github.com/bmizerany/assert"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
@@ -69,8 +71,10 @@ func TestBlogHandler_Create(t *testing.T) {
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
 		if tc.err == "" {
-			assert.Equal(t, tc.want, resp.Blog.Title())
+			assert.Equal(t, tc.want, resp.Blog.Title().String())
+			assert.Equal(t, "", resp.Error)
 		} else {
+			assert.Equal(t, (*blog.Blog)(nil), resp.Blog)
 			assert.Equal(t, tc.err, resp.Error)
 		}
 	}
@@ -119,8 +123,10 @@ func TestBlogHandler_Show(t *testing.T) {
 		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 
 		if tc.err == "" && tc.want != "" {
-			assert.Equal(t, tc.want, resp.Blog.Title())
+			assert.Equal(t, tc.want, resp.Blog.Title().String())
+			assert.Equal(t, "", resp.Error)
 		} else {
+			assert.Equal(t, (*blog.Blog)(nil), resp.Blog)
 			assert.Equal(t, tc.err, resp.Error)
 		}
 	}
@@ -175,12 +181,14 @@ func TestBlogHandler_Like(t *testing.T) {
 
 		if tc.err == "" {
 			if tc.wantTitle != "" {
-				assert.Equal(t, tc.wantTitle, resp.Blog.Title())
+				assert.Equal(t, tc.wantTitle, resp.Blog.Title().String())
 			}
 			if tc.wantCount != 0 {
-				assert.Equal(t, tc.wantCount, *resp.Blog.Count())
+				assert.Equal(t, tc.wantCount, resp.Blog.Count().Int())
 			}
+			assert.Equal(t, "", resp.Error)
 		} else {
+			assert.Equal(t, (*blog.Blog)(nil), resp.Blog)
 			assert.Equal(t, tc.err, resp.Error)
 		}
 	}
