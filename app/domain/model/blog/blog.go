@@ -1,12 +1,13 @@
 package blog
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
 // Blog : ブログを表すドメインモデル
 type Blog struct {
-	fields
+	f fields
 }
 
 type fields struct {
@@ -29,7 +30,7 @@ func NewBlog(title string) (*Blog, error) {
 	}
 
 	return &Blog{
-		fields{
+		f: fields{
 			Title: *t,
 			Count: *c,
 		},
@@ -51,7 +52,7 @@ func NewBlogWithFullParams(title string, count int) (*Blog, error) {
 	}
 
 	return &Blog{
-		fields{
+		f: fields{
 			Title: *t,
 			Count: *c,
 		},
@@ -60,20 +61,27 @@ func NewBlogWithFullParams(title string, count int) (*Blog, error) {
 
 // Title : title のゲッター
 func (b Blog) Title() Title {
-	return b.fields.Title
+	return b.f.Title
 }
 
 // Count : count のゲッター
 func (b Blog) Count() Count {
-	return b.fields.Count
+	return b.f.Count
 }
 
 // CountUp : いいね数をプラス1
-func (b *Blog) CountUp() {
-	b.fields.Count += 1
+func (b Blog) CountUp() *Blog {
+	b.f.Count += 1
+	return &b
 }
 
 // CreateLikeMessage : いいね受信メッセージを生成
 func (b Blog) CreateLikeMessage() string {
-	return "【" + b.fields.Title.String() + "】いいね！（Total: " + b.fields.Count.String() + "）"
+	return "【" + b.f.Title.String() + "】いいね！（Total: " + b.f.Count.String() + "）"
+}
+
+// MarshalJSON : Marshal用関数
+// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
+func (b Blog) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.f)
 }
