@@ -9,7 +9,7 @@ import (
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/imodel"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
 )
 
 type blog struct {
@@ -26,7 +26,7 @@ func NewBlog(db *db.DB) repository.Blog {
 // Create : ブログ情報を新規作成
 func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
-	blogDTO := imodel.BlogDTO{
+	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
@@ -45,7 +45,7 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 // SelectByTitle : タイトルからブログ情報を1件取得
 func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, error) {
-	blogDTO := imodel.BlogDTO{}
+	blogDTO := dto.BlogDTO{}
 	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -64,7 +64,7 @@ func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, err
 // Update : ブログ情報を1件更新
 func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {
 	// Blog モデル を DTO に変換
-	blogDTO := imodel.BlogDTO{
+	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}

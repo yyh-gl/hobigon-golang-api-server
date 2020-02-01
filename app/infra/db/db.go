@@ -8,7 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/imodel"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
 )
 
 // DB : DBコネクション->infra以外でORMライブラリを意識させないための中間層
@@ -60,5 +60,5 @@ func newSQLiteConnect() *DB {
 
 // migrate : マイグレーション実施
 func migrate(db *DB) {
-	db.AutoMigrate(&imodel.BlogDTO{}, &imodel.BirthdayDTO{})
+	db.AutoMigrate(&dto.BlogDTO{}, &dto.BirthdayDTO{})
 }

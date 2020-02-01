@@ -7,7 +7,7 @@ import (
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/imodel"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
 )
 
 type birthday struct {
@@ -24,7 +24,7 @@ func NewBirthday(db *db.DB) repository.Birthday {
 // Create : 誕生日データを新規作成
 func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
 	// Birthday モデル を DTO に変換
-	birthdayDTO := imodel.BirthdayDTO{
+	birthdayDTO := dto.BirthdayDTO{
 		Name:     birthday.Name().String(),
 		Date:     birthday.Date().String(),
 		WishList: birthday.WishList().String(),
@@ -47,7 +47,7 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 // SelectByDate : 日付から誕生日を1件取得
 func (b birthday) SelectByDate(ctx context.Context, date string) (*model.Birthday, error) {
 	// Birthday の DTO を用意
-	birthdayDTO := imodel.BirthdayDTO{}
+	birthdayDTO := dto.BirthdayDTO{}
 
 	// date 指定で誕生日情報を取得
 	err := b.db.First(&birthdayDTO, "date=?", date).Error
