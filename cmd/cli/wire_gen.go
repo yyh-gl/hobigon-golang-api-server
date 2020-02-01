@@ -9,9 +9,8 @@ import (
 	"github.com/google/wire"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/igateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/irepository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -21,10 +20,10 @@ import (
 // Injectors from wire.go:
 
 func initApp() *di.ContainerCLI {
-	task := igateway.NewTask()
-	slack := igateway.NewSlack()
+	task := dao.NewTask()
+	slack := dao.NewSlack()
 	gormDB := db.NewDB()
-	birthday := irepository.NewBirthday(gormDB)
+	birthday := dao.NewBirthday(gormDB)
 	notification := iservice.NewNotification(slack)
 	ranking := iservice.NewRanking()
 	usecaseNotification := usecase.NewNotification(task, slack, birthday, notification, ranking)

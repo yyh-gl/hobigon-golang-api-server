@@ -1,4 +1,4 @@
-package igateway
+package dao
 
 import (
 	"context"

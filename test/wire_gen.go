@@ -9,9 +9,8 @@ import (
 	"github.com/google/wire"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/igateway"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/irepository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -22,14 +21,14 @@ import (
 
 func initTestApp() *di.ContainerAPI {
 	gormDB := db.NewDB()
-	blog := irepository.NewBlog(gormDB)
-	slack := igateway.NewSlack()
+	blog := dao.NewBlog(gormDB)
+	slack := dao.NewSlack()
 	usecaseBlog := usecase.NewBlog(blog, slack)
 	restBlog := rest.NewBlog(usecaseBlog)
-	birthday := irepository.NewBirthday(gormDB)
+	birthday := dao.NewBirthday(gormDB)
 	usecaseBirthday := usecase.NewBirthday(birthday)
 	restBirthday := rest.NewBirthday(usecaseBirthday)
-	task := igateway.NewTask()
+	task := dao.NewTask()
 	notification := iservice.NewNotification(slack)
 	ranking := iservice.NewRanking()
 	usecaseNotification := usecase.NewNotification(task, slack, birthday, notification, ranking)
