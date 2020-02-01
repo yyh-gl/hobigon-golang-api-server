@@ -24,7 +24,6 @@ type notification struct {
 	tg gateway.Task
 	sg gateway.Slack
 	r  repository.Birthday
-	ns service.Notification
 	rs service.Ranking
 }
 
@@ -33,14 +32,12 @@ func NewNotification(
 	tg gateway.Task,
 	sg gateway.Slack,
 	r repository.Birthday,
-	ns service.Notification,
 	rs service.Ranking,
 ) Notification {
 	return &notification{
 		tg: tg,
 		sg: sg,
 		r:  r,
-		ns: ns,
 		rs: rs,
 	}
 }
@@ -108,13 +105,14 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
 	}
+	if birthday == nil {
+		return nil
+	}
 
 	// 誕生日情報を Slack に通知
-	if birthday != nil {
-		err = n.ns.SendTodayBirthdayToSlack(ctx, *birthday)
-		if err != nil && err != gorm.ErrRecordNotFound {
-			return errors.Wrap(err, "notificationService.SendTodayBirthdayToSlack()内でのエラー")
-		}
+	err = n.sg.SendBirthday(ctx, *birthday)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return errors.Wrap(err, "notificationService.SendBirthday()内でのエラー")
 	}
 
 	return nil

@@ -29,10 +29,9 @@ func initApp() *di.ContainerAPI {
 	usecaseBirthday := usecase.NewBirthday(birthday)
 	restBirthday := rest.NewBirthday(usecaseBirthday)
 	task := dao.NewTask()
-	notification := iservice.NewNotification(slack)
 	ranking := iservice.NewRanking()
-	usecaseNotification := usecase.NewNotification(task, slack, birthday, notification, ranking)
-	restNotification := rest.NewNotification(usecaseNotification)
+	notification := usecase.NewNotification(task, slack, birthday, ranking)
+	restNotification := rest.NewNotification(notification)
 	logger := app.NewAPILogger()
 	containerAPI := &di.ContainerAPI{
 		HandlerBlog:         restBlog,

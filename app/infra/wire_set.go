@@ -14,7 +14,6 @@ var APISet = wire.NewSet(
 	dao.NewBirthday,
 	dao.NewSlack,
 	dao.NewTask,
-	iservice.NewNotification,
 	iservice.NewRanking,
 )
 
@@ -24,6 +23,5 @@ var CLISet = wire.NewSet(
 	dao.NewBirthday,
 	dao.NewSlack,
 	dao.NewTask,
-	iservice.NewNotification,
 	iservice.NewRanking,
 )

@@ -24,10 +24,9 @@ func initApp() *di.ContainerCLI {
 	slack := dao.NewSlack()
 	gormDB := db.NewDB()
 	birthday := dao.NewBirthday(gormDB)
-	notification := iservice.NewNotification(slack)
 	ranking := iservice.NewRanking()
-	usecaseNotification := usecase.NewNotification(task, slack, birthday, notification, ranking)
-	cliNotification := cli.NewNotification(usecaseNotification)
+	notification := usecase.NewNotification(task, slack, birthday, ranking)
+	cliNotification := cli.NewNotification(notification)
 	logger := app.NewCLILogger()
 	containerCLI := &di.ContainerCLI{
 		HandlerNotification: cliNotification,
