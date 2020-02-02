@@ -50,7 +50,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
 
-	// TODO: ビジネスロジックを結構持ってしまっているのでドメインモデルに落とし込んでいく
+	// TODO: ビジネスロジックを結構持ってしまっているのでドメインサービスに移す
 	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
 	for _, boardID := range boardIDList {
 		lists, err := n.tg.GetListsByBoardID(ctx, boardID)
