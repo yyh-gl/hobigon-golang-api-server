@@ -10,15 +10,22 @@
 
 ## API
 
+WAFは使わずに [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) だけを使って実装
+
 - Slack通知
   - 本日のタスク一覧
-  - アクセスランキング通知
+  - アクセスランキング
+  - 誕生日
 - [ブログ](https://yyh-gl.github.io/tech-blog/)いいね
-- 誕生日通知くん
 
 ## CLI
 
-[urfave/cli](https://github.com/urfave/cli)を使って実装中
+[urfave/cli](https://github.com/urfave/cli)を使って実装
+
+- Slack通知
+  - 本日のタスク一覧
+  - アクセスランキング
+  - 誕生日
 
 
 # TODO
