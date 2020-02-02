@@ -26,8 +26,7 @@ func NewNotification(u usecase.Notification) Notification {
 	}
 }
 
-// notificationResponse : Birthday用共通レスポンス
-// TODO: OK, Error 部分は共通レスポンスにする
+// notificationResponse : Notification用共通レスポンス
 type notificationResponse struct {
 	errorResponse
 }
