@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -29,66 +29,48 @@ func NewNotification(u usecase.Notification) Notification {
 // notificationResponse : Birthday用共通レスポンス
 // TODO: OK, Error 部分は共通レスポンスにする
 type notificationResponse struct {
-	OK    bool   `json:"ok"`
-	Error string `json:"error,omitempty"`
+	errorResponse
 }
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
-		OK: true,
-	}
-
+	resp := notificationResponse{}
 	if err := n.u.NotifyTodayTasksToSlack(r.Context()); err != nil {
-		app.Logger.Println(err)
+		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err)
+		app.Logger.Println(errInfo)
 
-		res.OK = false
-		res.Error = err.Error()
-	}
-
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		app.Logger.Println(err)
-		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
+
+	DoResponse(w, resp, http.StatusOK)
 }
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
-		OK: true,
-	}
-
+	resp := notificationResponse{}
 	if err := n.u.NotifyTodayBirthdayToSlack(r.Context()); err != nil {
-		app.Logger.Println(err)
+		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err)
+		app.Logger.Println(errInfo)
 
-		res.OK = false
-		res.Error = err.Error()
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 	}
 
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		app.Logger.Println(err)
-		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
-		return
-	}
+	DoResponse(w, resp, http.StatusOK)
 }
 
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
 func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
-	res := notificationResponse{
-		OK: true,
-	}
-
+	resp := notificationResponse{}
 	if err := n.u.NotifyAccessRanking(r.Context()); err != nil {
-		app.Logger.Println(err)
+		errInfo := fmt.Errorf("notificationUseCase.NotifyAccessRanking()でエラー: %w", err)
+		app.Logger.Println(errInfo)
 
-		res.OK = false
-		res.Error = err.Error()
+		resp.Error = errInfo.Error()
+		DoResponse(w, resp, http.StatusInternalServerError)
 	}
 
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		app.Logger.Println(err)
-		http.Error(w, "API レスポンスの JSON エンコードに失敗", http.StatusInternalServerError)
-		return
-	}
+	DoResponse(w, resp, http.StatusOK)
 }
