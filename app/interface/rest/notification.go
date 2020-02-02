@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -53,8 +54,14 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
+		if errors.Is(err, usecase.ErrBirthdayNotFound) {
+			DoResponse(w, resp, http.StatusOK)
+			return
+		}
+
 		resp.Error = errInfo.Error()
 		DoResponse(w, resp, http.StatusInternalServerError)
+		return
 	}
 
 	DoResponse(w, resp, http.StatusOK)

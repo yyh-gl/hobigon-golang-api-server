@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -102,11 +103,11 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 	// 今日の誕生日情報を取得
 	today := time.Now().Format("0102")
 	birthday, err := n.r.SelectByDate(ctx, today)
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
+		if errors.Is(err, repository.ErrRecordNotFound) {
+			return ErrBirthdayNotFound
+		}
 		return fmt.Errorf("birthdayRepository.SelectByDate()内でのエラー: %w", err)
-	}
-	if birthday == nil {
-		return nil
 	}
 
 	// 誕生日情報を Slack に通知
