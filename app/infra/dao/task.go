@@ -79,7 +79,7 @@ func (t task) GetTasksFromList(ctx context.Context, list trello.List) (taskList 
 // convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
 func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.List) {
 	for _, card := range trelloCards {
-		t := new(model.Task)
+		t := model.Task{}
 		t.Title = card.Name
 		t.Description = card.Desc
 		t.ShortURL = card.ShortURL
@@ -87,7 +87,7 @@ func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskL
 			t.Due = t.GetJSTDue(card.Due)
 		}
 		t.OriginalModel = card
-		taskList.Tasks = append(taskList.Tasks, *t)
+		taskList.Tasks = append(taskList.Tasks, t)
 	}
 	return taskList
 }
