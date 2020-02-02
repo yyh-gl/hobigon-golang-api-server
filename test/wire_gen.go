@@ -11,7 +11,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/service"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
@@ -29,7 +29,7 @@ func initTestApp() *di.ContainerAPI {
 	usecaseBirthday := usecase.NewBirthday(birthday)
 	restBirthday := rest.NewBirthday(usecaseBirthday)
 	task := dao.NewTask()
-	ranking := iservice.NewRanking()
+	ranking := service.NewRanking()
 	notification := usecase.NewNotification(task, slack, birthday, ranking)
 	restNotification := rest.NewNotification(notification)
 	logger := app.NewAPILogger()

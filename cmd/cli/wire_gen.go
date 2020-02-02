@@ -11,7 +11,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/iservice"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/service"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
@@ -24,7 +24,7 @@ func initApp() *di.ContainerCLI {
 	slack := dao.NewSlack()
 	gormDB := db.NewDB()
 	birthday := dao.NewBirthday(gormDB)
-	ranking := iservice.NewRanking()
+	ranking := service.NewRanking()
 	notification := usecase.NewNotification(task, slack, birthday, ranking)
 	cliNotification := cli.NewNotification(notification)
 	logger := app.NewCLILogger()
