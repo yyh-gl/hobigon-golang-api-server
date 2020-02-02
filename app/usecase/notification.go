@@ -43,6 +43,8 @@ func NewNotification(
 	}
 }
 
+// TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
+
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 	var todayTasks []model.Task
