@@ -40,7 +40,8 @@ func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, acces
 	)
 
 	// TODO: /api/v1/blogs/*/like というように正規表現で ignore 指定できるようにする
-	var IgnoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks", "/api/v1/blogs/good_api/like"}
+	var ignoreEndpoints = []string{"/api/v1/rankings/access", "/api/v1/tasks", "/api/v1/blogs/good_api/like"}
+	var httpMethodOption = "OPTIONS"
 
 	// app.log からアクセス記録を解析
 	fp, err := os.Open(os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
@@ -56,7 +57,7 @@ func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, acces
 		req := scanner.Text()
 		reqSlice := strings.Split(req, " ")
 
-		if reqSlice[IndexPrefix] == AccessLogPrefix && !isContain(IgnoreEndpoints, reqSlice[IndexEndpoint]) {
+		if reqSlice[IndexPrefix] == AccessLogPrefix && !isContain(ignoreEndpoints, reqSlice[IndexEndpoint]) && reqSlice[IndexMethod] != httpMethodOption {
 			key := reqSlice[IndexMethod] + "_" + reqSlice[IndexEndpoint]
 
 			_, exist := accessCountPerEndpoint[key]
