@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"

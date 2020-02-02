@@ -2,10 +2,10 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"

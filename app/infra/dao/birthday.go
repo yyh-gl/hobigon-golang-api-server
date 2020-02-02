@@ -2,8 +2,8 @@ package dao
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/pkg/errors"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
@@ -33,13 +33,13 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 	// date 指定で誕生日情報を取得
 	err := b.db.Create(&birthdayDTO).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "gorm.Create()内でのエラー")
+		return nil, fmt.Errorf("gorm.Create()内でのエラー: %w", err)
 	}
 
 	// DTO を ドメインモデルに変換
 	createdBirthday, err := birthdayDTO.ConvertToDomainModel(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
+		return nil, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
 	return createdBirthday, nil
 }
@@ -52,13 +52,13 @@ func (b birthday) SelectByDate(ctx context.Context, date string) (*model.Birthda
 	// date 指定で誕生日情報を取得
 	err := b.db.First(&birthdayDTO, "date=?", date).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("gorm.First()内でのエラー: %w", err)
 	}
 
 	// DTO を ドメインモデルに変換
 	birthday, err := birthdayDTO.ConvertToDomainModel(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "birthdayDTO.ConvertToDomainModel()内でのエラー")
+		return nil, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
 	return birthday, nil
 }

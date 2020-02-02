@@ -2,11 +2,11 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
@@ -52,7 +52,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 	for _, boardID := range boardIDList {
 		lists, err := n.tg.GetListsByBoardID(ctx, boardID)
 		if err != nil {
-			return errors.Wrap(err, "taskGateway.GetListsByBoardID()内でのエラー")
+			return fmt.Errorf("taskGateway.GetListsByBoardID()内でのエラー: %w", err)
 		}
 
 		for _, list := range lists {
@@ -60,7 +60,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 			if list.Name == "TODO" || list.Name == "WIP" {
 				taskList, dueOverTaskList, err := n.tg.GetTasksFromList(ctx, *list)
 				if err != nil {
-					return errors.Wrap(err, "taskGateway.GetTasksFromList()内でのエラー")
+					return fmt.Errorf("taskGateway.GetTasksFromList()内でのエラー: %w", err)
 				}
 
 				switch list.Name {
@@ -81,17 +81,17 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 
 	// 今日のタスクを WIP リストに移動
 	if err := n.tg.MoveToWIP(ctx, todayTasks); err != nil {
-		return errors.Wrap(err, "taskGateway.MoveToWIP(todayTasks)内でのエラー")
+		return fmt.Errorf("taskGateway.MoveToWIP(todayTasks)内でのエラー: %w", err)
 	}
 
 	// 期限切れのタスクを WIP リストに移動
 	if err := n.tg.MoveToWIP(ctx, dueOverTasks); err != nil {
-		return errors.Wrap(err, "taskGateway.MoveToWIP(dueOverTasks)内でのエラー")
+		return fmt.Errorf("taskGateway.MoveToWIP(dueOverTasks)内でのエラー: %w", err)
 	}
 
 	// 今日および期限切れのタスクを Slack に通知
 	if err := n.sg.SendTask(ctx, todayTasks, dueOverTasks); err != nil {
-		return errors.Wrap(err, "slackGateway.SendTask()内でのエラー")
+		return fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
 	}
 
 	return nil
@@ -103,7 +103,7 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 	today := time.Now().Format("0102")
 	birthday, err := n.r.SelectByDate(ctx, today)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return errors.Wrap(err, "birthdayRepository.SelectByDate()内でのエラー")
+		return fmt.Errorf("birthdayRepository.SelectByDate()内でのエラー: %w", err)
 	}
 	if birthday == nil {
 		return nil
@@ -112,7 +112,7 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 	// 誕生日情報を Slack に通知
 	err = n.sg.SendBirthday(ctx, *birthday)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return errors.Wrap(err, "notificationService.SendBirthday()内でのエラー")
+		return fmt.Errorf("notificationService.SendBirthday()内でのエラー: %w", err)
 	}
 
 	return nil
@@ -121,17 +121,16 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
 // NotifyAccessRanking : アクセスランキングを Slack に通知
 func (n notification) NotifyAccessRanking(ctx context.Context) error {
 	// アクセスランキングの結果を取得
-	// TODO: エクセルに出力して解析とかしたい
-	// TODO: アウトプット再検討
+	// TODO: アウトプット再検討->エクセルに出力して解析とかしたい
 	rankingMsg, _, err := n.rs.GetAccessRanking(ctx)
 	if err != nil {
-		return errors.Wrap(err, "infra.GetAccessRanking()内でのエラー")
+		return fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
 	}
 
 	// アクセスランキングの結果を Slack に通知
 	err = n.sg.SendRanking(ctx, rankingMsg)
 	if err != nil {
-		return errors.Wrap(err, "slackGateway.SendRanking()内でのエラー")
+		return fmt.Errorf("slackGateway.SendRanking()内でのエラー: %w", err)
 	}
 
 	return nil
