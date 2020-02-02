@@ -6,7 +6,7 @@
 -> [Railsで作ったもの](https://github.com/yyh-gl/hobigon-rails-api-server)をGolangで書き直したもの
 
 
-# 実装機能
+# 機能
 
 ## API
 
@@ -20,7 +20,7 @@ WAFは使わずに [julienschmidt/httprouter](https://github.com/julienschmidt/h
 
 ## CLI
 
-[urfave/cli](https://github.com/urfave/cli)を使って実装
+[urfave/cli](https://github.com/urfave/cli) を使って実装
 
 - Slack通知
   - 本日のタスク一覧
