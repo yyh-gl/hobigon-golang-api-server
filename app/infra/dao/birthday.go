@@ -2,8 +2,10 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jinzhu/gorm"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
@@ -52,6 +54,9 @@ func (b birthday) SelectByDate(ctx context.Context, date string) (*model.Birthda
 	// date 指定で誕生日情報を取得
 	err := b.db.First(&birthdayDTO, "date=?", date).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, repository.ErrRecordNotFound
+		}
 		return nil, fmt.Errorf("gorm.First()内でのエラー: %w", err)
 	}
 
