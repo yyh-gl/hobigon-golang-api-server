@@ -10,10 +10,11 @@
 
 ## API
 
-- 今日のタスク通知
+- Slack通知
+  - 本日のタスク一覧
+  - アクセスランキング通知
 - [ブログ](https://yyh-gl.github.io/tech-blog/)いいね
 - 誕生日通知くん
-- アクセスランキング通知
 
 ## CLI
 
@@ -22,9 +23,6 @@
 
 # TODO
 - ドメインモデル貧血症の改善
-  - Birthday, Blog については完了
-- GORM タグをドメインモデルから除去
-  - Birthday, Blog については完了
-- 構造体初期化方法を下記方法で統一
-  - `h := hoge{}`
-- `github.com/pkg/errors` パッケージを削除して標準パッケージの `errors` のみを使うようにする
+  - Ranking
+  - Slack
+  - Task
