@@ -2,10 +2,17 @@ FROM golang:1.13.6-alpine AS build
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
 
-RUN apk add --no-cache ca-certificates git make gcc libc-dev
+ENV TZ="Asia/Tokyo"
+ENV GO111MODULE=on
 
 COPY . .
 
+RUN apk add --no-cache \
+    ca-certificates \
+    git \
+    make \
+    gcc \
+    libc-dev
 RUN robo api-build-prod
 
 FROM alpine AS app
