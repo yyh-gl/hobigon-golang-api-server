@@ -5,8 +5,6 @@ import (
 	"fmt"
 )
 
-// TODO: ドメインモデル貧血症を治す
-
 // Birthday : 誕生日を表すドメインモデル
 type Birthday struct {
 	f fields
