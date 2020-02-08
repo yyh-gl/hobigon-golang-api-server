@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 
 	slackWebHook "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -20,7 +21,7 @@ func NewSlack() gateway.Slack {
 }
 
 // send : Slack に通知を送信
-func (s slack) send(ctx context.Context, data modelS.Slack) (err []error) {
+func (s slack) send(ctx context.Context, data modelS.Slack) error {
 	payload := slackWebHook.Payload{
 		Username: data.Username,
 		Channel:  data.Channel,
@@ -28,11 +29,14 @@ func (s slack) send(ctx context.Context, data modelS.Slack) (err []error) {
 	}
 
 	webHookURL := data.GetWebHookURL()
-	err = slackWebHook.Send(webHookURL, "", payload)
-	if err != nil {
-		return err
+	errList := slackWebHook.Send(webHookURL, "", payload)
+	if errList != nil {
+		msg := ""
+		for _, e := range errList {
+			msg += e.Error() + " & "
+		}
+		return errors.New(msg)
 	}
-
 	return nil
 }
 
@@ -50,7 +54,7 @@ func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTa
 }
 
 // SendBirthday : Slack に誕生日通知を送信
-func (s slack) SendBirthday(ctx context.Context, birthday modelBd.Birthday) (err error) {
+func (s slack) SendBirthday(ctx context.Context, birthdayList modelBd.BirthdayList) error {
 	var data modelS.Slack
 	switch {
 	case app.IsPrd():
@@ -65,10 +69,13 @@ func (s slack) SendBirthday(ctx context.Context, birthday modelBd.Birthday) (err
 		}
 	}
 
-	data.Text = birthday.CreateBirthdayMessage()
-
-	s.send(ctx, data)
-	return err
+	for _, birthday := range birthdayList {
+		data.Text = birthday.CreateBirthdayMessage()
+		if err := s.send(ctx, data); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // SendLikeNotify : Slack にいいね（ブログ）通知を送信

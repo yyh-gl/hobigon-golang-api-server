@@ -11,7 +11,7 @@ import (
 // Slack : Slack用ゲートウェイのインターフェース
 type Slack interface {
 	SendTask(ctx context.Context, todayTasks []task.Task, dueOverTasks []task.Task) error
-	SendBirthday(ctx context.Context, birthday birthday.Birthday) error
+	SendBirthday(ctx context.Context, birthdayList birthday.BirthdayList) error
 	SendLikeNotify(ctx context.Context, blog blog.Blog) error
 	SendRanking(ctx context.Context, rankin string) error
 }
