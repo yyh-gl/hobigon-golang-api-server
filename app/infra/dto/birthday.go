@@ -8,7 +8,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 )
 
-// BirthdayDTO : 誕生日用の DTO
+// BirthdayDTO : 誕生日用のDTO
 type BirthdayDTO struct {
 	Name      string `gorm:"not null"`
 	Date      string `gorm:"index;not null"`
