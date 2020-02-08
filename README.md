@@ -33,4 +33,3 @@ WAFは使わずに [julienschmidt/httprouter](https://github.com/julienschmidt/h
   - Ranking
   - Slack
   - Task
-- 通知系APIのレスポンスで通知したコンテンツの数を返すようにする
