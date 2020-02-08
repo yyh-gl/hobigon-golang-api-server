@@ -11,21 +11,22 @@ import (
 // TODO: ドメインモデル貧血症を治す
 type Slack struct {
 	Username string
-	Channel  string
-	Text     string
+	// TODO: enum化
+	Channel string
+	Text    string
 }
 
 // GetWebHookURL : WebHook URL を取得
 func (s Slack) GetWebHookURL() (webHookURL string) {
 	switch s.Channel {
 	case "00_today_tasks":
-		webHookURL = os.Getenv("WEBHOOK_URL_TO_00")
+		return os.Getenv("WEBHOOK_URL_TO_00")
 	case "51_tech_blog":
-		webHookURL = os.Getenv("WEBHOOK_URL_TO_51")
+		return os.Getenv("WEBHOOK_URL_TO_51")
 	case "2019新卒技術_雑談":
-		webHookURL = os.Getenv("WEBHOOK_URL_TO_SHINSOTSU")
+		return os.Getenv("WEBHOOK_URL_TO_SHINSOTSU")
 	}
-	return webHookURL
+	return ""
 }
 
 // CreateTaskMessage : タスク通知用のメッセージを作成
