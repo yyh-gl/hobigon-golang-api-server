@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
@@ -17,7 +16,7 @@ import (
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) error
-	NotifyTodayBirthdayToSlack(ctx context.Context) error
+	NotifyTodayBirthdayToSlack(ctx context.Context) (int, error)
 	NotifyAccessRanking(ctx context.Context) error
 }
 
@@ -101,24 +100,24 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 }
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
-func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) error {
+func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, error) {
 	// 今日の誕生日情報を取得
 	today := time.Now().Format("0102")
-	birthday, err := n.r.SelectByDate(ctx, today)
+	birthdayList, err := n.r.FindAllByDate(ctx, today)
 	if err != nil {
 		if errors.Is(err, repository.ErrRecordNotFound) {
-			return ErrBirthdayNotFound
+			return 0, ErrBirthdayNotFound
 		}
-		return fmt.Errorf("birthdayRepository.SelectByDate()内でのエラー: %w", err)
+		return 0, fmt.Errorf("birthdayRepository.SelectByDate()内でのエラー: %w", err)
 	}
 
 	// 誕生日情報を Slack に通知
-	err = n.sg.SendBirthday(ctx, *birthday)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return fmt.Errorf("notificationService.SendBirthday()内でのエラー: %w", err)
+	err = n.sg.SendBirthday(ctx, *birthdayList)
+	if err != nil {
+		return 0, fmt.Errorf("notificationService.SendBirthday()内でのエラー: %w", err)
 	}
 
-	return nil
+	return len(*birthdayList), nil
 }
 
 // NotifyAccessRanking : アクセスランキングを Slack に通知
