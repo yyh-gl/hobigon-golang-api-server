@@ -49,8 +49,10 @@ func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTa
 
 	data.Text = data.CreateTaskMessage(todayTasks, dueOverTasks)
 
-	s.send(ctx, data)
-	return err
+	if err := s.send(ctx, data); err != nil {
+		return err
+	}
+	return nil
 }
 
 // SendBirthday : Slack に誕生日通知を送信
@@ -86,8 +88,10 @@ func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) (err error)
 		Text:     blog.CreateLikeMessage(),
 	}
 
-	s.send(ctx, data)
-	return err
+	if err := s.send(ctx, data); err != nil {
+		return err
+	}
+	return nil
 }
 
 // SendRanking : Slack にアクセスラキングを送信
@@ -98,6 +102,8 @@ func (s slack) SendRanking(ctx context.Context, ranking string) (err error) {
 		Text:     ranking,
 	}
 
-	s.send(ctx, data)
-	return err
+	if err := s.send(ctx, data); err != nil {
+		return err
+	}
+	return nil
 }
