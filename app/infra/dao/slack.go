@@ -41,7 +41,7 @@ func (s slack) send(ctx context.Context, data modelS.Slack) error {
 }
 
 // SendTask : Slack にタスクを送信
-func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTasks []modelT.Task) (err error) {
+func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTasks []modelT.Task) error {
 	data := modelS.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",
@@ -81,7 +81,7 @@ func (s slack) SendBirthday(ctx context.Context, birthdayList modelBd.BirthdayLi
 }
 
 // SendLikeNotify : Slack にいいね（ブログ）通知を送信
-func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) (err error) {
+func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) error {
 	data := modelS.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
@@ -95,7 +95,7 @@ func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) (err error)
 }
 
 // SendRanking : Slack にアクセスラキングを送信
-func (s slack) SendRanking(ctx context.Context, ranking string) (err error) {
+func (s slack) SendRanking(ctx context.Context, ranking string) error {
 	data := modelS.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
