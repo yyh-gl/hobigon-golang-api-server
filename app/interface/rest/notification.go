@@ -29,7 +29,7 @@ func NewNotification(u usecase.Notification) Notification {
 
 // notificationResponse : Notification用共通レスポンス
 type notificationResponse struct {
-	Count int `json:"count,omitempty"`
+	Count int `json:"count"`
 	errorResponse
 }
 
@@ -50,7 +50,9 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	resp := notificationResponse{}
+	resp := notificationResponse{
+		Count: 0,
+	}
 	notifiedNum, err := n.u.NotifyTodayBirthdayToSlack(r.Context())
 	if err != nil {
 		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err)
