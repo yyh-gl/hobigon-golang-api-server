@@ -7,7 +7,13 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 )
 
+// BirthdayListDTO : BirthdayDTOのリスト
 type BirthdayListDTO []BirthdayDTO
+
+// IsEmpty : BirthdayListDTOが空かどうか判定
+func (bl BirthdayListDTO) IsEmpty() bool {
+	return len(bl) == 0
+}
 
 // ConvertToDomainModel : ドメインモデルに変換
 func (bl BirthdayListDTO) ConvertToDomainModel(ctx context.Context) (*birthday.BirthdayList, error) {

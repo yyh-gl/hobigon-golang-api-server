@@ -2,10 +2,8 @@ package dao
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
@@ -52,10 +50,9 @@ func (b birthday) FindAllByDate(ctx context.Context, date string) (*model.Birthd
 	var birthdayListDTO dto.BirthdayListDTO
 	err := b.db.Where("date=?", date).Find(&birthdayListDTO).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, repository.ErrRecordNotFound
-		}
 		return nil, fmt.Errorf("gorm.Where().Find()内でのエラー: %w", err)
+	} else if birthdayListDTO.IsEmpty() {
+		return nil, repository.ErrRecordNotFound
 	}
 
 	// DTO を ドメインモデルに変換
