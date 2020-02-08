@@ -46,24 +46,24 @@ func (b blog) Create(ctx context.Context, title string) (*model.Blog, error) {
 
 // Show : ブログ情報を1件取得
 func (b blog) Show(ctx context.Context, title string) (*model.Blog, error) {
-	blog, err := b.r.SelectByTitle(ctx, title)
+	blog, err := b.r.FindByTitle(ctx, title)
 	if err != nil {
 		if errors.Is(err, repository.ErrRecordNotFound) {
 			return nil, ErrBlogNotFound
 		}
-		return nil, fmt.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
+		return nil, fmt.Errorf("blogRepository.FindByTitle()内でのエラー: %w", err)
 	}
 	return blog, nil
 }
 
 // Like : 指定ブログにいいねをプラス1
 func (b blog) Like(ctx context.Context, title string) (*model.Blog, error) {
-	blog, err := b.r.SelectByTitle(ctx, title)
+	blog, err := b.r.FindByTitle(ctx, title)
 	if err != nil {
 		if errors.Is(err, repository.ErrRecordNotFound) {
 			return nil, ErrBlogNotFound
 		}
-		return nil, fmt.Errorf("blogRepository.SelectByTitle()内でのエラー: %w", err)
+		return nil, fmt.Errorf("blogRepository.FindByTitle()内でのエラー: %w", err)
 	}
 
 	blog.CountUp()

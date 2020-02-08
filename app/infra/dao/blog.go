@@ -43,8 +43,8 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 	return createdBlog, nil
 }
 
-// SelectByTitle : タイトルからブログ情報を1件取得
-func (b blog) SelectByTitle(ctx context.Context, title string) (*model.Blog, error) {
+// FindByTitle : タイトルからブログ情報を1件取得
+func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error) {
 	blogDTO := dto.BlogDTO{}
 	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
