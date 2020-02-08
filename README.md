@@ -29,7 +29,8 @@ WAFは使わずに [julienschmidt/httprouter](https://github.com/julienschmidt/h
 
 
 # TODO
-- ドメインモデル貧血症の改善
-  - Ranking
-  - Slack
-  - Task
+- DDDらしく書き直す
+  - ドメインモデル貧血症の改善
+    - Ranking
+    - Slack
+    - Task
