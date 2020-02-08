@@ -47,7 +47,7 @@ func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
+	if _, err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
