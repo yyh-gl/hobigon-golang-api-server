@@ -29,7 +29,7 @@ func NewNotification(u usecase.Notification) Notification {
 
 // notificationResponse : Notification用共通レスポンス
 type notificationResponse struct {
-	NotifiedNum int `json:"notified_num,omitempty"`
+	NotifiedNum int `json:"notified_num"`
 	errorResponse
 }
 
