@@ -46,24 +46,22 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 	return createdBirthday, nil
 }
 
-// SelectByDate : 日付から誕生日を1件取得
-func (b birthday) SelectByDate(ctx context.Context, date string) (*model.Birthday, error) {
-	// Birthday の DTO を用意
-	birthdayDTO := dto.BirthdayDTO{}
-
+// FindAllByDate : 指定日付の誕生日データを全件取得
+func (b birthday) FindAllByDate(ctx context.Context, date string) (*model.BirthdayList, error) {
 	// date 指定で誕生日情報を取得
-	err := b.db.First(&birthdayDTO, "date=?", date).Error
+	var birthdayListDTO dto.BirthdayListDTO
+	err := b.db.Where("date=?", date).Find(&birthdayListDTO).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, repository.ErrRecordNotFound
 		}
-		return nil, fmt.Errorf("gorm.First()内でのエラー: %w", err)
+		return nil, fmt.Errorf("gorm.Where().Find()内でのエラー: %w", err)
 	}
 
 	// DTO を ドメインモデルに変換
-	birthday, err := birthdayDTO.ConvertToDomainModel(ctx)
+	birthdayList, err := birthdayListDTO.ConvertToDomainModel(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
+		return nil, fmt.Errorf("birthdayListDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
-	return birthday, nil
+	return birthdayList, nil
 }
