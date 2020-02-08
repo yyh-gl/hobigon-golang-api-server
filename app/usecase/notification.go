@@ -15,9 +15,9 @@ import (
 
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
-	NotifyTodayTasksToSlack(ctx context.Context) error
+	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
 	NotifyTodayBirthdayToSlack(ctx context.Context) (int, error)
-	NotifyAccessRanking(ctx context.Context) error
+	NotifyAccessRanking(ctx context.Context) (int, error)
 }
 
 type notification struct {
@@ -45,7 +45,7 @@ func NewNotification(
 // TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
-func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
+func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
 	var todayTasks []model.Task
 	var dueOverTasks []model.Task
 
@@ -54,7 +54,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 	for _, boardID := range boardIDList {
 		lists, err := n.tg.GetListsByBoardID(ctx, boardID)
 		if err != nil {
-			return fmt.Errorf("taskGateway.GetListsByBoardID()内でのエラー: %w", err)
+			return 0, fmt.Errorf("taskGateway.GetListsByBoardID()内でのエラー: %w", err)
 		}
 
 		for _, list := range lists {
@@ -62,7 +62,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 			if list.Name == "TODO" || list.Name == "WIP" {
 				taskList, dueOverTaskList, err := n.tg.GetTasksFromList(ctx, *list)
 				if err != nil {
-					return fmt.Errorf("taskGateway.GetTasksFromList()内でのエラー: %w", err)
+					return 0, fmt.Errorf("taskGateway.GetTasksFromList()内でのエラー: %w", err)
 				}
 
 				switch list.Name {
@@ -83,20 +83,21 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) error {
 
 	// 今日のタスクを WIP リストに移動
 	if err := n.tg.MoveToWIP(ctx, todayTasks); err != nil {
-		return fmt.Errorf("taskGateway.MoveToWIP(todayTasks)内でのエラー: %w", err)
+		return 0, fmt.Errorf("taskGateway.MoveToWIP(todayTasks)内でのエラー: %w", err)
 	}
 
 	// 期限切れのタスクを WIP リストに移動
 	if err := n.tg.MoveToWIP(ctx, dueOverTasks); err != nil {
-		return fmt.Errorf("taskGateway.MoveToWIP(dueOverTasks)内でのエラー: %w", err)
+		return 0, fmt.Errorf("taskGateway.MoveToWIP(dueOverTasks)内でのエラー: %w", err)
 	}
 
 	// 今日および期限切れのタスクを Slack に通知
 	if err := n.sg.SendTask(ctx, todayTasks, dueOverTasks); err != nil {
-		return fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
+		return 0, fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
 	}
 
-	return nil
+	notifiedNum := len(todayTasks) + len(dueOverTasks)
+	return notifiedNum, nil
 }
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
@@ -121,19 +122,19 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, erro
 }
 
 // NotifyAccessRanking : アクセスランキングを Slack に通知
-func (n notification) NotifyAccessRanking(ctx context.Context) error {
+func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
 	// アクセスランキングの結果を取得
 	// TODO: アウトプット再検討->エクセルに出力して解析とかしたい
-	rankingMsg, _, err := n.rs.GetAccessRanking(ctx)
+	rankingMsg, ranking, err := n.rs.GetAccessRanking(ctx)
 	if err != nil {
-		return fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
+		return 0, fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
 	}
 
 	// アクセスランキングの結果を Slack に通知
 	err = n.sg.SendRanking(ctx, rankingMsg)
 	if err != nil {
-		return fmt.Errorf("slackGateway.SendRanking()内でのエラー: %w", err)
+		return 0, fmt.Errorf("slackGateway.SendRanking()内でのエラー: %w", err)
 	}
 
-	return nil
+	return len(ranking), nil
 }

@@ -33,7 +33,7 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
+	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}
@@ -61,7 +61,7 @@ func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
-	if err := n.u.NotifyAccessRanking(ctx); err != nil {
+	if _, err := n.u.NotifyAccessRanking(ctx); err != nil {
 		logger.Println(err)
 		return err
 	}

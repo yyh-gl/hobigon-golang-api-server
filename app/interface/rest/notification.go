@@ -29,14 +29,15 @@ func NewNotification(u usecase.Notification) Notification {
 
 // notificationResponse : Notification用共通レスポンス
 type notificationResponse struct {
-	Count int `json:"count"`
+	NotifiedNum int `json:"notified_num,omitempty"`
 	errorResponse
 }
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
 func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request) {
 	resp := notificationResponse{}
-	if err := n.u.NotifyTodayTasksToSlack(r.Context()); err != nil {
+	notifiedNum, err := n.u.NotifyTodayTasksToSlack(r.Context())
+	if err != nil {
 		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
@@ -44,15 +45,14 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
+	resp.NotifiedNum = notifiedNum
 
 	DoResponse(w, resp, http.StatusOK)
 }
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
 func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	resp := notificationResponse{
-		Count: 0,
-	}
+	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyTodayBirthdayToSlack(r.Context())
 	if err != nil {
 		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err)
@@ -67,7 +67,7 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 		DoResponse(w, resp, http.StatusInternalServerError)
 		return
 	}
-	resp.Count = notifiedNum
+	resp.NotifiedNum = notifiedNum
 
 	DoResponse(w, resp, http.StatusOK)
 }
@@ -75,13 +75,15 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 // NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
 func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request) {
 	resp := notificationResponse{}
-	if err := n.u.NotifyAccessRanking(r.Context()); err != nil {
+	notifiedNum, err := n.u.NotifyAccessRanking(r.Context())
+	if err != nil {
 		errInfo := fmt.Errorf("notificationUseCase.NotifyAccessRanking()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
 		resp.Error = errInfo.Error()
 		DoResponse(w, resp, http.StatusInternalServerError)
 	}
+	resp.NotifiedNum = notifiedNum
 
 	DoResponse(w, resp, http.StatusOK)
 }
