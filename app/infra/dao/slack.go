@@ -30,10 +30,13 @@ func (s slack) send(ctx context.Context, data modelS.Slack) error {
 
 	webHookURL := data.GetWebHookURL()
 	errList := slackWebHook.Send(webHookURL, "", payload)
-	if errList != nil {
+	if len(errList) != 0 && !app.IsTest() {
 		msg := ""
 		for _, e := range errList {
-			msg += e.Error() + " & "
+			if msg != "" {
+				msg += " & "
+			}
+			msg += e.Error()
 		}
 		return errors.New(msg)
 	}
