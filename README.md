@@ -1,36 +1,42 @@
 
-# Hobigon サーバ
+# Hobigon Server
 
-**自宅APIサーバ**
+**Hoby + Kanegon = Hobigon**
 
--> [Railsで作ったもの](https://github.com/yyh-gl/hobigon-rails-api-server)をGolangで書き直したもの
+Hobigon is API server and it is made by me for me.
+
+I remade that was made in Ruby(Rails).
+-> [Hobigon ver.Ruby repository](https://github.com/yyh-gl/hobigon-rails-api-server) (sorry, this is private repo) 
 
 
-# 機能
+# Features
 
 ## API
+Hobigon don't use WAF but use only [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter).
 
-WAFは使わずに [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) だけを使って実装
-
-- Slack通知
-  - 本日のタスク一覧
-  - アクセスランキング
-  - 誕生日
-- [ブログ](https://yyh-gl.github.io/tech-blog/)いいね
+- Slack Notification
+  - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
+  - Today's task list
+  - Today's birthday people
+- [My Blog](https://yyh-gl.github.io/tech-blog/)
+  - Create post data
+  - Get post data
+  - Like👍 post
+- Birthday
+  - Create birthday data
 
 ## CLI
+Hobigon use [urfave/cli](https://github.com/urfave/cli).
 
-[urfave/cli](https://github.com/urfave/cli) を使って実装
-
-- Slack通知
-  - 本日のタスク一覧
-  - アクセスランキング
-  - 誕生日
+- Slack Notification
+  - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
+  - Today's task list
+  - Today's birthday people
 
 
 # TODO
-- DDDらしく書き直す
-  - ドメインモデル貧血症の改善
+- Make Hobigon DDD-like
+  - Improve anemic domain model
     - Ranking
     - Slack
     - Task
