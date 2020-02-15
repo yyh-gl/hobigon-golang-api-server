@@ -1,6 +1,9 @@
 
 # Hobigon Server
 
+![Go](https://img.shields.io/badge/Go-1.13.5-blue.svg)
+![GitHub Actions](https://img.shields.io/github/workflow/status/yyh-gl/hobigon-golang-api-server/Workflow%20for%20Golang)
+
 **Hoby + Kanegon = Hobigon**
 
 Hobigon is API server and it is made by me for me.
