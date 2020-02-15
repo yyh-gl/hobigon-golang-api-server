@@ -70,8 +70,9 @@ func (b Blog) Count() Count {
 }
 
 // CountUp : いいね数をプラス1
-func (b *Blog) CountUp() {
+func (b Blog) CountUp() *Blog {
 	b.f.Count += 1
+	return &b
 }
 
 // CreateLikeMessage : いいね受信メッセージを生成
