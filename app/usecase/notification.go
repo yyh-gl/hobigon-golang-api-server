@@ -111,12 +111,12 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, erro
 	}
 
 	// 誕生日情報を Slack に通知
-	err = n.sg.SendBirthday(ctx, *birthdayList)
+	err = n.sg.SendBirthday(ctx, birthdayList)
 	if err != nil {
 		return 0, fmt.Errorf("notificationService.SendBirthday()内でのエラー: %w", err)
 	}
 
-	return len(*birthdayList), nil
+	return len(birthdayList), nil
 }
 
 // NotifyAccessRanking : アクセスランキングを Slack に通知

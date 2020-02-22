@@ -37,7 +37,7 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 	}
 
 	// DTO を ドメインモデルに変換
-	createdBirthday, err := birthdayDTO.ConvertToDomainModel(ctx)
+	createdBirthday := model.ConvertToDomainModel(birthdayDTO)
 	if err != nil {
 		return nil, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
@@ -45,7 +45,7 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 }
 
 // FindAllByDate : 指定日付の誕生日データを全件取得
-func (b birthday) FindAllByDate(ctx context.Context, date string) (*model.BirthdayList, error) {
+func (b birthday) FindAllByDate(ctx context.Context, date string) (model.BirthdayList, error) {
 	// date 指定で誕生日情報を取得
 	var birthdayListDTO dto.BirthdayListDTO
 	err := b.db.Where("date=?", date).Find(&birthdayListDTO).Error
@@ -56,7 +56,7 @@ func (b birthday) FindAllByDate(ctx context.Context, date string) (*model.Birthd
 	}
 
 	// DTO を ドメインモデルに変換
-	birthdayList, err := birthdayListDTO.ConvertToDomainModel(ctx)
+	birthdayList := model.ConvertToDomainModelList(birthdayListDTO)
 	if err != nil {
 		return nil, fmt.Errorf("birthdayListDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
