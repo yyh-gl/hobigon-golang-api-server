@@ -8,7 +8,7 @@ import (
 // WishList : Amazon の欲しい物リストを表す値オブジェクト
 type WishList string
 
-// NewWishList : WishList を生成
+// newWishList : WishList を生成
 func newWishList(val string) (*WishList, error) {
 	// WishList が空じゃない場合は "https://" で始まっていることをチェック
 	if val != "" && !strings.HasPrefix(val, "https://") {

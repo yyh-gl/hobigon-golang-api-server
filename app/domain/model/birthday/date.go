@@ -15,7 +15,7 @@ const (
 // Date : 誕生日に関する日付を表す値オブジェクト
 type Date string
 
-// NewDate : Date を生成
+// newDate : Date を生成
 func newDate(val string) (*Date, error) {
 	if len(val) != defaultLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")

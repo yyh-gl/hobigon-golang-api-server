@@ -11,7 +11,7 @@ const maxLength = 30
 // Name : 誕生日の人の名前を表す値オブジェクト
 type Name string
 
-// NewName : Name を生成
+// newName : Name を生成
 func newName(val string) (*Name, error) {
 	if len(val) > maxLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Nameは" + strconv.Itoa(maxLength) + "文字以内です")
