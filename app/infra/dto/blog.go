@@ -1,11 +1,7 @@
 package dto
 
 import (
-	"context"
-	"fmt"
 	"time"
-
-	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 )
 
 // BlogDTO : ブログ用の DTO
@@ -20,13 +16,4 @@ type BlogDTO struct {
 // TableName : DB アクセスにおける対応テーブル名
 func (b BlogDTO) TableName() string {
 	return "blog_posts"
-}
-
-// ConvertToDomainModel : ドメインモデルに変換
-func (b BlogDTO) ConvertToDomainModel(ctx context.Context) (*model.Blog, error) {
-	blog, err := model.NewBlogWithFullParams(b.Title, b.Count)
-	if err != nil {
-		return nil, fmt.Errorf("model.NewBlogWithFullParams()でエラー: %w", err)
-	}
-	return blog, nil
 }
