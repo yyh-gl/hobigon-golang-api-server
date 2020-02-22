@@ -16,7 +16,7 @@ const (
 type Date string
 
 // NewDate : Date を生成
-func NewDate(val string) (*Date, error) {
+func newDate(val string) (*Date, error) {
 	if len(val) != defaultLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")
 	}

@@ -12,7 +12,7 @@ const maxLength = 30
 type Name string
 
 // NewName : Name を生成
-func NewName(val string) (*Name, error) {
+func newName(val string) (*Name, error) {
 	if len(val) > maxLength {
 		return nil, errors.New("バリデーションエラー：【Birthday】Nameは" + strconv.Itoa(maxLength) + "文字以内です")
 	}

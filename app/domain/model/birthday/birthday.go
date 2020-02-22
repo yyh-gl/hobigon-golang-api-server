@@ -19,48 +19,19 @@ type fields struct {
 // NewBirthday : Birthdayドメインモデルを生成
 func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
 	// Name を生成
-	n, err := NewName(name)
+	n, err := newName(name)
 	if err != nil {
 		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
 	}
 
 	// Date を生成
-	d, err := NewDate(date)
+	d, err := newDate(date)
 	if err != nil {
 		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
 	}
 
 	// WishList を生成
-	wl, err := NewWishList(wishList)
-	if err != nil {
-		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)
-	}
-
-	return &Birthday{
-		fields{
-			Name:     *n,
-			Date:     *d,
-			WishList: *wl,
-		},
-	}, nil
-}
-
-// NewBirthdayWithFullParams : パラメータ全指定でBirthdayドメインモデルを生成
-func NewBirthdayWithFullParams(name string, date string, wishList string) (*Birthday, error) {
-	// Name を生成
-	n, err := NewName(name)
-	if err != nil {
-		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
-	}
-
-	// Date を生成
-	d, err := NewDate(date)
-	if err != nil {
-		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
-	}
-
-	// WishList を生成
-	wl, err := NewWishList(wishList)
+	wl, err := newWishList(wishList)
 	if err != nil {
 		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)
 	}
