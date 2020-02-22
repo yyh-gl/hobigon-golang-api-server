@@ -8,8 +8,8 @@ const initCount = 0
 // Count : ブログのいいね数を表す値オブジェクト
 type Count int
 
-// NewCount : Count を生成
-func NewCount() (*Count, error) {
+// newCount : Count を生成
+func newCount() (*Count, error) {
 	n := Count(initCount)
 	return &n, nil
 }

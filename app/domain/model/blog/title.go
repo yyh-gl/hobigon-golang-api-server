@@ -11,8 +11,8 @@ const maxLength = 50
 // Title : ブログのタイトルを表す値オブジェクト
 type Title string
 
-// NewTitle : Title を生成
-func NewTitle(val string) (*Title, error) {
+// newTitle : Title を生成
+func newTitle(val string) (*Title, error) {
 	if len(val) > maxLength {
 		return nil, errors.New("バリデーションエラー：【Blog】Titleは" + strconv.Itoa(maxLength) + "文字以内です")
 	}

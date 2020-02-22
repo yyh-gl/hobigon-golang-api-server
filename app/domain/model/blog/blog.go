@@ -17,36 +17,12 @@ type fields struct {
 
 // NewBlog : Blog ドメインモデルを生成
 func NewBlog(title string) (*Blog, error) {
-	// Title を生成
-	t, err := NewTitle(title)
+	t, err := newTitle(title)
 	if err != nil {
 		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
 	}
 
-	// Count を生成
-	c, err := NewCount()
-	if err != nil {
-		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
-	}
-
-	return &Blog{
-		f: fields{
-			Title: *t,
-			Count: *c,
-		},
-	}, nil
-}
-
-// NewBlogWithFullParams : パラメータ全指定で Blog ドメインモデルを生成
-func NewBlogWithFullParams(title string, count int) (*Blog, error) {
-	// Title を生成
-	t, err := NewTitle(title)
-	if err != nil {
-		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
-	}
-
-	// Count を生成
-	c, err := NewCountWithArg(count)
+	c, err := newCount()
 	if err != nil {
 		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
 	}
