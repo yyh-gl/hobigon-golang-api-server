@@ -1,9 +1,13 @@
 package birthday
 
-import "github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
+import (
+	"context"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
+)
 
 // ConvertToDomainModel : DTOからドメインモデルへ変換
-func ConvertToDomainModel(b dto.BirthdayDTO) *Birthday {
+func ConvertToDomainModel(ctx context.Context, b dto.BirthdayDTO) *Birthday {
 	return &Birthday{
 		fields{
 			Name:     Name(b.Name),
@@ -14,9 +18,9 @@ func ConvertToDomainModel(b dto.BirthdayDTO) *Birthday {
 }
 
 // ConvertToDomainModelList : リスト型DTOからリスト型ドメインモデルへ変換
-func ConvertToDomainModelList(bl dto.BirthdayListDTO) (list BirthdayList) {
+func ConvertToDomainModelList(ctx context.Context, bl dto.BirthdayListDTO) (list BirthdayList) {
 	for _, b := range bl {
-		model := ConvertToDomainModel(b)
+		model := ConvertToDomainModel(ctx, b)
 		list = append(list, *model)
 	}
 	return list
