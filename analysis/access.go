@@ -1,4 +1,4 @@
-package service
+package analysis
 
 import (
 	"bufio"
@@ -9,29 +9,34 @@ import (
 	"strings"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/ranking"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/service"
 )
 
-type ranking struct{}
-
-// NewRanking : Ranking用ドメインサービスを取得
-func NewRanking() service.Ranking {
-	return &ranking{}
+// access : アクセス情報を表す構造体
+type access struct {
+	endpoint string
+	count    int
 }
 
-// isContain : 文字列の配列に指定文字列が存在するか確認
-func isContain(arr []string, str string) bool {
-	for _, v := range arr {
-		if str == v {
-			return true
-		}
-	}
-	return false
+// accessList : アクセス情報を表す構造体のリスト
+type accessList []access
+
+// Len : accessList の配列数を取得
+func (l accessList) Len() int {
+	return len(l)
+}
+
+// Swap : 指定要素の位置を入れ替える
+func (l accessList) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
+
+// Less : 指定要素の大小関係を判定
+func (l accessList) Less(i, j int) bool {
+	return l[i].count < l[j].count
 }
 
 // GetAccessRanking : アクセスランキングを取得する関数
-func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, accessList model.Ranking, err error) {
+func GetAccessRanking(ctx context.Context) (rankingMsg string, notifiedNum int, err error) {
 	const (
 		IndexPrefix     = 2
 		IndexMethod     = 3
@@ -46,7 +51,7 @@ func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, acces
 	// app.log からアクセス記録を解析
 	fp, err := os.Open(os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 	if err != nil {
-		return "", nil, err
+		return "", 0, err
 	}
 	defer func() { _ = fp.Close() }()
 
@@ -69,19 +74,18 @@ func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, acces
 		}
 	}
 	if err = scanner.Err(); err != nil {
-		return "", nil, err
+		return "", 0, err
 	}
 
 	// アクセス数が多い順にソート
-	accessList = model.Ranking{}
+	accessList := accessList{}
 	for endpoint, count := range accessCountPerEndpoint {
-		e := model.Access{
-			Endpoint: endpoint,
-			Count:    count,
-		}
-		accessList = append(accessList, e)
+		accessList = append(accessList, access{
+			endpoint: endpoint,
+			count:    count,
+		})
 	}
-	sort.Sort(accessList)
+	sort.Sort(sort.Reverse(accessList))
 
 	// Slack 通知用のメッセージを作成
 	rankingMsg = "\n【アクセスランキング】"
@@ -91,8 +95,18 @@ func (r ranking) GetAccessRanking(ctx context.Context) (rankingMsg string, acces
 			break
 		}
 
-		rankingMsg += "\n" + strconv.Itoa(i+1) + "位 " + strconv.Itoa(req.Count) + "回： " + req.Endpoint
+		rankingMsg += "\n" + strconv.Itoa(i+1) + "位 " + strconv.Itoa(req.count) + "回： " + req.endpoint
 	}
 
-	return rankingMsg, accessList, nil
+	return rankingMsg, len(accessList), nil
+}
+
+// isContain : 文字列の配列に指定文字列が存在するか確認
+func isContain(arr []string, str string) bool {
+	for _, v := range arr {
+		if str == v {
+			return true
+		}
+	}
+	return false
 }
