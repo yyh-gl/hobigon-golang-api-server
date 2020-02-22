@@ -18,9 +18,7 @@ type birthday struct {
 }
 
 // NewBirthday : Birthday用ユースケースを取得
-func NewBirthday(
-	r repository.Birthday,
-) Birthday {
+func NewBirthday(r repository.Birthday) Birthday {
 	return &birthday{
 		r: r,
 	}
