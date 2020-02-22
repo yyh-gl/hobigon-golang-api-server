@@ -7,10 +7,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/analysis"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/service"
 )
 
 // Notification : Notification用ユースケースのインターフェース
@@ -24,7 +25,6 @@ type notification struct {
 	tg gateway.Task
 	sg gateway.Slack
 	r  repository.Birthday
-	rs service.Ranking
 }
 
 // NewNotification : Notification用ユースケースを取得
@@ -32,13 +32,11 @@ func NewNotification(
 	tg gateway.Task,
 	sg gateway.Slack,
 	r repository.Birthday,
-	rs service.Ranking,
 ) Notification {
 	return &notification{
 		tg: tg,
 		sg: sg,
 		r:  r,
-		rs: rs,
 	}
 }
 
@@ -125,7 +123,7 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, erro
 func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
 	// アクセスランキングの結果を取得
 	// TODO: アウトプット再検討->エクセルに出力して解析とかしたい
-	rankingMsg, ranking, err := n.rs.GetAccessRanking(ctx)
+	rankingMsg, notifiedNum, err := analysis.GetAccessRanking(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
 	}
@@ -136,5 +134,5 @@ func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("slackGateway.SendRanking()内でのエラー: %w", err)
 	}
 
-	return len(ranking), nil
+	return notifiedNum, nil
 }
