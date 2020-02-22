@@ -40,6 +40,5 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
 # TODO
 - Make Hobigon DDD-like
   - Improve anemic domain model
-    - Ranking
     - Slack
     - Task
