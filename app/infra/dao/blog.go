@@ -25,7 +25,7 @@ func NewBlog(db *db.DB) repository.Blog {
 
 // Create : ブログ情報を新規作成
 func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
-	// Blog モデル を DTO に変換
+	// BlogモデルをDTOに変換
 	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
@@ -57,7 +57,7 @@ func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error
 
 // Update : ブログ情報を1件更新
 func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {
-	// Blog モデル を DTO に変換
+	// BlogモデルをDTOに変換
 	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),

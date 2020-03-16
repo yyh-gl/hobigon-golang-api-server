@@ -2,30 +2,30 @@ package blog
 
 import "strconv"
 
-// initCount : Count のデフォルト初期値
+// initCount : Countのデフォルト初期値
 const initCount = 0
 
 // Count : ブログのいいね数を表す値オブジェクト
 type Count int
 
-// newCount : Count を生成
+// newCount : Countを生成
 func newCount() (*Count, error) {
 	n := Count(initCount)
 	return &n, nil
 }
 
-// NewCountWithArg : 引数の値をもとに Count を生成
+// NewCountWithArg : 引数の値をもとにCountを生成
 func NewCountWithArg(val int) (*Count, error) {
 	n := Count(val)
 	return &n, nil
 }
 
-// Int : Countの 値を Int として返却
+// Int : Countの値をIntとして返却
 func (n Count) Int() int {
 	return int(n)
 }
 
-// String : Countの 値を String として返却
+// String : Countの値をStringとして返却
 func (n Count) String() string {
 	return strconv.Itoa(n.Int())
 }

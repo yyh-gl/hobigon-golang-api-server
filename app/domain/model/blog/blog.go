@@ -35,12 +35,12 @@ func NewBlog(title string) (*Blog, error) {
 	}, nil
 }
 
-// Title : title のゲッター
+// Title : titleのゲッター
 func (b Blog) Title() Title {
 	return b.f.Title
 }
 
-// Count : count のゲッター
+// Count : countのゲッター
 func (b Blog) Count() Count {
 	return b.f.Count
 }

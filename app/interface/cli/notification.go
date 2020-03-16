@@ -26,7 +26,7 @@ func NewNotification(u usecase.Notification) Notification {
 	}
 }
 
-// NotifyTodayTasksToSlack : 今日のタスク一覧を Slack に通知
+// NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	logger := app.Logger
 
@@ -40,7 +40,7 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	return nil
 }
 
-// NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
+// NotifyTodayBirthdayToSlack : 今日誕生日の人をSlackに通知
 func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 	logger := app.Logger
 
@@ -54,7 +54,7 @@ func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 	return nil
 }
 
-// NotifyAccessRankingToSlack : アクセスランキングを Slack に通知
+// NotifyAccessRankingToSlack : アクセスランキングをSlackに通知
 func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
 	logger := app.Logger
 

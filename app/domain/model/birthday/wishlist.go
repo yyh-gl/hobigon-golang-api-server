@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-// WishList : Amazon の欲しい物リストを表す値オブジェクト
+// WishList : Amazonの欲しい物リストを表す値オブジェクト
 type WishList string
 
-// newWishList : WishList を生成
+// newWishList : WishListを生成
 func newWishList(val string) (*WishList, error) {
 	// WishList が空じゃない場合は "https://" で始まっていることをチェック
 	if val != "" && !strings.HasPrefix(val, "https://") {
@@ -19,12 +19,12 @@ func newWishList(val string) (*WishList, error) {
 	return &wl, nil
 }
 
-// String : WishList の値を文字列として返却
+// String : WishListの値を文字列として返却
 func (wl WishList) String() string {
 	return string(wl)
 }
 
-// IsNull : WishList の値が Null かどうか判定
+// IsNull : WishListの値がNullかどうか判定
 func (wl WishList) IsNull() bool {
 	return wl == ""
 }

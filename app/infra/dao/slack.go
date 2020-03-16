@@ -15,12 +15,12 @@ import (
 
 type slack struct{}
 
-// NewSlack : Slack 用のゲートウェイを取得
+// NewSlack : Slack用のゲートウェイを取得
 func NewSlack() gateway.Slack {
 	return &slack{}
 }
 
-// send : Slack に通知を送信
+// send : Slackに通知を送信
 func (s slack) send(ctx context.Context, data modelS.Slack) error {
 	payload := slackWebHook.Payload{
 		Username: data.Username,

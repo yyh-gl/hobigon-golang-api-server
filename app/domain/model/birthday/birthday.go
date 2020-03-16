@@ -18,19 +18,19 @@ type fields struct {
 
 // NewBirthday : Birthdayドメインモデルを生成
 func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
-	// Name を生成
+	// Nameを生成
 	n, err := newName(name)
 	if err != nil {
 		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
 	}
 
-	// Date を生成
+	// Dateを生成
 	d, err := newDate(date)
 	if err != nil {
 		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
 	}
 
-	// WishList を生成
+	// WishListを生成
 	wl, err := newWishList(wishList)
 	if err != nil {
 		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)

@@ -14,7 +14,7 @@ type BirthdayDTO struct {
 	DeletedAt *time.Time
 }
 
-// TableName : DB アクセスにおける対応テーブル名
+// TableName : DBアクセスにおける対応テーブル名
 func (b BirthdayDTO) TableName() string {
 	return "birthdays"
 }

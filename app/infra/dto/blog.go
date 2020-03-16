@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// BlogDTO : ブログ用の DTO
+// BlogDTO : ブログ用のDTO
 type BlogDTO struct {
 	Title     string `gorm:"primary_key;not null"`
 	Count     int    `gorm:"default:0;not null"`
@@ -13,7 +13,7 @@ type BlogDTO struct {
 	DeletedAt *time.Time
 }
 
-// TableName : DB アクセスにおける対応テーブル名
+// TableName : DBアクセスにおける対応テーブル名
 func (b BlogDTO) TableName() string {
 	return "blog_posts"
 }

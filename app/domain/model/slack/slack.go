@@ -16,7 +16,7 @@ type Slack struct {
 	Text    string
 }
 
-// GetWebHookURL : WebHook URL を取得
+// GetWebHookURL : WebHook URLを取得
 func (s Slack) GetWebHookURL() (webHookURL string) {
 	switch s.Channel {
 	case "00_today_tasks":

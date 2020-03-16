@@ -87,7 +87,7 @@ func GetAccessRanking(ctx context.Context) (rankingMsg string, notifiedNum int, 
 	}
 	sort.Sort(sort.Reverse(accessList))
 
-	// Slack 通知用のメッセージを作成
+	// Slack通知用のメッセージを作成
 	rankingMsg = "\n【アクセスランキング】"
 	for i, req := range accessList {
 		// Slack 通知では10位まで表示

@@ -8,7 +8,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
-// Response : REST API 用の共通エラーレスポンス
+// Response : REST API用の共通エラーレスポンス
 type errorResponse struct {
 	Error string `json:"error,omitempty"`
 }

@@ -76,7 +76,7 @@ func (t task) GetTasksFromList(ctx context.Context, list trello.List) (taskList 
 	return taskList, dueOverTaskList, nil
 }
 
-// convertToTasksModel : infra 層用の Task モデルをドメインモデルに変換
+// convertToTasksModel : infra層用のTaskモデルをドメインモデルに変換
 func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.List) {
 	for _, card := range trelloCards {
 		t := model.Task{}
@@ -92,7 +92,7 @@ func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskL
 	return taskList
 }
 
-// MoveToWIP : 指定タスクを WIP リストに移動
+// MoveToWIP : 指定タスクをWIPリストに移動
 func (t task) MoveToWIP(ctx context.Context, tasks []model.Task) (err error) {
 	for _, t := range tasks {
 		var wipListID string
