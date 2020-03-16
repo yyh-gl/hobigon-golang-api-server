@@ -7,7 +7,7 @@ LABEL "name"="Golang workflow" \
     "com.github.actions.name"="golang　workflow" \
     "com.github.actions.description"="This is an Action to run go and golangci-lint commands."
 
-ENV LINT_VERSION="v1.23.1"
+ENV LINT_VERSION="v1.24.0"
 
 COPY entrypoint.sh /entrypoint.sh
 
