@@ -13,6 +13,11 @@ RUN apk add --no-cache \
     make \
     gcc \
     libc-dev
+RUN go get -u github.com/cosmtrek/air
+RUN go get -u github.com/yyh-gl/realize
+RUN go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+RUN go get -u github.com/google/wire/cmd/wire
+RUN go get -u github.com/tj/robo
 RUN robo api-build-prod
 
 FROM alpine AS app
