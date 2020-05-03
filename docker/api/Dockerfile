@@ -1,4 +1,4 @@
-FROM golang:1.14.1-alpine AS build
+FROM golang:1.14.2-alpine AS build
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
 

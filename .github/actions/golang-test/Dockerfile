@@ -1,4 +1,4 @@
-FROM golang:1.14.1
+FROM golang:1.14.2
 
 LABEL "name"="Golang workflow" \
     "maintainer"="yyh-gl <yhonda.95.gl@gmail.com>" \
