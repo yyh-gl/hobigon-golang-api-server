@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: "."
-      dockerfile: "./docker/api/Dockerfile.local"
+      dockerfile: "./docker/api/Dockerfile"
     ports:
       - '3000:3000'
     volumes:
