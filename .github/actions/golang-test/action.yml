@@ -1,6 +1,0 @@
-name: 'Golang Lint and Test Action'
-description: 'Lint and Test for Golang'
-author: 'yyh-gl'
-runs:
-  using: 'docker'
-  image: 'Dockerfile'
