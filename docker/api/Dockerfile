@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     libc-dev
 RUN robo api-build-prod
 
-FROM alpine AS app
+FROM gcr.io/distroless/base
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/api/bin/api-server /app/api-server
