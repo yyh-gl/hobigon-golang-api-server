@@ -19,6 +19,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test
+        env:
+          APP_ENV: test
         run: go test -v ./...
 
   lint:
