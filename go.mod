@@ -8,6 +8,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
 	github.com/go-playground/validator/v10 v10.2.0
 	github.com/google/wire v0.4.0
+	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/jinzhu/gorm v1.9.12
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect
