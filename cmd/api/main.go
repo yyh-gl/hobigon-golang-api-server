@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -36,12 +40,36 @@ func main() {
 	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack))
 	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack))
 
-	fmt.Println("========================")
-	fmt.Println("Server Start >> http://localhost:3000")
-	fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
-	fmt.Println("========================")
-	app.Logger.Println("Server Start")
-	app.Logger.Fatal(http.ListenAndServe(":3000", r))
+	s := &http.Server{
+		Addr:    ":3000",
+		Handler: r,
+	}
+
+	errCh := make(chan error)
+	sigCh := make(chan os.Signal)
+	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		fmt.Println("========================")
+		fmt.Println("Server Start >> http://localhost" + s.Addr)
+		fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
+		fmt.Println("========================")
+		errCh <- s.ListenAndServe()
+	}()
+
+	select {
+	case err := <-errCh:
+		fmt.Println("Error happened:", err.Error())
+	case sig := <-sigCh:
+		fmt.Println("Signal received:", sig)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil {
+		fmt.Println("Graceful shutdown failed:", err.Error())
+	}
+	fmt.Println("Server shutdown")
 }
 
 // wrapHandler : 全ハンドラー共通処理
