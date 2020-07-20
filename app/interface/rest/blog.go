@@ -63,7 +63,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := response{
-		// TODO: ドメイン層への依存をなくす
+		// 簡略化のためにドメインモデルを直接参照
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
@@ -111,7 +111,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := response{
-		// TODO: ドメイン層への依存をなくす
+		// 簡略化のためにドメインモデルを直接参照
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
@@ -156,7 +156,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := response{
-		// TODO: ドメイン層への依存をなくす
+		// 簡略化のためにドメインモデルを直接参照
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}

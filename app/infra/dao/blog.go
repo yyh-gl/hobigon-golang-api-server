@@ -36,7 +36,7 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 		return nil, fmt.Errorf("gorm.Create(blog)内でのエラー: %w", err)
 	}
 
-	createdBlog := model.ConvertToDomainModel(ctx, blogDTO)
+	createdBlog := model.ConvertToEntity(ctx, blogDTO)
 	return createdBlog, nil
 }
 
@@ -51,7 +51,7 @@ func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error
 		return nil, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}
 
-	blog := model.ConvertToDomainModel(ctx, blogDTO)
+	blog := model.ConvertToEntity(ctx, blogDTO)
 	return blog, nil
 }
 
@@ -68,6 +68,6 @@ func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 		return nil, fmt.Errorf("gorm.Save(blog)内でのエラー: %w", err)
 	}
 
-	updatedBlog := model.ConvertToDomainModel(ctx, blogDTO)
+	updatedBlog := model.ConvertToEntity(ctx, blogDTO)
 	return updatedBlog, nil
 }
