@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
@@ -22,31 +22,32 @@ func main() {
 	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
 	app.Logger = diContainer.Logger
 
-	// ルーティング設定
-	r := httprouter.New()
-	r.GlobalOPTIONS = wrapHandler(preflightHandler)
+	r := mux.NewRouter()
 
-	// ブログ関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create))
-	r.HandlerFunc(http.MethodGet, "/api/v1/blogs/:title", wrapHandler(diContainer.HandlerBlog.Show))
-	r.HandlerFunc(http.MethodPost, "/api/v1/blogs/:title/like", wrapHandler(diContainer.HandlerBlog.Like))
+	// Preflight handler
+	r.PathPrefix("/").Handler(wrapHandler(preflightHandler)).Methods(http.MethodOptions)
 
-	// 誕生日関連のAPI
-	r.HandlerFunc(http.MethodPost, "/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create))
-
-	// 通知系API
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack))
-	// TODO: 誕生日の人が複数いたときに対応
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack))
-	r.HandlerFunc(http.MethodPost, "/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack))
+	// Blog handlers
+	r.HandleFunc("/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/blogs/{title}", wrapHandler(diContainer.HandlerBlog.Show)).Methods(http.MethodGet)
+	r.HandleFunc("/api/v1/blogs/{title}/like", wrapHandler(diContainer.HandlerBlog.Like)).Methods(http.MethodPost)
+	//
+	//// Birthday handler
+	//r.HandleFunc("/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create)).Methods(http.MethodPost)
+	//
+	//// Notification handlers
+	//r.HandleFunc("/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack)).Methods(http.MethodPost)
+	//// TODO: 誕生日の人が複数いたときに対応
+	//r.HandleFunc("/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack)).Methods(http.MethodPost)
+	//r.HandleFunc("/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack)).Methods(http.MethodPost)
 
 	s := &http.Server{
 		Addr:    ":3000",
 		Handler: r,
 	}
 
-	errCh := make(chan error)
-	sigCh := make(chan os.Signal)
+	errCh := make(chan error, 1)
+	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
