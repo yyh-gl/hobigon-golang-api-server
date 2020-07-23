@@ -3,6 +3,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 go 1.14
 
 require (
+	github.com/99designs/gqlgen v0.11.3 // indirect
 	github.com/adlio/trello v1.6.0
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
