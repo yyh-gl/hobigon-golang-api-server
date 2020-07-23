@@ -41,6 +41,7 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 }
 
 // FindByTitle : タイトルからブログ情報を1件取得
+// FIXME: テストUtil用に適当に作ったのでエラーハンドリングが間違っている可能性あり
 func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error) {
 	blogDTO := dto.BlogDTO{}
 	err := b.db.First(&blogDTO, "title=?", title).Error
@@ -70,4 +71,19 @@ func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 	updatedBlog := model.ConvertToEntity(ctx, blogDTO)
 	return updatedBlog, nil
+}
+
+// Delete : ブログ情報を1件削除
+func (b blog) Delete(ctx context.Context, title model.Title) error {
+	// BlogモデルをDTOに変換
+	blogDTO := dto.BlogDTO{
+		Title: title.String(),
+	}
+
+	err := b.db.Delete(&blogDTO).Error
+	if err != nil {
+		return fmt.Errorf("gorm.Delete(blog)内でのエラー: %w", err)
+	}
+
+	return nil
 }
