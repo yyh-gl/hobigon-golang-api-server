@@ -53,7 +53,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 	blog, err := b.usecase.Create(ctx, req.Title)
 	if err != nil {
-		// TODO: 重複エラー出す
+		// TODO: 全て500エラーにしているのでより詳細なエラーを出す（重複エラーとか）
 
 		errInfo := fmt.Errorf("BlogUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
