@@ -31,15 +31,15 @@ func main() {
 	r.HandleFunc("/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create)).Methods(http.MethodPost)
 	r.HandleFunc("/api/v1/blogs/{title}", wrapHandler(diContainer.HandlerBlog.Show)).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/blogs/{title}/like", wrapHandler(diContainer.HandlerBlog.Like)).Methods(http.MethodPost)
-	//
-	//// Birthday handler
-	//r.HandleFunc("/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create)).Methods(http.MethodPost)
-	//
-	//// Notification handlers
-	//r.HandleFunc("/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack)).Methods(http.MethodPost)
-	//// TODO: 誕生日の人が複数いたときに対応
-	//r.HandleFunc("/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack)).Methods(http.MethodPost)
-	//r.HandleFunc("/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack)).Methods(http.MethodPost)
+
+	// Birthday handler
+	r.HandleFunc("/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create)).Methods(http.MethodPost)
+
+	// Notification handlers
+	r.HandleFunc("/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack)).Methods(http.MethodPost)
+	// TODO: 誕生日の人が複数いたときに対応
+	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack)).Methods(http.MethodPost)
 
 	s := &http.Server{
 		Addr:    ":3000",
