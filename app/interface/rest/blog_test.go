@@ -140,61 +140,65 @@ func TestBlogHandler_Show(t *testing.T) {
 	}
 }
 
-//func TestBlogHandler_Like(t *testing.T) {
-//	type want struct {
-//		body       string
-//		statusCode int
-//	}
-//
-//	tests := []struct {
-//		title string
-//		want  want
-//	}{
-//		{ // 正常系
-//			title:     "sample-blog-title",
-//			wantTitle: "sample-blog-title",
-//			wanttount: 1,
-//			err:       "",
-//		},
-//		{ // 正常系：存在しないブログ
-//			title:     "sample-blog-title2",
-//			wantTitle: "",
-//			wanttount: 0,
-//			err:       "",
-//		},
-//		{ // 正常系：50文字タイトル
-//			title:     "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
-//			wantTitle: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
-//			wanttount: 1,
-//			err:       "",
-//		},
-//		{ // 異常系：51文字タイトル
-//			title:     "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
-//			wantTitle: "",
-//			wanttount: 0,
-//			// TODO: ドメインモデル用テストを作って、NewTitle()におけるバリデーションが動作するか確認
-//			err: "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
-//		},
-//	}
-//
-//	// テストデータを追加
-//	createBlog(c, "sample-blog-title")
-//	createBlog(c, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
-//
-//	for _, tt := range tests {
-//		req, _ := http.NewRequest(http.MethodPost, "/api/v1/blogs/"+tt.title+"/show", nil)
-//		rr := httptest.NewRecorder()
-//		Router.ServeHTTP(rr, req)
-//
-//		if c := rr.Code; c != tt.want.statusCode {
-//			t.Errorf("handler returned wrong status code: got %v want %v",
-//				c, tt.want.statusCode)
-//		}
-//
-//		b := strings.TrimRight(rr.Body.String(), "\n")
-//		if b != tt.want.body {
-//			t.Errorf("handler returned unexpected body: got %v want %v",
-//				b, tt.want.body)
-//		}
-//	}
-//}
+func TestBlogHandler_Like(t *testing.T) {
+	type want struct {
+		body       string
+		statusCode int
+	}
+
+	tests := []struct {
+		title string
+		want  want
+	}{
+		{ // 正常系
+			title: "sample-blog-title",
+			want: want{
+				body:       `{"title":"sample-blog-title","count":1}`,
+				statusCode: http.StatusOK,
+			},
+		},
+		{ // 正常系：存在しないブログ
+			title: "sample-blog-title2",
+			want: want{
+				body:       "null",
+				statusCode: http.StatusNoContent,
+			},
+		},
+		{ // 正常系：50文字タイトル
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+			want: want{
+				body:       `{"title":"hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title","count":1}`,
+				statusCode: http.StatusOK,
+			},
+		},
+		{ // 異常系：51文字タイトル
+			// TODO: ドメインモデル用テストを作って、NewTitle()におけるバリデーションが動作するか確認
+			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
+		},
+	}
+
+	// テストデータを追加
+	test.CreateBlog(DIContainer.DB, "sample-blog-title")
+	test.CreateBlog(DIContainer.DB, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
+
+	for _, tt := range tests {
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/blogs/"+tt.title+"/like", nil)
+		rr := httptest.NewRecorder()
+		Router.ServeHTTP(rr, req)
+
+		if c := rr.Code; c != tt.want.statusCode {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				c, tt.want.statusCode)
+		}
+
+		b := strings.TrimRight(rr.Body.String(), "\n")
+		if b != tt.want.body {
+			t.Errorf("handler returned unexpected body: got %v want %v",
+				b, tt.want.body)
+		}
+	}
+}
