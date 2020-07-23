@@ -1,19 +1,14 @@
 package birthday
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
 // Birthday : 誕生日を表すドメインモデル
 type Birthday struct {
-	f fields
-}
-
-type fields struct {
-	Name     Name     `json:"name,omitempty"`
-	Date     Date     `json:"date,omitempty"`
-	WishList WishList `json:"wish_list,omitempty"`
+	name     Name
+	date     Date
+	wishList WishList
 }
 
 // NewBirthday : Birthdayドメインモデルを生成
@@ -37,51 +32,32 @@ func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
 	}
 
 	return &Birthday{
-		fields{
-			Name:     *n,
-			Date:     *d,
-			WishList: *wl,
-		},
+		name:     *n,
+		date:     *d,
+		wishList: *wl,
 	}, nil
 }
 
 // Name : name のゲッター
 func (b Birthday) Name() Name {
-	return b.f.Name
+	return b.name
 }
 
 // Date : date のゲッター
 func (b Birthday) Date() Date {
-	return b.f.Date
+	return b.date
 }
 
 // WishList : wishList のゲッター
 func (b Birthday) WishList() WishList {
-	return b.f.WishList
+	return b.wishList
 }
 
 // CreateBirthdayMessage : 誕生日メッセージを生成
 func (b Birthday) CreateBirthdayMessage() string {
-	wishList := b.f.WishList.String()
-	if b.f.WishList.IsNull() {
+	wishList := b.wishList.String()
+	if b.wishList.IsNull() {
 		wishList = "Amazon の欲しい物リスト教えて！"
 	}
-	return "今日は *" + b.f.Name.String() + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
-}
-
-// MarshalJSON : Marshal用関数
-// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
-func (b Birthday) MarshalJSON() ([]byte, error) {
-	return json.Marshal(b.f)
-}
-
-// UnmarshalJSON : Unmarshal用関数
-// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
-//        テストのためにだけに用意しているので、いっそう見直したい
-func (b *Birthday) UnmarshalJSON(data []byte) error {
-	err := json.Unmarshal(data, &b.f)
-	if err != nil {
-		return fmt.Errorf("Birthday.UnmarshalJSON()内でエラー: %w", err)
-	}
-	return nil
+	return "今日は *" + b.name.String() + "* の誕生日ンゴ > :honda:\n↓ *WishList* ↓\n:gainings: " + wishList + " :gainings:"
 }

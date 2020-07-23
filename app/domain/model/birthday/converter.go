@@ -9,11 +9,9 @@ import (
 // ConvertToDomainModel : DTOからドメインモデルへ変換
 func ConvertToDomainModel(ctx context.Context, b dto.BirthdayDTO) *Birthday {
 	return &Birthday{
-		fields{
-			Name:     Name(b.Name),
-			Date:     Date(b.Date),
-			WishList: WishList(b.WishList),
-		},
+		name:     Name(b.Name),
+		date:     Date(b.Date),
+		wishList: WishList(b.WishList),
 	}
 }
 
