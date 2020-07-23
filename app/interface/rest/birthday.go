@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
@@ -25,29 +24,29 @@ func NewBirthday(bu usecase.Birthday) Birthday {
 	}
 }
 
-// BirthdayResponse : Birthday用共通レスポンス
-type BirthdayResponse struct {
-	Birthday *model.Birthday `json:"birthday,omitempty"`
-	errorResponse
-}
-
 // Create : 誕生日データを新規作成
 func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Name     string `json:"name" validate:"required,max=30"`
-		Date     string `json:"date" validate:"required,len=4"`
-		WishList string `json:"wish_list" validate:"required"` // TODO: URL形式のバリデーションを追加
-	}
+	type (
+		request struct {
+			Name     string `json:"name" validate:"required,max=30"`
+			Date     string `json:"date" validate:"required,len=4"`
+			WishList string `json:"wish_list" validate:"required"` // TODO: URL形式のバリデーションを追加
+		}
+		response struct {
+			Name     string `json:"name"`
+			Date     string `json:"date"`
+			WishList string `json:"wish_list"`
+		}
+	)
 
 	ctx := r.Context()
-	req := request{}
-	resp := BirthdayResponse{}
-	if err := bindReqWithValidate(ctx, &req, r); err != nil {
+
+	var req request
+	if err := bindReqWithValidate(ctx, r, &req); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusBadRequest)
+		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
@@ -56,11 +55,14 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 		errInfo := fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
-	resp.Birthday = birthday
 
+	resp := response{
+		Name:     birthday.Name().String(),
+		Date:     birthday.Date().String(),
+		WishList: birthday.WishList().String(),
+	}
 	DoResponse(w, resp, http.StatusCreated)
 }

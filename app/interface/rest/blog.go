@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
@@ -28,59 +29,67 @@ func NewBlog(u usecase.Blog) Blog {
 	}
 }
 
-// BlogResponse : Blog用共通レスポンス
-type BlogResponse struct {
-	Blog *model.Blog `json:"blog,omitempty"`
-	errorResponse
-}
-
 // Create : ブログ情報を新規作成
 func (b blog) Create(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Title string `json:"title" validate:"required,max=50"`
-	}
+	type (
+		request struct {
+			Title string `validate:"required,max=50"`
+		}
+		response struct {
+			Title string `json:"title"`
+			Count int    `json:"count"`
+		}
+	)
 
 	ctx := r.Context()
 	req := request{}
-	resp := BlogResponse{}
-	if err := bindReqWithValidate(ctx, &req, r); err != nil {
-		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+	if err := bindReqWithValidate(ctx, r, &req); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusBadRequest)
+		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
 	blog, err := b.usecase.Create(ctx, req.Title)
 	if err != nil {
+		// TODO: 全て500エラーにしているのでより詳細なエラーを出す（重複エラーとか）
+
 		errInfo := fmt.Errorf("BlogUseCase.Create()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
-	resp.Blog = blog
 
+	resp := response{
+		// 簡略化のためにドメインモデルを直接参照
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
+	}
 	DoResponse(w, resp, http.StatusCreated)
 }
 
 // Show : ブログ情報を1件取得
 func (b blog) Show(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Title string `validate:"required,max=50"`
-	}
+	type (
+		request struct {
+			Title string `validate:"required,max=50"`
+		}
+		response struct {
+			Title string `json:"title"`
+			Count int    `json:"count"`
+		}
+	)
 
 	ctx := r.Context()
-	req := request{}
-	resp := BlogResponse{}
-	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
-		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+
+	var req request
+	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusBadRequest)
+		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
@@ -90,34 +99,42 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 		app.Logger.Println(errInfo)
 
 		if errors.Is(err, usecase.ErrBlogNotFound) {
-			DoResponse(w, resp, http.StatusNoContent)
+			DoResponse(w, errNotFound, http.StatusNotFound)
 			return
 		}
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
-	resp.Blog = blog
+	resp := response{
+		// 簡略化のためにドメインモデルを直接参照
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
+	}
 	DoResponse(w, resp, http.StatusOK)
 }
 
 // Like : 指定ブログにいいねをプラス1
 func (b blog) Like(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Title string `validate:"required,max=50"`
-	}
+	type (
+		request struct {
+			Title string `validate:"required,max=50"`
+		}
+		response struct {
+			Title string `json:"title"`
+			Count int    `json:"count"`
+		}
+	)
 
 	ctx := r.Context()
-	req := request{}
-	resp := BlogResponse{}
-	if err := bindReqWithValidate(ctx, &req, nil); err != nil {
-		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
+
+	var req request
+	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusBadRequest)
+		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
@@ -127,15 +144,18 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 		app.Logger.Println(errInfo)
 
 		if errors.Is(err, usecase.ErrBlogNotFound) {
-			DoResponse(w, resp, http.StatusNoContent)
+			DoResponse(w, nil, http.StatusNoContent)
 			return
 		}
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
-	resp.Blog = blog
+	resp := response{
+		// 簡略化のためにドメインモデルを直接参照
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
+	}
 	DoResponse(w, resp, http.StatusOK)
 }

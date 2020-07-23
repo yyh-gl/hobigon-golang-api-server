@@ -1,162 +1,143 @@
 package rest_test
 
 import (
-	"encoding/json"
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
-
-	"github.com/bmizerany/assert"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 
-func createBirthday(c *test.Client, name string, date string, wishList string) {
-	c.AddRoute(http.MethodPost, "/api/v1/birthday", c.DIContainer.HandlerBirthday.Create)
-
-	body := `{
-	"name": "` + name + `",
-	"date": "` + date + `",
-	"wish_list": "` + wishList + `"
-}`
-	_ = c.Post("/api/v1/birthday", body)
-}
-
 func TestBirthdayHandler_Create(t *testing.T) {
-	c := test.NewClient()
-	defer func() { _ = c.DIContainer.DB.Close() }()
+	type want struct {
+		body       string
+		statusCode int
+	}
 
-	c.AddRoute(http.MethodPost, "/api/v1/birthday", c.DIContainer.HandlerBirthday.Create)
-
-	testCases := []struct {
-		name         string
-		date         string
-		wishList     string
-		wantName     string
-		wantDate     string
-		wantWishList string
-		err          string
+	tests := []struct {
+		name     string
+		date     string
+		wishList string
+		want     want
 	}{
 		{ // 正常系
-			name:         "hon-D",
-			date:         "1205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "hon-D",
-			wantDate:     "1205",
-			wantWishList: "https://honzon.co.jp",
-			err:          "",
+			name:     "hon-D",
+			date:     "0905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"name":"hon-D","date":"0905","wish_list":"https://honzon.co.jp"}`,
+				statusCode: http.StatusCreated,
+			},
 		},
 		{ // 正常系：重複はOK
-			name:         "duplicate-name",
-			date:         "1205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "duplicate-name",
-			wantDate:     "1205",
-			wantWishList: "https://honzon.co.jp",
-			err:          "",
+			name:     "duplicate-name",
+			date:     "0905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"name":"duplicate-name","date":"0905","wish_list":"https://honzon.co.jp"}`,
+				statusCode: http.StatusCreated,
+			},
 		},
 		{ // 正常系：30文字name
-			name:         "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D",
-			date:         "1205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "",
+			name:     "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D",
+			date:     "0905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"name":"hon-Dhon-Dhon-Dhon-Dhon-Dhon-D","date":"0905","wish_list":"https://honzon.co.jp"}`,
+				statusCode: http.StatusCreated,
+			},
 		},
 		{ // 異常系：nameがない
-			name:         "",
-			date:         "1205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Name' Error:Field validation for 'Name' failed on the 'required' tag",
+			name:     "",
+			date:     "0905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：31文字name
-			name:         "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D1",
-			date:         "1205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Name' Error:Field validation for 'Name' failed on the 'max' tag",
+			name:     "hon-Dhon-Dhon-Dhon-Dhon-Dhon-D1",
+			date:     "0905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：dateがない
-			name:         "hon-D",
-			date:         "",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Date' Error:Field validation for 'Date' failed on the 'required' tag",
+			name:     "hon-D",
+			date:     "",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：3文字date
-			name:         "hon-D",
-			date:         "125",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Date' Error:Field validation for 'Date' failed on the 'len' tag",
+			name:     "hon-D",
+			date:     "125",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：5文字date
-			name:         "hon-D",
-			date:         "11205",
-			wishList:     "https://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Date' Error:Field validation for 'Date' failed on the 'len' tag",
+			name:     "hon-D",
+			date:     "10905",
+			wishList: "https://honzon.co.jp",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：wish_listがない
-			name:         "hon-D",
-			date:         "1205",
-			wishList:     "",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.WishList' Error:Field validation for 'WishList' failed on the 'required' tag",
+			name:     "hon-D",
+			date:     "0905",
+			wishList: "",
+			want: want{
+				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+				statusCode: http.StatusBadRequest,
+			},
 		},
 		{ // 異常系：wish_listに不正な形式のURLが入っている
-			name:         "hon-D",
-			date:         "1205",
-			wishList:     "httpsa://honzon.co.jp",
-			wantName:     "",
-			wantDate:     "",
-			wantWishList: "",
-			err:          "BirthdayUseCase.Create()でエラー: model.NewBirthday()内でエラー: NewWishList()内でエラー: バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません",
+			name:     "hon-D",
+			date:     "0905",
+			wishList: "httpsa://honzon.co.jp",
+			// FIXME: BadRequestエラーを返す
+			want: want{
+				body:       `{"error":{"detail":"サーバ内でエラーが発生しました"}}`,
+				statusCode: http.StatusInternalServerError,
+			},
 		},
 	}
 
-	for _, tc := range testCases {
-		body := `{
-	"name": "` + tc.name + `",
-	"date": "` + tc.date + `",
-	"wish_list": "` + tc.wishList + `"
-}`
-		rec := c.Post("/api/v1/birthday", body)
-		resp := rest.BirthdayResponse{}
-		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
+	// 重複データ登録時に使用するテストデータを追加
+	test.CreateBirthday(DIContainer.DB, "duplicate-name", "0905", "https://honzon.co.jp")
 
-		// 重複データ登録時に使用するテストデータを追加
-		createBirthday(c, "duplicate-name", "1205", "https://honzon.co.jp")
+	for _, tt := range tests {
+		reqBody := strings.NewReader(`
+{
+	"name": "` + tt.name + `",
+	"date": "` + tt.date + `",
+	"wish_list": "` + tt.wishList + `"
+}
+`)
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/birthday", reqBody)
+		rr := httptest.NewRecorder()
+		Router.ServeHTTP(rr, req)
 
-		if tc.err == "" {
-			if tc.wantName != "" {
-				assert.Equal(t, tc.wantName, resp.Birthday.Name().String())
-			}
-			if tc.wantDate != "" {
-				assert.Equal(t, tc.wantDate, resp.Birthday.Date().String())
-			}
-			if tc.wantWishList != "" {
-				assert.Equal(t, tc.wantWishList, resp.Birthday.WishList().String())
-			}
-			assert.Equal(t, "", resp.Error)
-		} else {
-			assert.Equal(t, (*birthday.Birthday)(nil), resp.Birthday)
-			assert.Equal(t, tc.err, resp.Error)
+		if c := rr.Code; c != tt.want.statusCode {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				c, tt.want.statusCode)
+		}
+
+		respBody := strings.TrimRight(rr.Body.String(), "\n")
+		if respBody != tt.want.body {
+			t.Errorf("handler returned unexpected body: got %v want %v",
+				respBody, tt.want.body)
 		}
 	}
 }

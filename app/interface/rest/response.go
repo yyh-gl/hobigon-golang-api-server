@@ -8,11 +8,6 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
-// Response : REST API用の共通エラーレスポンス
-type errorResponse struct {
-	Error string `json:"error,omitempty"`
-}
-
 // DoResponse : JSON形式でレスポンスを返す
 func DoResponse(w http.ResponseWriter, resp interface{}, status int) {
 	w.WriteHeader(status)
