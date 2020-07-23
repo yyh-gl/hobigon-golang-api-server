@@ -77,8 +77,8 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 			Title string `validate:"required,max=50"`
 		}
 		response struct {
-			Title string
-			Count int
+			Title string `json:"title"`
+			Count int    `json:"count"`
 		}
 	)
 
@@ -125,8 +125,8 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 			Title string `validate:"required,max=50"`
 		}
 		response struct {
-			Title string
-			Count int
+			Title string `json:"title"`
+			Count int    `json:"count"`
 		}
 	)
 
