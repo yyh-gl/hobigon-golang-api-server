@@ -1,6 +1,7 @@
 package rest_test
 
 import (
+	"net/http"
 	"os"
 	"testing"
 
@@ -24,9 +25,10 @@ func TestMain(m *testing.M) {
 	app.Logger = DIContainer.Logger
 
 	Router = mux.NewRouter()
-	Router.HandleFunc("/api/v1/blogs/{title}", DIContainer.HandlerBlog.Show)
+	// Blog handlers
+	Router.HandleFunc("/api/v1/blogs", DIContainer.HandlerBlog.Create).Methods(http.MethodPost)
+	Router.HandleFunc("/api/v1/blogs/{title}", DIContainer.HandlerBlog.Show).Methods(http.MethodGet)
+	Router.HandleFunc("/api/v1/blogs/{title}/like", DIContainer.HandlerBlog.Like).Methods(http.MethodPost)
 
-	code := m.Run()
-
-	os.Exit(code)
+	os.Exit(m.Run())
 }
