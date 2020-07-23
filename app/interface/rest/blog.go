@@ -67,7 +67,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
-	DoResponse(w, resp, http.StatusOK)
+	DoResponse(w, resp, http.StatusCreated)
 }
 
 // Show : ブログ情報を1件取得
