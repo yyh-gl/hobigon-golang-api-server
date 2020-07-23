@@ -23,21 +23,27 @@ import (
 //		{ // 正常系
 //			title: "sample-blog-title",
 //			want: want{
-//				body:       `{"Title":"sample-blog-title","Count":0}`,
+//				body:       `{"title":"sample-blog-title","count":0}`,
 //				statusCode: http.StatusCreated,
 //			},
 //			err: "",
 //		},
-//		//{ // 正常系：50文字タイトル
-//		//	title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
-//		//	want:  "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
-//		//	err:   "",
-//		//},
-//		//{ // 異常系：51文字タイトル
-//		//	title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
-//		//	want:  "",
-//		//	err:   "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
-//		//},
+//		{ // 正常系：50文字タイトル
+//			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
+//			want: want{
+//				body:       `{"title":"hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title","count":0}`,
+//				statusCode: http.StatusCreated,
+//			},
+//			err: "",
+//		},
+//		{ // 異常系：51文字タイトル
+//			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
+//			want: want{
+//				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
+//				statusCode: http.StatusBadRequest,
+//			},
+//			err: "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
+//		},
 //		//{ // 異常系：タイトルを渡さない
 //		//	title: "",
 //		//	want:  "",
@@ -82,7 +88,6 @@ func TestBlogHandler_Show(t *testing.T) {
 	tests := []struct {
 		title string
 		want  want
-		err   string
 	}{
 		{ // 正常系
 			title: "sample-blog-title",
@@ -90,7 +95,6 @@ func TestBlogHandler_Show(t *testing.T) {
 				body:       `{"title":"sample-blog-title","count":0}`,
 				statusCode: http.StatusOK,
 			},
-			err: "",
 		},
 		{ // 正常系：存在しないブログ
 			title: "sample-blog-title2",
@@ -98,7 +102,6 @@ func TestBlogHandler_Show(t *testing.T) {
 				body:       "null",
 				statusCode: http.StatusNotFound,
 			},
-			err: "",
 		},
 		{ // 正常系：50文字タイトル
 			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title",
@@ -106,7 +109,6 @@ func TestBlogHandler_Show(t *testing.T) {
 				body:       `{"title":"hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title","count":0}`,
 				statusCode: http.StatusOK,
 			},
-			err: "",
 		},
 		{ // 異常系：51文字タイトル
 			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
@@ -114,7 +116,6 @@ func TestBlogHandler_Show(t *testing.T) {
 				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
 				statusCode: http.StatusBadRequest,
 			},
-			err: "bindReqWithValidate()でエラー: バリデーションエラー: Key: 'request.Title' Error:Field validation for 'Title' failed on the 'max' tag",
 		},
 	}
 
