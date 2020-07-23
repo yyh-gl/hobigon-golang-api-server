@@ -11,3 +11,11 @@ func CreateBlog(db *db.DB, title string) {
 		Count: 0,
 	}).Error
 }
+
+func CreateBirthday(db *db.DB, name, date, wishList string) {
+	_ = db.Create(&dto.BirthdayDTO{
+		Name:     name,
+		Date:     date,
+		WishList: wishList,
+	}).Error
+}
