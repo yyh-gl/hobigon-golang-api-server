@@ -58,7 +58,6 @@ func TestBlogHandler_Create(t *testing.T) {
 
 	// 重複データ登録時に使用するテストデータを追加
 	test.CreateBlog(DIContainer.DB, "duplicate-blog-title")
-	defer test.DeleteBlog(DIContainer.DB, "duplicate-blog-title")
 
 	for _, tt := range tests {
 		reqBody := strings.NewReader(`{"title":"` + tt.title + `"}`)
@@ -122,10 +121,6 @@ func TestBlogHandler_Show(t *testing.T) {
 	// テストデータを追加
 	test.CreateBlog(DIContainer.DB, "sample-blog-title")
 	test.CreateBlog(DIContainer.DB, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
-	defer func() {
-		test.DeleteBlog(DIContainer.DB, "sample-blog-title")
-		test.DeleteBlog(DIContainer.DB, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
-	}()
 
 	for _, tt := range tests {
 		req, _ := http.NewRequest(http.MethodGet, "/api/v1/blogs/"+tt.title, nil)
@@ -146,16 +141,14 @@ func TestBlogHandler_Show(t *testing.T) {
 }
 
 //func TestBlogHandler_Like(t *testing.T) {
-//	c := test.NewClient()
-//	defer func() { _ = c.DIContainer.DB.Close() }()
+//	type want struct {
+//		body       string
+//		statusCode int
+//	}
 //
-//	c.AddRoute(http.MethodPost, "/api/v1/blogs/:title/like", c.DIContainer.HandlerBlog.Like)
-//
-//	testtases := []struct {
-//		title     string
-//		wantTitle string
-//		wanttount int
-//		err       string
+//	tests := []struct {
+//		title string
+//		want  want
 //	}{
 //		{ // 正常系
 //			title:     "sample-blog-title",
@@ -188,22 +181,20 @@ func TestBlogHandler_Show(t *testing.T) {
 //	createBlog(c, "sample-blog-title")
 //	createBlog(c, "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title")
 //
-//	for _, tt := range testtases {
-//		rec := c.Post("/api/v1/blogs/"+tt.title+"/like", "")
-//		resp := rest.BlogResponse{}
-//		_ = json.Unmarshal(rec.Body.Bytes(), &resp)
+//	for _, tt := range tests {
+//		req, _ := http.NewRequest(http.MethodPost, "/api/v1/blogs/"+tt.title+"/show", nil)
+//		rr := httptest.NewRecorder()
+//		Router.ServeHTTP(rr, req)
 //
-//		if tt.err == "" {
-//			if tt.wantTitle != "" {
-//				assert.Equal(t, tt.wantTitle, resp.Blog.Title().String())
-//			}
-//			if tt.wanttount != 0 {
-//				assert.Equal(t, tt.wanttount, resp.Blog.Count().Int())
-//			}
-//			assert.Equal(t, "", resp.Error)
-//		} else {
-//			assert.Equal(t, (*blog.Blog)(nil), resp.Blog)
-//			assert.Equal(t, tt.err, resp.Error)
+//		if c := rr.Code; c != tt.want.statusCode {
+//			t.Errorf("handler returned wrong status code: got %v want %v",
+//				c, tt.want.statusCode)
+//		}
+//
+//		b := strings.TrimRight(rr.Body.String(), "\n")
+//		if b != tt.want.body {
+//			t.Errorf("handler returned unexpected body: got %v want %v",
+//				b, tt.want.body)
 //		}
 //	}
 //}

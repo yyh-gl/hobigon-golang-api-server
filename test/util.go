@@ -11,9 +11,3 @@ func CreateBlog(db *db.DB, title string) {
 		Count: 0,
 	}).Error
 }
-
-func DeleteBlog(db *db.DB, title string) {
-	_ = db.Delete(&dto.BlogDTO{
-		Title: title,
-	}).Error
-}
