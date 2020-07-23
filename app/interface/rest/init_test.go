@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/cmd/api/di"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 
 	"github.com/gorilla/mux"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"

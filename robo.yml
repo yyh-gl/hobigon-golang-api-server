@@ -43,7 +43,7 @@ deploy:
 wire-api:
   summary: APIサーバ用 wire_gen 生成
   command: |
-    cd ./cmd/api
+    cd ./cmd/rest
     wire
     cd -
 
