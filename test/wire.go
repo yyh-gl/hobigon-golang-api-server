@@ -18,7 +18,7 @@ var testAppSet = wire.NewSet(
 	rest.WireSet,
 )
 
-func initTestApp() *di.ContainerAPI {
+func InitTestApp() *di.ContainerAPI {
 	wire.Build(
 		wire.Struct(new(di.ContainerAPI), "*"),
 		testAppSet,

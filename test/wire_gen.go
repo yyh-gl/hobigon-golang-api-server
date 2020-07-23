@@ -18,7 +18,7 @@ import (
 
 // Injectors from wire.go:
 
-func initTestApp() *di.ContainerAPI {
+func InitTestApp() *di.ContainerAPI {
 	gormDB := db.NewDB()
 	blog := dao.NewBlog(gormDB)
 	slack := dao.NewSlack()
