@@ -42,7 +42,7 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var req request
-	if err := bindReqWithValidate2(ctx, r, &req); err != nil {
+	if err := bindReqWithValidate(ctx, r, &req); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 

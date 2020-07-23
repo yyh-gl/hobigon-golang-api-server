@@ -43,8 +43,8 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	req := request{}
-	if err := bindReqWithValidate2(ctx, r, &req); err != nil {
-		errInfo := fmt.Errorf("bindReqWithValidate2() > %w", err)
+	if err := bindReqWithValidate(ctx, r, &req); err != nil {
+		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 
 		DoResponse(w, errBadRequest, http.StatusBadRequest)
@@ -85,7 +85,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var req request
-	if err := bindReqWithValidate2(ctx, mux.Vars(r), &req); err != nil {
+	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 
@@ -133,7 +133,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var req request
-	if err := bindReqWithValidate2(ctx, mux.Vars(r), &req); err != nil {
+	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
 		errInfo := fmt.Errorf("bindReqWithValidate() > %w", err)
 		app.Logger.Println(errInfo)
 

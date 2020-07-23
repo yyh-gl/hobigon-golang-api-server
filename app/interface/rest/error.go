@@ -1,6 +1,6 @@
 package rest
 
-type errorResponse2 struct {
+type errorResponse struct {
 	Error errResp `json:"error"`
 }
 
@@ -9,12 +9,12 @@ type errResp struct {
 }
 
 var (
-	errBadRequest = errorResponse2{
+	errBadRequest = errorResponse{
 		Error: errResp{
 			Detail: "不正なリクエスト形式です",
 		},
 	}
-	errInterServerError = errorResponse2{
+	errInterServerError = errorResponse{
 		Error: errResp{
 			Detail: "サーバ内でエラーが発生しました",
 		},
