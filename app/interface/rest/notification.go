@@ -41,8 +41,7 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 	resp.NotifiedNum = notifiedNum
@@ -63,8 +62,7 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 			return
 		}
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 	resp.NotifiedNum = notifiedNum
@@ -80,8 +78,7 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 		errInfo := fmt.Errorf("notificationUseCase.NotifyAccessRanking()でエラー: %w", err)
 		app.Logger.Println(errInfo)
 
-		resp.Error = errInfo.Error()
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 	}
 	resp.NotifiedNum = notifiedNum
 

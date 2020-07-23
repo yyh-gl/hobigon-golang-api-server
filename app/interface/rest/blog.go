@@ -103,10 +103,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		resp := errorResponse{
-			Error: errInfo.Error(),
-		}
-		DoResponse(w, resp, http.StatusInternalServerError)
+		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
