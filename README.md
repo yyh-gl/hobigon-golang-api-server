@@ -15,7 +15,12 @@ I remade that was made in Ruby(Rails).
 # Features
 
 ## API
-Hobigon don't use WAF but use only [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter).
+Hobigon don't use WAF and use only [gorilla/mux](https://github.com/gorilla/mux).
+
+(Use [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) 
+until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c0fb3e52df7714593386840e64a9bf7f32f1a4))
+
+### Features
 
 - Slack Notification
   - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
@@ -30,6 +35,8 @@ Hobigon don't use WAF but use only [julienschmidt/httprouter](https://github.com
 
 ## CLI
 Hobigon use [urfave/cli](https://github.com/urfave/cli).
+
+### Features
 
 - Slack Notification
   - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
