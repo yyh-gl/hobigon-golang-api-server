@@ -10,7 +10,14 @@ type errResp struct {
 }
 
 var (
-	// errBadRequest : 400 Bad Request
+	// errNotFound : 404 Not Found
+	errNotFound = errorResponse{
+		Error: errResp{
+			Detail: "該当するリソースが存在しません",
+		},
+	}
+
+	// errBadRequest : 404 Bad Request
 	errBadRequest = errorResponse{
 		Error: errResp{
 			Detail: "不正なリクエスト形式です",

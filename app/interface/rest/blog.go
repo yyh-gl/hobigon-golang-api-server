@@ -99,7 +99,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 		app.Logger.Println(errInfo)
 
 		if errors.Is(err, usecase.ErrBlogNotFound) {
-			DoResponse(w, nil, http.StatusNotFound)
+			DoResponse(w, errNotFound, http.StatusNotFound)
 			return
 		}
 

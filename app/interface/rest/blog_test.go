@@ -98,7 +98,7 @@ func TestBlogHandler_Show(t *testing.T) {
 		{ // 正常系：存在しないブログ
 			title: "sample-blog-title2",
 			want: want{
-				body:       "null",
+				body:       `{"error":{"detail":"該当するリソースが存在しません"}}`,
 				statusCode: http.StatusNotFound,
 			},
 		},
