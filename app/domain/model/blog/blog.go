@@ -1,7 +1,6 @@
 package blog
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -48,21 +47,4 @@ func (b Blog) CountUp() *Blog {
 // CreateLikeMessage : いいね受信メッセージを生成
 func (b Blog) CreateLikeMessage() string {
 	return "【" + b.title.String() + "】いいね！（Total: " + b.count.String() + "）"
-}
-
-// MarshalJSON : Marshal用関数
-// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
-func (b Blog) MarshalJSON() ([]byte, error) {
-	return json.Marshal(b)
-}
-
-// UnmarshalJSON : Unmarshal用関数
-// FIXME: ドメインモデル内に持ちたくないが、フィールドを公開したくもないので一旦これでいく。よりよい方法を探す
-//        テストのためにだけに用意しているので、いっそう見直したい
-func (b *Blog) UnmarshalJSON(data []byte) error {
-	err := json.Unmarshal(data, &b)
-	if err != nil {
-		return fmt.Errorf("Blog.UnmarshalJSON()内でエラー: %w", err)
-	}
-	return nil
 }
