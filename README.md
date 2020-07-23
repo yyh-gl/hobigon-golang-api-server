@@ -4,19 +4,22 @@
 ![Go](https://img.shields.io/badge/Go-1.14.4-blue.svg)
 ![GitHub Actions](https://img.shields.io/github/workflow/status/yyh-gl/hobigon-golang-api-server/Workflow%20for%20Golang)
 
-**Hobby + [KANEGON](https://lh3.googleusercontent.com/proxy/7iv-F5GG-BP9nAEEc85VJ0Uh-lAF47GkRQqWIPKSem4r1QNNnrAeIHyUExGd-gWBxEehqi9k6SOBbe8F41VdKYJj5lIOULIQeSiCJsCKaDyUHhQ) = Hobigon**
+**Hobby + [KANEGON](https://m-78.jp/ultraman-archives/kanegons-cocoon/) = Hobigon**
 
-Hobigon is API server and it is made by me for me.
+Hobigon is server which make rich my live.
+<br>
+It's just a hobby.
 
 I remade that was made in Ruby(Rails).
 -> [Hobigon ver.Ruby repository](https://github.com/yyh-gl/hobigon-rails-api-server) (sorry, this is private repo) 
 
+<br>
 
-# Features
+Hobigon has two interfaces, Web API and CLI.
 
-## API
+## Web API
 Hobigon don't use WAF and use only [gorilla/mux](https://github.com/gorilla/mux).
-
+<br>
 (Use [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) 
 until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c0fb3e52df7714593386840e64a9bf7f32f1a4))
 
@@ -45,7 +48,7 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
 
 
 # TODO
-- Make Hobigon DDD-like
+- Apply the tactical patterns of DDD
   - Improve anemic domain model
     - Slack
     - Task
