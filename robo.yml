@@ -20,17 +20,27 @@ cli-build-prod:
   summary: CLIをProductionかつLinux用にビルド
   command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/cli/bin/hobi ./cmd/cli/main.go ./cmd/cli/wire_gen.go
 
+graphql-build-local:
+  summary: GraphQLサーバをローカルかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./docker/graph/bin/graphql-server ./cmd/graph/main.go
+
+graphql-build-prod:
+  summary: GraphQLサーバをProductionかつLinux用にビルド
+  command: GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.COMMIT={{.git.commit}} -X main.BRANCH={{.git.branch}}" -o ./cmd/graph/bin/graphql-server ./cmd/graph/main.go
+
 all-build-local:
-  summary: APIサーバおよびCLIをローカルかつLinux用にビルド
+  summary: APIサーバおよびGraphQLサーバ，CLIをローカルかつLinux用にビルド
   command: |
     robo api-build-local
     robo cli-build-local
+    robo graphql-build-local
 
 all-build-prod:
-  summary: APIサーバおよびCLIをProductionかつLinux用にビルド
+  summary: APIサーバおよびGraphQLサーバ，CLIをProductionかつLinux用にビルド
   command: |
     robo api-build-prod
     robo cli-build-prod
+    robo graphql-build-prod
 
 deploy:
   summary: ProductionかつLinux用にビルドしてからデプロイ（masterにPUSH）
