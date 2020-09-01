@@ -1,0 +1,16 @@
+type Blog {
+  title: ID!
+  count: Int!
+}
+
+type Query {
+  blog: Blog
+}
+
+input NewBlog {
+  title: ID!
+}
+
+type Mutation {
+  createBlog(input: NewBlog!): Blog!
+}

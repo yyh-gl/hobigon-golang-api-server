@@ -1,4 +1,4 @@
-package graph
+package graphql
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -7,15 +7,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/graph/generated"
-	"github.com/yyh-gl/hobigon-golang-api-server/graph/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateBlog(ctx context.Context, input model.NewBlog) (*model.Blog, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+func (r *queryResolver) Blog(ctx context.Context) (*model.Blog, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
