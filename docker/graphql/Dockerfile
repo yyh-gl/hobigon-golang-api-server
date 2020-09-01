@@ -12,11 +12,11 @@ RUN apk add --no-cache \
     git \
     make \
     gcc \
-    libc-dev
-RUN go get -u github.com/cosmtrek/air
+    libc-dev \
+    curl
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.30.0
+#RUN go get -u github.com/cosmtrek/air
 RUN go get -u github.com/yyh-gl/realize
-# TODO: なぜかGolangCI-Lintのgo getに失敗するようになったので調査する
-#RUN go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 RUN go get -u github.com/google/wire/cmd/wire
 RUN go get -u github.com/tj/robo
 RUN robo graphql-build-prod
