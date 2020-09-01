@@ -6,7 +6,6 @@ package graphql
 import (
 	"context"
 	"fmt"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/model"
 )
@@ -15,8 +14,16 @@ func (r *mutationResolver) CreateBlog(ctx context.Context, input model.NewBlog) 
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Blog(ctx context.Context) (*model.Blog, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Blog(ctx context.Context, title string) (*model.Blog, error) {
+	blog, err := r.BlogRepository.FindByTitle(ctx, title)
+	if err != nil {
+		// TODO: NotFound時のエラーハンドリング
+		return nil, fmt.Errorf("blogRepository.FindByTitle()内でのエラー: %w", err)
+	}
+	return &model.Blog{
+		Title: blog.Title().String(),
+		Count: blog.Count().Int(),
+	}, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

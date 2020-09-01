@@ -3,14 +3,18 @@ package main
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/yyh-gl/hobigon-golang-api-server/graph"
-	"github.com/yyh-gl/hobigon-golang-api-server/graph/generated"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
 	"log"
 	"net/http"
 )
 
 func main() {
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	br := dao.NewBlog(db.NewDB())
+	r := graphql.Resolver{BlogRepository: br}
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &r}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

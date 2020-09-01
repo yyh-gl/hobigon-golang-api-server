@@ -4,7 +4,7 @@ type Blog {
 }
 
 type Query {
-  blog: Blog
+  blog(title: String!): Blog
 }
 
 input NewBlog {
