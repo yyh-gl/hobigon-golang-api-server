@@ -16,15 +16,35 @@ settings:
     force: false
     interval: 0s
 schema:
-  - name: app
+  - name: rest
     path: .
     commands:
       install:
         status: true
-        method: robo all-build-local
+        method: robo api-build-local
       run:
         status: true
-        method: ./docker/api/bin/api-server
+        method: ./docker/rest/bin/api-server
+    watcher:
+      extensions:
+        - go
+      paths:
+        - /
+      ignored_paths:
+        - .git
+        - .idea
+        - logs
+        - docker
+  
+  - name: graphql
+    path: .
+    commands:
+      install:
+        status: true
+        method: robo graphql-build-local
+      run:
+        status: true
+        method: ./docker/graphql/bin/graphql-server
     watcher:
       extensions:
         - go

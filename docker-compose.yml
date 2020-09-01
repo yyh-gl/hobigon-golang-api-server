@@ -1,15 +1,16 @@
 version: '3.7'
 services:
-  app:
+  rest:
     build:
       context: "."
-      dockerfile: "./docker/api/Dockerfile"
+      target: "build"
+      dockerfile: "./docker/rest/Dockerfile"
     ports:
       - '3000:3000'
     volumes:
       - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
     working_dir: "/go/src/github.com/yyh-gl/hobigon-golang-api-server"
-    command: ["sh", "-c", "realize start --run"]
+    command: ["sh", "-c", "realize start --run --name=\"rest\""]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"
@@ -23,6 +24,32 @@ services:
       - .secret_env
     depends_on:
       - db
+
+  graphql:
+    build:
+      context: "."
+      target: "build"
+      dockerfile: "./docker/graphql/Dockerfile"
+    ports:
+      - '8080:8080'
+    volumes:
+      - '.:/go/src/github.com/yyh-gl/hobigon-golang-api-server'
+    working_dir: "/go/src/github.com/yyh-gl/hobigon-golang-api-server"
+    command: ["sh", "-c", "realize start --run --name=\"graphql\" "]
+    environment:
+      APP_ENV: "develop"
+      GO111MODULE: "on"
+      MYSQL_HOST: "db"
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: "hobigon"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "mysql"
+      LOG_PATH: "./logs"
+    env_file:
+      - .secret_env
+    depends_on:
+      - db
+  
   db:
     image: mysql:8.0.19
     ports:

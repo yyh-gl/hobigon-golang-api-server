@@ -1,6 +1,6 @@
 FROM golang:1.15.0-alpine AS build
 
-WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
+WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-graphql-server
 
 ENV TZ="Asia/Tokyo"
 ENV GO111MODULE=on
@@ -15,17 +15,18 @@ RUN apk add --no-cache \
     libc-dev
 RUN go get -u github.com/cosmtrek/air
 RUN go get -u github.com/yyh-gl/realize
-RUN go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+# TODO: なぜかGolangCI-Lintのgo getに失敗するようになったので調査する
+#RUN go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 RUN go get -u github.com/google/wire/cmd/wire
 RUN go get -u github.com/tj/robo
-RUN robo api-build-prod
+RUN robo graphql-build-prod
 
 FROM gcr.io/distroless/base
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/api/bin/api-server /app/api-server
+COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/graphql/bin/graphql-server /app/graphql-server
 COPY --from=build /tmp /tmp
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["/app/api-server"]
+CMD ["/app/graphql-server"]
