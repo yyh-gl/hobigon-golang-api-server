@@ -46,6 +46,16 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
   - Today's task list
   - Today's birthday people
 
+## GraphQL
+
+Hobigon use [99designs/gqlgen](https://github.com/99designs/gqlgen).
+
+### Features
+
+This is completely experimental implementation.(Just out of interest)
+
+- [My Blog](https://yyh-gl.github.io/tech-blog/)
+  - Get post data
 
 # TODO
 - Apply the tactical patterns of DDD
