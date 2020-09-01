@@ -1,14 +1,15 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
-	"log"
-	"net/http"
 )
 
 func main() {

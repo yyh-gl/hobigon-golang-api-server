@@ -6,6 +6,7 @@ import "github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type Resolver struct{
+// Resolver : GraphQL標準Resolver
+type Resolver struct {
 	BlogRepository repository.Blog
 }
