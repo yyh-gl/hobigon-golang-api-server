@@ -81,7 +81,7 @@ wire:
 lint:
   summary: Docker経由でLint実行
   command: |
-    docker-compose exec -T app golangci-lint --timeout 5m0s run ./...
+    docker-compose exec -T rest golangci-lint --timeout 5m0s run ./...
 
 test:
   summary: Docker経由でテスト実行
