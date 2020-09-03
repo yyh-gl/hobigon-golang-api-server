@@ -57,6 +57,7 @@ services:
     volumes:
       - ./docker/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: "mysql"
+      MYSQL_DATABASE: "hobigon"
     security_opt:
       - seccomp:unconfined
