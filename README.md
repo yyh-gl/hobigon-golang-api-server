@@ -13,9 +13,10 @@ It's just a hobby.
 I remade that was made in Ruby(Rails).
 -> [Hobigon ver.Ruby repository](https://github.com/yyh-gl/hobigon-rails-api-server) (sorry, this is private repo) 
 
-<br>
+Hobigon has three interfaces:<br>
+Web API, CLI and GraphQL.
 
-Hobigon has two interfaces, Web API and CLI.
+<br>
 
 ## Web API
 Hobigon don't use WAF and use only [gorilla/mux](https://github.com/gorilla/mux).
@@ -36,6 +37,8 @@ until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c
 - Birthday
   - Create birthday data
 
+<br>
+
 ## CLI
 Hobigon use [urfave/cli](https://github.com/urfave/cli).
 
@@ -45,6 +48,8 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
   - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
   - Today's task list
   - Today's birthday people
+
+<br>
 
 ## GraphQL
 
@@ -56,6 +61,8 @@ This is completely experimental implementation.(Just out of interest)
 
 - [My Blog](https://yyh-gl.github.io/tech-blog/)
   - Get post data
+
+<br>
 
 # TODO
 - Apply the tactical patterns of DDD
