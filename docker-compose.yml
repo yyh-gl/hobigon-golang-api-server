@@ -51,12 +51,13 @@ services:
       - db
   
   db:
-    image: mysql:8.0.19
+    image: mysql:latest
     ports:
       - '13306:3306'
     volumes:
       - ./docker/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: "mysql"
+      MYSQL_DATABASE: "hobigon"
     security_opt:
       - seccomp:unconfined
