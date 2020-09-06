@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	// TODO: wire導入
 	br := dao.NewBlog(db.NewDB())
 	r := graphql.Resolver{BlogRepository: br}
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &r}))
