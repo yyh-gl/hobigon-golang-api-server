@@ -27,6 +27,11 @@ func main() {
 	// Preflight handler
 	r.PathPrefix("/").Handler(wrapHandler(preflightHandler)).Methods(http.MethodOptions)
 
+	// Health Check
+	r.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods(http.MethodGet)
+
 	// Blog handlers
 	r.HandleFunc("/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create)).Methods(http.MethodPost)
 	r.HandleFunc("/api/v1/blogs/{title}", wrapHandler(diContainer.HandlerBlog.Show)).Methods(http.MethodGet)
