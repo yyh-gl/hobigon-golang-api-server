@@ -89,4 +89,5 @@ docker/mysql
 dist
 .secret_env
 tmp
-cmd/**/bin
+cmd/**/bin/*
+!cmd/**/bin/.keep
