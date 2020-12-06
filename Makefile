@@ -71,13 +71,6 @@ wire-all: ## all wire gen
 	cd ./cmd/cli && wire
 	cd ./test && wire
 
-.PHONY: deploy
-deploy: ## deploy to prd
-	make build-all env=prd
-	git add ./cmd/rest/bin/api-server ./cmd/cli/bin/hobi ./cmd/graphql/bin/graphql-server
-	git commit -m "[`date +'%Y/%m/%d %H:%M:%S'`] 最新版デプロイ"
-	git push origin master
-
 .PHONY: test
 test: ## go test
 	APP_ENV=test go test ./...
