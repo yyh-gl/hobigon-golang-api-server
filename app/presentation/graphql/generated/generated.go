@@ -13,7 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/graphql/model"
 )
 
 // region    ************************** generated!.gotpl **************************

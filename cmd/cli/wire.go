@@ -6,7 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 )

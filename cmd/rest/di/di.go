@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 )
 
 // ContainerAPI : API用DIコンテナ

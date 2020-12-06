@@ -8,8 +8,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/graphql"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/graphql/generated"
 )
 
 func main() {

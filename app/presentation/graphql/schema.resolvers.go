@@ -7,8 +7,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/generated"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/graphql/model"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/graphql/generated"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/graphql/model"
 )
 
 func (r *mutationResolver) CreateBlog(ctx context.Context, input model.NewBlog) (*model.Blog, error) {

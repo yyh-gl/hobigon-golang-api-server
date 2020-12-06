@@ -11,7 +11,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/interface/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 )
