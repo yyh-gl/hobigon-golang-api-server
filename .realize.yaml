@@ -24,7 +24,7 @@ schema:
         method: make build target=api env=local
       run:
         status: true
-        method: ./docker/rest/bin/api-server
+        method: ./cmd/rest/bin/api-server
     watcher:
       extensions:
         - go
@@ -44,7 +44,7 @@ schema:
         method: make build target=graphql env=local
       run:
         status: true
-        method: ./docker/graphql/bin/graphql-server
+        method: ./cmd/graphql/bin/graphql-server
     watcher:
       extensions:
         - go

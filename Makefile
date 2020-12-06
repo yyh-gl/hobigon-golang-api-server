@@ -7,39 +7,23 @@ help: ## helpを表示
 	@echo ''
 
 .PHONY: build
-build: ## build target=[api, cli, graphql] env=[local, prd]
+build: ## build target=[api, cli, graphql]
 	@if [ -z ${target} ]; then \
 		echo 'targetを指定してください。'; \
 		exit 1; \
 	fi
-	@if [ -z ${env} ]; then \
-		echo 'envを指定してください。'; \
-		exit 1; \
-	fi
 	
-	@if [ ${target} = api -a ${env} = local ]; then \
+	@if [ ${target} = api ]; then \
 		echo 'build api for local'; \
- 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/rest/bin/api-server ./cmd/rest; \
+ 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
-	@if [ ${target} = api -a ${env} = prd ]; then \
-		echo 'build api for prd'; \
-   		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
-   	fi
 	
-	@if [ ${target} = cli -a ${env} = local ]; then \
-		echo 'build cli for local'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/cli/bin/hobi ./cmd/cli; \
-	fi
-	@if [ ${target} = cli -a ${env} = prd ]; then \
+	@if [ ${target} = cli ]; then \
 		echo 'build cli for prd'; \
 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
-	@if [ ${target} = graphql -a ${env} = local ]; then \
-		echo 'build graphql for local'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/graphql/bin/graphql-server ./cmd/graphql; \
-	fi
-	@if [ ${target} = graphql -a ${env} = prd ]; then \
+	@if [ ${target} = graphql ]; then \
 		echo 'build graphql for prd'; \
 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
@@ -47,23 +31,10 @@ build: ## build target=[api, cli, graphql] env=[local, prd]
 	@exit 0;
 
 .PHONY: build-all
-build-all: ## build-all env=[local, prd]
-	@if [ -z ${env} ]; then \
-		echo 'envを指定してください。'; \
-		exit 1; \
-	fi
-	
-	@if [ ${env} = local ]; then \
-		make build target=api env=local; \
-		make build target=cli env=local; \
-		make build target=graphql env=local; \
-	fi
-	
-	@if [ ${env} = prd ]; then \
-		make build target=api env=prd; \
-		make build target=cli env=prd; \
-		make build target=graphql env=prd; \
-	fi
+build-all: ## build-all
+	make build target=api
+	make build target=cli
+	make build target=graphql
 
 .PHONY: wire-all
 wire-all: ## all wire gen
