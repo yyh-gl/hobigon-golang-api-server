@@ -1,0 +1,24 @@
+builds:
+  - id: hobigon-api
+    main: ./cmd/rest
+    binary: api
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: hobigon-cli
+    main: ./cmd/cli
+    binary: hobi
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: hobigon-graphql
+    main: ./cmd/graphql
+    binary: graphql-server
+    goos:
+      - linux
+    goarch:
+      - amd64

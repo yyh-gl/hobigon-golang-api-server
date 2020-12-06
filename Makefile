@@ -19,29 +19,29 @@ build: ## build target=[api, cli, graphql] env=[local, prd]
 	
 	@if [ ${target} = api -a ${env} = local ]; then \
 		echo 'build api for local'; \
- 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/rest/bin/api-server ./cmd/rest/main.go ./cmd/rest/wire_gen.go; \
+ 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/rest/bin/api-server ./cmd/rest; \
 	fi
 	@if [ ${target} = api -a ${env} = prd ]; then \
 		echo 'build api for prd'; \
-   		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest/main.go ./cmd/rest/wire_gen.go; \
+   		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
    	fi
 	
 	@if [ ${target} = cli -a ${env} = local ]; then \
 		echo 'build cli for local'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/cli/bin/hobi ./cmd/cli/main.go ./cmd/cli/wire_gen.go; \
+		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/cli/bin/hobi ./cmd/cli; \
 	fi
 	@if [ ${target} = cli -a ${env} = prd ]; then \
 		echo 'build cli for prd'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli/main.go ./cmd/cli/wire_gen.go; \
+		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql -a ${env} = local ]; then \
 		echo 'build graphql for local'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/graphql/bin/graphql-server ./cmd/graphql/main.go; \
+		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./docker/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	@if [ ${target} = graphql -a ${env} = prd ]; then \
 		echo 'build graphql for prd'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql/main.go; \
+		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
 	@exit 0;
