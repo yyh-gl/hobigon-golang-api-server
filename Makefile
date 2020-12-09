@@ -14,17 +14,17 @@ build: ## build target=[api, cli, graphql]
 	fi
 	
 	@if [ ${target} = api ]; then \
-		echo 'build api for local'; \
+		echo 'build api'; \
  		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
-		echo 'build cli for prd'; \
+		echo 'build cli'; \
 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
-		echo 'build graphql for prd'; \
+		echo 'build graphql'; \
 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
