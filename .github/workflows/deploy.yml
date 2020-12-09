@@ -109,6 +109,20 @@ jobs:
           source: cmd
           target: api-server-golang
 
+  success_notification:
+    name: Success notification
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v2
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
+          SLACK_TITLE: CI Success
+        if: env.WORKFLOW_CONCLUSION == 'success'
+
   failure_notification:
     name: Failure notification
     needs: deploy
