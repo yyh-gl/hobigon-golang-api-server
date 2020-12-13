@@ -1,11 +1,11 @@
-package rest_test
+package http_test
 
 import (
 	"net/http"
 	"os"
 	"testing"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/http/di"
 
 	"github.com/gorilla/mux"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"

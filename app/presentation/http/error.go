@@ -1,4 +1,4 @@
-package rest
+package http
 
 // errorResponse : API用の共通エラーレスポンス構造体
 type errorResponse struct {

@@ -23,7 +23,7 @@ RUN make build target=api env=prd
 FROM gcr.io/distroless/base
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/bin/api-server /app/api-server
+COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/http/bin/api-server /app/api-server
 COPY --from=build /tmp /tmp
 
 EXPOSE 3000

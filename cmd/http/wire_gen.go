@@ -11,9 +11,9 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/http"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
-	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/http/di"
 )
 
 // Injectors from wire.go:
@@ -23,18 +23,18 @@ func initApp() *di.ContainerAPI {
 	blog := dao.NewBlog(gormDB)
 	slack := dao.NewSlack()
 	usecaseBlog := usecase.NewBlog(blog, slack)
-	restBlog := rest.NewBlog(usecaseBlog)
+	httpBlog := http.NewBlog(usecaseBlog)
 	birthday := dao.NewBirthday(gormDB)
 	usecaseBirthday := usecase.NewBirthday(birthday)
-	restBirthday := rest.NewBirthday(usecaseBirthday)
+	httpBirthday := http.NewBirthday(usecaseBirthday)
 	task := dao.NewTask()
 	notification := usecase.NewNotification(task, slack, birthday)
-	restNotification := rest.NewNotification(notification)
+	httpNotification := http.NewNotification(notification)
 	logger := app.NewAPILogger()
 	containerAPI := &di.ContainerAPI{
-		HandlerBlog:         restBlog,
-		HandlerBirthday:     restBirthday,
-		HandlerNotification: restNotification,
+		HandlerBlog:         httpBlog,
+		HandlerBirthday:     httpBirthday,
+		HandlerNotification: httpNotification,
 		DB:                  gormDB,
 		Logger:              logger,
 	}
@@ -43,4 +43,4 @@ func initApp() *di.ContainerAPI {
 
 // wire.go:
 
-var appSet = wire.NewSet(app.APISet, infra.APISet, usecase.APISet, rest.WireSet)
+var appSet = wire.NewSet(app.APISet, infra.APISet, usecase.APISet, http.WireSet)

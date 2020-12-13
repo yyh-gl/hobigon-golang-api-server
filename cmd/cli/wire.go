@@ -8,7 +8,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
-	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/http/di"
 )
 
 var appSet = wire.NewSet(

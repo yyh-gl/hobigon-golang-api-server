@@ -3,7 +3,7 @@ release:
 
 builds:
   - id: hobigon-api
-    main: ./cmd/rest
+    main: ./cmd/http
     binary: api
     goos:
       - linux

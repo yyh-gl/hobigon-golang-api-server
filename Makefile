@@ -15,7 +15,7 @@ build: ## build target=[api, cli, graphql]
 	
 	@if [ ${target} = api ]; then \
 		echo 'build api'; \
- 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
+ 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/http/bin/api-server ./cmd/http; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
@@ -38,7 +38,7 @@ build-all: ## build-all
 
 .PHONY: wire-all
 wire-all: ## all wire gen
-	cd ./cmd/rest && wire
+	cd ./cmd/http && wire
 	cd ./cmd/cli && wire
 	cd ./test && wire
 
@@ -48,5 +48,5 @@ test: ## go test
 
 .PHONY: lint
 lint: ## lint
-	docker-compose exec -T rest golangci-lint --timeout 5m0s run ./...
+	docker-compose exec -T http golangci-lint --timeout 5m0s run ./...
 

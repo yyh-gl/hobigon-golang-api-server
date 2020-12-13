@@ -1,16 +1,16 @@
 version: '3.7'
 services:
-  rest:
+  http:
     build:
       context: .
       target: build
-      dockerfile: ./docker/rest/Dockerfile
+      dockerfile: ./docker/http/Dockerfile
     ports:
       - 3000:3000
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "realize start --run --name=\"rest\""]
+    command: ["sh", "-c", "realize start --run --name=\"http\""]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"

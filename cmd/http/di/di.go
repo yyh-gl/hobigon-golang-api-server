@@ -5,14 +5,14 @@ import (
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/http"
 )
 
 // ContainerAPI : API用DIコンテナ
 type ContainerAPI struct {
-	HandlerBlog         rest.Blog
-	HandlerBirthday     rest.Birthday
-	HandlerNotification rest.Notification
+	HandlerBlog         http.Blog
+	HandlerBirthday     http.Birthday
+	HandlerNotification http.Notification
 
 	DB     *db.DB
 	Logger *log.Logger

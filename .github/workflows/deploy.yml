@@ -74,7 +74,7 @@ jobs:
         with:
           name: binaries
           path: |
-            ./cmd/rest/bin/api-server
+            ./cmd/http/bin/api-server
             ./cmd/cli/bin/hobi
             ./cmd/graphql/bin/graphql-server
           retention-days: 1
