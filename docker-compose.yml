@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "realize start --run --name=\"http\""]
+    command: ["sh", "-c", "air -c .air.http.toml"]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"
@@ -35,7 +35,7 @@ services:
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "realize start --run --name=\"graphql\" "]
+    command: ["sh", "-c", "air -c .air.graphql.toml"]
     environment:
       APP_ENV: "develop"
       GO111MODULE: "on"

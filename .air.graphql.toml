@@ -7,15 +7,15 @@ tmp_dir = "tmp"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "make build-all env=local"
+cmd = "make build target=graphql"
 # Binary file yields from `cmd`.
-bin = "cmd/http/bin/api-server"
+bin = "cmd/graphql/bin/graphql-server"
 # Customize binary.
-full_bin = "APP_ENV=develop APP_USER=air ./cmd/http/bin/api-server"
+full_bin = "cmd/graphql/bin/graphql-server"
 # Watch these filename extensions.
 include_ext = ["go"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["docker"]
+exclude_dir = ["docker", "app/presentation/cli", "app/presentation/http"]
 # Watch these directories if you specified.
 include_dir = []
 # Exclude files.

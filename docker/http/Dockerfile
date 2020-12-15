@@ -15,10 +15,9 @@ RUN apk add --no-cache \
     libc-dev \
     curl
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.30.0
-#RUN go get -u github.com/cosmtrek/air
-RUN go get -u github.com/yyh-gl/realize
+RUN go get -u github.com/cosmtrek/air
 RUN go get -u github.com/google/wire/cmd/wire
-RUN make build target=api env=prd
+RUN make build target=api
 
 FROM gcr.io/distroless/base
 
