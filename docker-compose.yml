@@ -3,7 +3,7 @@ services:
   http:
     build:
       context: .
-      target: build
+      target: builder
       dockerfile: ./docker/http/Dockerfile
     ports:
       - 3000:3000
@@ -28,7 +28,7 @@ services:
   graphql:
     build:
       context: .
-      target: build
+      target: builder
       dockerfile: ./docker/graphql/Dockerfile
     ports:
       - 8081:8081
@@ -51,7 +51,8 @@ services:
       - db
   
   db:
-    image: mysql:latest
+    # mysql:8.0（M1 Macのためにダイジェストで指定）
+    image: mysql@sha256:03306a1f248727ec979f61424c5fb5150e2c5fd2436f2561c5259b1258d6063c
     ports:
       - 13306:3306
     volumes:

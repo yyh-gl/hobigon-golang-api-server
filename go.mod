@@ -1,6 +1,6 @@
 module github.com/yyh-gl/hobigon-golang-api-server
 
-go 1.15
+go 1.16
 
 require (
 	github.com/99designs/gqlgen v0.11.3
@@ -11,7 +11,6 @@ require (
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.7.4
 	github.com/jinzhu/gorm v1.9.12
-	github.com/kr/pretty v0.2.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mitchellh/mapstructure v1.3.2
 	github.com/parnurzeal/gorequest v0.2.16 // indirect

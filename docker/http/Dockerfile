@@ -1,9 +1,8 @@
-FROM golang:1.15.5-alpine AS build
+FROM golang:1.16.0-alpine AS builder
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
 
 ENV TZ="Asia/Tokyo"
-ENV GO111MODULE=on
 
 COPY . .
 
@@ -21,9 +20,9 @@ RUN make build target=api
 
 FROM gcr.io/distroless/base
 
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=build /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/http/bin/api-server /app/api-server
-COPY --from=build /tmp /tmp
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/http/bin/api-server /app/api-server
+COPY --from=builder /tmp /tmp
 
 EXPOSE 3000
 
