@@ -15,17 +15,17 @@ build: ## build target=[api, cli, graphql]
 	
 	@if [ ${target} = api ]; then \
 		echo 'build api'; \
- 		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/http/bin/api-server ./cmd/http; \
+ 		GOOS=linux GOARCH=amd64 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
 		echo 'build cli'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
+		GOOS=linux GOARCH=amd64 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
 		echo 'build graphql'; \
-		GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
+		GOOS=linux GOARCH=amd64 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
 	@exit 0;
@@ -38,9 +38,9 @@ build-all: ## build-all
 
 .PHONY: wire-all
 wire-all: ## all wire gen
-	cd ./cmd/http && wire
-	cd ./cmd/cli && wire
-	cd ./test && wire
+	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/rest rest wire
+	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/cli rest wire
+	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/test rest wire
 
 .PHONY: test
 test: ## go test
@@ -48,5 +48,5 @@ test: ## go test
 
 .PHONY: lint
 lint: ## lint
-	docker-compose exec -T http golangci-lint --timeout 5m0s run ./...
+	docker-compose exec -T rest golangci-lint --timeout 5m0s run ./...
 
