@@ -15,17 +15,17 @@ build: ## build target=[api, cli, graphql]
 	
 	@if [ ${target} = api ]; then \
 		echo 'build api'; \
-		GOOS=linux GOARCH=amd64 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
 		echo 'build cli'; \
-		GOOS=linux GOARCH=amd64 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
 		echo 'build graphql'; \
-		GOOS=linux GOARCH=amd64 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
 	@exit 0;
