@@ -14,8 +14,10 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mitchellh/mapstructure v1.3.2
 	github.com/parnurzeal/gorequest v0.2.16 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.0.1
+	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )

@@ -1,19 +1,18 @@
 version: '3.7'
 services:
-  http:
+  rest:
     build:
       context: .
       target: builder
-      dockerfile: ./docker/http/Dockerfile
+      dockerfile: ./docker/rest/Dockerfile
     ports:
       - 3000:3000
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "air -c .air.http.toml"]
+    command: ["sh", "-c", "air -c .air.rest.toml"]
     environment:
       APP_ENV: "develop"
-      GO111MODULE: "on"
       MYSQL_HOST: "db"
       MYSQL_PORT: "3306"
       MYSQL_DATABASE: "hobigon"
@@ -38,7 +37,6 @@ services:
     command: ["sh", "-c", "air -c .air.graphql.toml"]
     environment:
       APP_ENV: "develop"
-      GO111MODULE: "on"
       MYSQL_HOST: "db"
       MYSQL_PORT: "3306"
       MYSQL_DATABASE: "hobigon"

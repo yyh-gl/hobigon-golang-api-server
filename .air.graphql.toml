@@ -15,11 +15,11 @@ full_bin = "cmd/graphql/bin/graphql-server"
 # Watch these filename extensions.
 include_ext = ["go"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["docker", "app/presentation/cli", "app/presentation/http"]
+exclude_dir = ["docker", "app/presentation/cli", "app/presentation/rest"]
 # Watch these directories if you specified.
 include_dir = []
 # Exclude files.
-exclude_file = ["cmd/http/wire_gen.go", "cmd/cli/wire_gen.go", "test/wire_gen.go"]
+exclude_file = ["cmd/rest/wire_gen.go", "cmd/cli/wire_gen.go", "test/wire_gen.go"]
 # It's not necessary to trigger build each time file changes if it's too frequent.
 delay = 1000 # ms
 # Stop to run old binary when build errors occur.
