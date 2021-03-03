@@ -7,7 +7,7 @@ tmp_dir = "tmp"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "make build target=api"
+cmd = "make build target=rest"
 # Binary file yields from `cmd`.
 bin = "cmd/rest/bin/api-server"
 # Customize binary.

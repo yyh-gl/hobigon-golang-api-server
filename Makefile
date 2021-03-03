@@ -7,14 +7,14 @@ help: ## helpを表示
 	@echo ''
 
 .PHONY: build
-build: ## build target=[api, cli, graphql]
+build: ## build target=[rest, cli, graphql]
 	@if [ -z ${target} ]; then \
 		echo 'targetを指定してください。'; \
 		exit 1; \
 	fi
 	
-	@if [ ${target} = api ]; then \
-		echo 'build api'; \
+	@if [ ${target} = rest ]; then \
+		echo 'build rest'; \
 		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
@@ -32,7 +32,7 @@ build: ## build target=[api, cli, graphql]
 
 .PHONY: build-all
 build-all: ## build-all
-	make build target=api
+	make build target=rest
 	make build target=cli
 	make build target=graphql
 
