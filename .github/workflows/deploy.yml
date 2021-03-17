@@ -120,6 +120,17 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: cmd
           target: api-server-golang
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          config: ${{ secrets.SSH_CONFIG }}
+      - name: Restart server
+        run: |
+          ssh hobigon sudo chmod +x /home/Y_h/api-server-golang/cmd/{cli,graphql,rest}/bin/*
+          ssh hobigon sudo systemctl restart api-server-golang.service
 
   success_notification:
     name: Success notification
