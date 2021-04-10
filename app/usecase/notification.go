@@ -7,11 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/analysis"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
 )
 
 // Notification : Notification用ユースケースのインターフェース
@@ -122,7 +121,7 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, erro
 // NotifyAccessRanking : アクセスランキングをSlackに通知
 func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
 	// アクセスランキングの結果を取得
-	// TODO: アウトプット再検討->エクセルに出力して解析とかしたい
+	// NOTE: シンプルさのためにinfraを直参照
 	rankingMsg, notifiedNum, err := analysis.GetAccessRanking(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
