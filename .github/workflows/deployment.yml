@@ -1,0 +1,84 @@
+name: Deployment
+
+on:
+  push:
+    tags:
+      - v[1-9]+.[0-9]+.[0-9]+
+
+jobs:
+  create_release_note:
+    name: Create release note
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Make release note
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set TAG environment
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:latest" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.CONTAINER_REGISTORY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GCR_PERSONAL_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/rest/Dockerfile
+          push: true
+          tags: ${{ env.TAG }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+  success_notification:
+    name: Success notification
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v2
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
+          SLACK_TITLE: CD Success
+        if: env.WORKFLOW_CONCLUSION == 'success'
+
+  failure_notification:
+    name: Failure notification
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v2
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
+          SLACK_TITLE: CD Failure
+          SLACK_COLOR: danger
+        if: env.WORKFLOW_CONCLUSION == 'failure'
