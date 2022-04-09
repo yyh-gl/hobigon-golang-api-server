@@ -1,4 +1,4 @@
-FROM golang:1.16.0-alpine AS builder
+FROM golang:1.18.0-alpine AS builder
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-graphql-server
 
@@ -13,9 +13,9 @@ RUN apk add --no-cache \
     gcc \
     libc-dev \
     curl
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.30.0
-RUN go get -u github.com/cosmtrek/air
-RUN go get -u github.com/google/wire/cmd/wire
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/google/wire/cmd/wire@latest
 RUN make build target=graphql
 
 FROM gcr.io/distroless/base
