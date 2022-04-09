@@ -1,15 +1,13 @@
-name: Deploy
+name: Deployment
 
 on:
   push:
-
-env:
-  GO_VERSION: 1.16
-  GOLANGCI_LINT_VERSION: v1.33
+    tags:
+      - 'v[1-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  test:
-    name: Test
+  create_release_note:
+    name: Create release note
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,39 +18,46 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.GO_VERSION }}
-      - uses: actions/cache@v2
+      - name: Make release note
+        uses: goreleaser/goreleaser-action@v2
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Test
+          version: latest
+          args: release --rm-dist
         env:
-          APP_ENV: test
-        run: go test -v ./...
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  lint:
-    name: Lint
+  publish_container_image:
+    name: Publish container image
     runs-on: ubuntu-latest
+    needs: create_release_note
     steps:
+      - name: Set TAG environment
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:latest" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
         with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
+          registry: ${{ secrets.CONTAINER_REGISTORY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GCR_PERSONAL_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and Push
+        uses: docker/build-push-action@v2
         with:
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --timeout 5m0s
+          context: .
+          file: ./docker/rest/Dockerfile
+          push: true
+          tags: ${{ env.TAG }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -79,32 +84,11 @@ jobs:
             ./cmd/graphql/bin/graphql-server
           retention-days: 1
           if-no-files-found: error
-  
-  create_release_note:
-    name: Create release note
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: Make release note
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          args: release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    name: Deploy
+  deploy_to_gce:
+    name: Deploy to GCE
     runs-on: ubuntu-latest
-    needs: [test, lint, build, create_release_note]
+    needs: [create_release_note, build]
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/download-artifact@v2
@@ -134,7 +118,7 @@ jobs:
 
   success_notification:
     name: Success notification
-    needs: deploy
+    needs: [publish_container_image, deploy_to_gce]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -143,12 +127,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: CI Success
+          SLACK_TITLE: CD Success
         if: env.WORKFLOW_CONCLUSION == 'success'
 
   failure_notification:
     name: Failure notification
-    needs: deploy
+    needs: [publish_container_image, deploy_to_gce]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -157,6 +141,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: CI Failure
+          SLACK_TITLE: CD Failure
           SLACK_COLOR: danger
         if: env.WORKFLOW_CONCLUSION == 'failure'
