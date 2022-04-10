@@ -91,3 +91,6 @@ dist
 tmp
 cmd/**/bin/*
 !cmd/**/bin/.keep
+
+# k8s secret
+k8s/secret.yml
