@@ -92,3 +92,87 @@ spec:
                   name: mysql-secret
                   key: mysql_password
                   optional: false
+            - name: TRELLO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: trello_api_key
+                  optional: false
+            - name: TRELLO_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: trello_api_token
+                  optional: false
+            - name: MAIN_BOARD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: main_board_id
+                  optional: false
+            - name: TECH_BOARD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: tech_board_id
+                  optional: false
+            - name: WORK_BOARD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: work_board_id
+                  optional: false
+            - name: MAIN_WIP_LIST_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: main_wip_list_id
+                  optional: false
+            - name: TECH_WIP_LIST_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: tech_wip_list_id
+                  optional: false
+            - name: WORK_WIP_LIST_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trello-secret
+                  key: work_wip_list_id
+                  optional: false
+            - name: SLACK_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: slack_api_token
+                  optional: false
+            - name: WEBHOOK_URL_TO_00
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook_url_to_00
+                  optional: false
+            - name: WEBHOOK_URL_TO_02
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook_url_to_02
+                  optional: false
+            - name: WEBHOOK_URL_TO_50
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook_url_to_50
+                  optional: false
+            - name: WEBHOOK_URL_TO_51
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook_url_to_51
+                  optional: false
+            - name: WEBHOOK_URL_TO_SHINSOTSU
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook_url_to_shinsotsu
+                  optional: false
