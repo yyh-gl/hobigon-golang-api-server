@@ -1,16 +1,35 @@
+# Oktetoでは不要
+#kind: PersistentVolume
+#apiVersion: v1
+#metadata:
+#  name: mysql-pv-volume
+#  labels:
+#    type: local
+#  namespace: hobigon-yyh-gl
+#spec:
+#  storageClassName: manual
+#  capacity:
+#    storage: 3Gi
+#  accessModes:
+#    - ReadWriteOnce
+#  hostPath:
+#    path: "/mnt/data"
+---
+
 apiVersion: v1
-kind: Service
+kind: PersistentVolumeClaim
 metadata:
-  name: mysql-service
+  name: mysql-pv-claim
   namespace: hobigon-yyh-gl
 spec:
-  ports:
-    - port: 3306
-  selector:
-    app: mysql
-  clusterIP: None
-
+  storageClassName: okteto-standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -51,32 +70,13 @@ spec:
 
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Service
 metadata:
-  name: mysql-pv-claim
+  name: mysql-service
   namespace: hobigon-yyh-gl
 spec:
-  storageClassName: okteto-standard
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 3Gi
-
----
-# Oktetoでは不要
-#kind: PersistentVolume
-#apiVersion: v1
-#metadata:
-#  name: mysql-pv-volume
-#  labels:
-#    type: local
-#  namespace: hobigon-yyh-gl
-#spec:
-#  storageClassName: manual
-#  capacity:
-#    storage: 3Gi
-#  accessModes:
-#    - ReadWriteOnce
-#  hostPath:
-#    path: "/mnt/data"
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
