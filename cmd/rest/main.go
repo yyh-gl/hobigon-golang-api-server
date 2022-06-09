@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 )
 
 func main() {
@@ -95,6 +96,9 @@ func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 		}
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
+
+		// リクエスト数をカウント by Prometheus
+		rest.CountRequest(r.Method, r.URL.Path)
 
 		h.ServeHTTP(w, r)
 	}
