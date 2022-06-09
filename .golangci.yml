@@ -6,14 +6,8 @@ linters:
   disable-all: true
   enable:
     - goimports
-    - golint
     - govet
     - errcheck
-
-linters-settings:
-  golint:
-    # TODO: タスク関連のLint修正が完了しだい 0.8 に戻す
-    min-confidence: 0.9
 
 issues:
   exclude-use-default: false
