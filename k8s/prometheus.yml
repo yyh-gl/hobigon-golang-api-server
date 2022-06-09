@@ -11,7 +11,7 @@ data:
     - name: alert
       rules:
       - alert: High Count
-        expr: sum(hello_processed_total) > 10
+        expr: sum(hobigon_request_count) > 10
         for: 1m
         annotations:
           summary: High Count Usage
@@ -26,7 +26,6 @@ data:
         static_configs:
         - targets:
           - hobigon-api-service:3000
-        metrics_path: "/api/v1/health"
 ---
 
 apiVersion: apps/v1

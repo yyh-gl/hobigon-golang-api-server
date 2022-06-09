@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 )
@@ -46,6 +47,8 @@ func main() {
 	// TODO: 誕生日の人が複数いたときに対応
 	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack)).Methods(http.MethodPost)
 	r.HandleFunc("/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack)).Methods(http.MethodPost)
+
+	r.Handle("/metrics", promhttp.Handler())
 
 	s := &http.Server{
 		Addr:    ":3000",
