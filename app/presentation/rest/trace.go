@@ -1,24 +1,44 @@
 package rest
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"strconv"
+	"time"
 
-var httpReqs = prometheus.NewCounterVec(
-	prometheus.CounterOpts{
-		Namespace: "hobigon",
-		Name:      "request_count",
-		Help:      "The number of requests",
-	},
-	[]string{"method", "path"},
-	// TODO: ステータスコードを記録
-	//[]string{"method", "path", "status_code"},
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+)
+
+var (
+	httpRequestTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "hobigon",
+			Name:      "http_requests_total",
+			Help:      "The number of requests",
+		},
+		[]string{"method", "path", "status"},
+	)
+
+	httpDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name: "http_response_time_seconds",
+			Help: "Duration of HTTP requests.",
+		},
+		[]string{"method", "path"},
+	)
 )
 
 func init() {
-	prometheus.MustRegister(httpReqs)
+	prometheus.MustRegister(httpRequestTotal, httpDuration, collectors.NewBuildInfoCollector())
 }
 
-// CountRequest : リクエストをカウントアップ
-func CountRequest(method, path string) {
-	counter := httpReqs.WithLabelValues(method, path)
+// IncrementRequestCount : httpRequestTotalカウンターをインクリメント
+func IncrementRequestCount(method, path string, statusCode int) {
+	counter := httpRequestTotal.WithLabelValues(method, path, strconv.Itoa(statusCode))
 	counter.Inc()
+}
+
+// ObserveLatency : レイテンシを測定
+func ObserveLatency(method, path string) func() time.Duration {
+	timer := prometheus.NewTimer(httpDuration.WithLabelValues(method, path))
+	return timer.ObserveDuration
 }

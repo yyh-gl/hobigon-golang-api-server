@@ -85,6 +85,8 @@ func main() {
 // wrapHandler : 全ハンドラー共通処理
 func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		done := rest.ObserveLatency(r.Method, r.URL.Path)
+
 		// リクエスト内容をログ出力
 		// TODO: Bodyの内容を出力
 		app.Logger.Println("[AccessLog] " + r.Method + " " + r.URL.String())
@@ -100,14 +102,29 @@ func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
-		// リクエスト数をカウント by Prometheus
-		rest.CountRequest(r.Method, r.URL.Path)
+		rw := NewResponseWriter(w)
+		h.ServeHTTP(rw, r)
 
-		h.ServeHTTP(w, r)
+		rest.IncrementRequestCount(r.Method, r.URL.Path, rw.statusCode)
+		done()
 	}
 }
 
 // preflightHandler : preflight用のハンドラー
 func preflightHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
+}
+
+type responseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func NewResponseWriter(w http.ResponseWriter) *responseWriter {
+	return &responseWriter{w, http.StatusOK}
+}
+
+func (rw *responseWriter) WriteHeader(code int) {
+	rw.statusCode = code
+	rw.ResponseWriter.WriteHeader(code)
 }
