@@ -31,7 +31,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus
+  name: prometheus-deployment
   namespace: hobigon-yyh-gl
 spec:
   replicas: 1
@@ -69,7 +69,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus
+  name: prometheus-service
   namespace: hobigon-yyh-gl
   annotations:
     dev.okteto.com/auto-ingress: "private"
@@ -78,7 +78,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: "prometheus"
+    - name: prometheus
       port: 9090
   selector:
     app: prometheus
