@@ -20,8 +20,9 @@ var (
 
 	httpDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name: "http_response_time_seconds",
-			Help: "Duration of HTTP requests.",
+			Namespace: "hobigon",
+			Name:      "http_response_time_seconds",
+			Help:      "Duration of HTTP requests.",
 		},
 		[]string{"method", "path"},
 	)
