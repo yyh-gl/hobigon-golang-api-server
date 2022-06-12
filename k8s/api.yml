@@ -10,6 +10,11 @@ spec:
   selector:
     matchLabels:
       app: hobigon-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 25%
   template:
     metadata:
       labels:
@@ -21,6 +26,11 @@ spec:
           image: ghcr.io/yyh-gl/hobigon-golang-api-server/prd/hobigon-api:latest
           ports:
             - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              port: 3000
+              path: /api/health
+            periodSeconds: 5
           env:
             - name: APP_ENV
               value: "production"

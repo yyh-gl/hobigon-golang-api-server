@@ -30,7 +30,7 @@ func main() {
 	r.PathPrefix("/").Handler(wrapHandler(preflightHandler)).Methods(http.MethodOptions)
 
 	// Health Check
-	r.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
 
