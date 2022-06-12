@@ -10,6 +10,11 @@ spec:
   selector:
     matchLabels:
       app: hobigon-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 25%
   template:
     metadata:
       labels:
@@ -140,6 +145,11 @@ spec:
                   name: slack-secret
                   key: webhook_url_to_shinsotsu
                   optional: false
+      readinessProbe:
+        httpGet:
+          port: 3000
+          path: /api/health
+        periodSeconds: 5
 ---
 
 apiVersion: v1
