@@ -26,17 +26,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish_container_image:
-    name: Publish container image
+  publish_container_image_specified_version:
+    name: Publish container image (specified version)
     runs-on: ubuntu-latest
     needs: create_release_note
     steps:
-      - name: Set TAG environment
-        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:latest" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Set VERSION environment
+        env:
+          REF: ${{ github.ref }}
+        run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
+      - name: Set TAG environment
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -54,6 +58,56 @@ jobs:
           tags: ${{ env.TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+  
+  publish_container_image_latest_version:
+    name: Publish container image (latest version)
+    runs-on: ubuntu-latest
+    needs: create_release_note
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set TAG environment
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:latest" >> $GITHUB_ENV
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.CONTAINER_REGISTORY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GCR_PERSONAL_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/rest/Dockerfile
+          push: true
+          tags: ${{ env.TAG }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+  deploy_to_k8s_okteto:
+    runs-on: ubuntu-latest
+    needs: [ create_release_note, publish_container_image_specified_version ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set VERSION environment
+        env:
+          REF: ${{ github.ref }}
+        run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
+      - name: Set TAG environment
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:${{ env.VERSION }}" >> $GITHUB_ENV
+      - name: Deploy
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/hobigon-api-deployment hobigon-api=${{ env.TAG }}
 
   build:
     name: Build
@@ -89,7 +143,6 @@ jobs:
     name: Deploy to GCE
     runs-on: ubuntu-latest
     needs: [create_release_note, build]
-    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -118,7 +171,7 @@ jobs:
 
   success_notification:
     name: Success notification
-    needs: [publish_container_image, deploy_to_gce]
+    needs: [publish_container_image_latest_version, deploy_to_k8s_okteto, deploy_to_gce]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -132,7 +185,7 @@ jobs:
 
   failure_notification:
     name: Failure notification
-    needs: [publish_container_image, deploy_to_gce]
+    needs: [publish_container_image_latest_version, deploy_to_k8s_okteto, deploy_to_gce]
     runs-on: ubuntu-latest
     if: always()
     steps:
