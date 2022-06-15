@@ -10,6 +10,9 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 )
 
+// ErrBlogNotFound : 該当Blogが存在しないエラー
+var ErrBlogNotFound = errors.New("blog is not found")
+
 // Blog : Blog用ユースケースのインターフェース
 type Blog interface {
 	Create(context.Context, string) (model.Blog, error)
@@ -48,7 +51,7 @@ func (b blog) Create(ctx context.Context, title string) (model.Blog, error) {
 func (b blog) Show(ctx context.Context, title string) (model.Blog, error) {
 	blog, err := b.r.FindByTitle(ctx, title)
 	if err != nil {
-		if errors.Is(err, repository.ErrRecordNotFound) {
+		if errors.Is(err, repository.ErrBlogRecordNotFound) {
 			return model.Blog{}, ErrBlogNotFound
 		}
 		return model.Blog{}, fmt.Errorf("blogRepository.FindByTitle()内でのエラー: %w", err)
@@ -60,7 +63,7 @@ func (b blog) Show(ctx context.Context, title string) (model.Blog, error) {
 func (b blog) Like(ctx context.Context, title string) (model.Blog, error) {
 	blog, err := b.r.FindByTitle(ctx, title)
 	if err != nil {
-		if errors.Is(err, repository.ErrRecordNotFound) {
+		if errors.Is(err, repository.ErrBlogRecordNotFound) {
 			return model.Blog{}, ErrBlogNotFound
 		}
 		return model.Blog{}, fmt.Errorf("blogRepository.FindByTitle()内でのエラー: %w", err)

@@ -46,7 +46,7 @@ func (b blog) FindByTitle(ctx context.Context, title string) (model.Blog, error)
 	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return model.Blog{}, repository.ErrRecordNotFound
+			return model.Blog{}, repository.ErrBlogRecordNotFound
 		}
 		return model.Blog{}, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}

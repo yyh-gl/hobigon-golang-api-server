@@ -13,6 +13,9 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
 )
 
+// ErrBirthdayNotFound : 該当Birthdayが存在しないエラー
+var ErrBirthdayNotFound = errors.New("birthday is not found")
+
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
@@ -103,7 +106,7 @@ func (n notification) NotifyTodayBirthdayToSlack(ctx context.Context) (int, erro
 	today := time.Now().Format("0102")
 	birthdayList, err := n.r.FindAllByDate(ctx, today)
 	if err != nil {
-		if errors.Is(err, repository.ErrRecordNotFound) {
+		if errors.Is(err, repository.ErrBirthdayRecordNotFound) {
 			return 0, ErrBirthdayNotFound
 		}
 		return 0, fmt.Errorf("birthdayRepository.SelectByDate()内でのエラー: %w", err)

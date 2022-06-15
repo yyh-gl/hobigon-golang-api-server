@@ -2,9 +2,13 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 )
+
+// ErrBlogRecordNotFound : DBに該当Blog情報が存在しないエラー
+var ErrBlogRecordNotFound = errors.New("record of blog is not found")
 
 // Blog : Blog用リポジトリのインターフェース
 type Blog interface {

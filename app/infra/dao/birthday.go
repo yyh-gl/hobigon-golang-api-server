@@ -52,7 +52,7 @@ func (b birthday) FindAllByDate(ctx context.Context, date string) (model.Birthda
 	if err != nil {
 		return nil, fmt.Errorf("gorm.Where().Find()内でのエラー: %w", err)
 	} else if birthdayListDTO.IsEmpty() {
-		return nil, repository.ErrRecordNotFound
+		return nil, repository.ErrBirthdayRecordNotFound
 	}
 
 	// DTO を ドメインモデルに変換
