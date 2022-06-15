@@ -16,6 +16,7 @@ RUN apk add --no-cache \
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 RUN go install github.com/cosmtrek/air@latest
 RUN go install github.com/google/wire/cmd/wire@latest
+RUN go install github.com/99designs/gqlgen@latest
 RUN make build target=graphql
 
 FROM gcr.io/distroless/base

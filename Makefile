@@ -38,9 +38,13 @@ build-all: ## build-all
 
 .PHONY: wire-all
 wire-all: ## all wire gen
-	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/rest rest wire
-	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/cli rest wire
-	docker-compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/test rest wire
+	docker compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/rest rest wire
+	docker compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/cli rest wire
+	docker compose exec -T -w /go/src/github.com/yyh-gl/hobigon-golang-api-server/test rest wire
+
+.PHONY: gqlgen
+gqlgen: ## gqlgen
+	docker compose exec -T graphql gqlgen
 
 .PHONY: test
 test: ## go test
@@ -48,5 +52,5 @@ test: ## go test
 
 .PHONY: lint
 lint: ## lint
-	docker-compose exec -T rest golangci-lint --timeout 5m0s run ./...
+	docker compose exec -T rest golangci-lint --timeout 5m0s run ./...
 
