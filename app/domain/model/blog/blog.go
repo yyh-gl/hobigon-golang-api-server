@@ -11,20 +11,20 @@ type Blog struct {
 }
 
 // NewBlog : Blog ドメインモデルを生成
-func NewBlog(title string) (*Blog, error) {
+func NewBlog(title string) (Blog, error) {
 	t, err := newTitle(title)
 	if err != nil {
-		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+		return Blog{}, fmt.Errorf("NewTitle()内でエラー: %w", err)
 	}
 
 	c, err := newCount()
 	if err != nil {
-		return nil, fmt.Errorf("NewTitle()内でエラー: %w", err)
+		return Blog{}, fmt.Errorf("NewTitle()内でエラー: %w", err)
 	}
 
-	return &Blog{
-		title: *t,
-		count: *c,
+	return Blog{
+		title: t,
+		count: c,
 	}, nil
 }
 
@@ -39,9 +39,9 @@ func (b Blog) Count() Count {
 }
 
 // CountUp : いいね数をプラス1
-func (b Blog) CountUp() *Blog {
+func (b Blog) CountUp() Blog {
 	b.count += 1
-	return &b
+	return b
 }
 
 // CreateLikeMessage : いいね受信メッセージを生成

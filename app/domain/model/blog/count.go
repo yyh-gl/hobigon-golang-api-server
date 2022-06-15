@@ -9,15 +9,8 @@ const initCount = 0
 type Count int
 
 // newCount : Countを生成
-func newCount() (*Count, error) {
-	n := Count(initCount)
-	return &n, nil
-}
-
-// NewCountWithArg : 引数の値をもとにCountを生成
-func NewCountWithArg(val int) (*Count, error) {
-	n := Count(val)
-	return &n, nil
+func newCount() (Count, error) {
+	return Count(initCount), nil
 }
 
 // Int : Countの値をIntとして返却

@@ -12,13 +12,12 @@ const maxLength = 50
 type Title string
 
 // newTitle : Titleを生成
-func newTitle(val string) (*Title, error) {
+func newTitle(val string) (Title, error) {
 	if len(val) > maxLength {
-		return nil, errors.New("バリデーションエラー：【Blog】Titleは" + strconv.Itoa(maxLength) + "文字以内です")
+		return "", errors.New("バリデーションエラー：【Blog】Titleは" + strconv.Itoa(maxLength) + "文字以内です")
 	}
 
-	n := Title(val)
-	return &n, nil
+	return Title(val), nil
 }
 
 // String : Titleの値を文字列として返却

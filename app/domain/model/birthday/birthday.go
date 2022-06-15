@@ -12,29 +12,29 @@ type Birthday struct {
 }
 
 // NewBirthday : Birthdayドメインモデルを生成
-func NewBirthday(name string, date string, wishList string) (*Birthday, error) {
+func NewBirthday(name string, date string, wishList string) (Birthday, error) {
 	// Nameを生成
 	n, err := newName(name)
 	if err != nil {
-		return nil, fmt.Errorf("NewName()内でエラー: %w", err)
+		return Birthday{}, fmt.Errorf("NewName()内でエラー: %w", err)
 	}
 
 	// Dateを生成
 	d, err := newDate(date)
 	if err != nil {
-		return nil, fmt.Errorf("NewDate()内でエラー: %w", err)
+		return Birthday{}, fmt.Errorf("NewDate()内でエラー: %w", err)
 	}
 
 	// WishListを生成
 	wl, err := newWishList(wishList)
 	if err != nil {
-		return nil, fmt.Errorf("NewWishList()内でエラー: %w", err)
+		return Birthday{}, fmt.Errorf("NewWishList()内でエラー: %w", err)
 	}
 
-	return &Birthday{
-		name:     *n,
-		date:     *d,
-		wishList: *wl,
+	return Birthday{
+		name:     n,
+		date:     d,
+		wishList: wl,
 	}, nil
 }
 

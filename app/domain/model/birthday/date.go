@@ -16,13 +16,12 @@ const (
 type Date string
 
 // newDate : Date を生成
-func newDate(val string) (*Date, error) {
+func newDate(val string) (Date, error) {
 	if len(val) != defaultLength {
-		return nil, errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")
+		return "", errors.New("バリデーションエラー：【Birthday】Dateの形式が誤っています")
 	}
 
-	d := Date(val)
-	return &d, nil
+	return Date(val), nil
 }
 
 // String : Date の値を文字列として返却

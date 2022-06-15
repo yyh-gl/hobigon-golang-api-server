@@ -24,7 +24,7 @@ func NewBlog(db *db.DB) repository.Blog {
 }
 
 // Create : ブログ情報を新規作成
-func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) {
+func (b blog) Create(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	// BlogモデルをDTOに変換
 	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
@@ -33,7 +33,7 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 	err := b.db.Create(&blogDTO).Error
 	if err != nil {
-		return nil, fmt.Errorf("gorm.Create(blog)内でのエラー: %w", err)
+		return model.Blog{}, fmt.Errorf("gorm.Create(blog)内でのエラー: %w", err)
 	}
 
 	createdBlog := model.ConvertToEntity(ctx, blogDTO)
@@ -41,14 +41,14 @@ func (b blog) Create(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 }
 
 // FindByTitle : タイトルからブログ情報を1件取得
-func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error) {
+func (b blog) FindByTitle(ctx context.Context, title string) (model.Blog, error) {
 	blogDTO := dto.BlogDTO{}
 	err := b.db.First(&blogDTO, "title=?", title).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, repository.ErrRecordNotFound
+			return model.Blog{}, repository.ErrRecordNotFound
 		}
-		return nil, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
+		return model.Blog{}, fmt.Errorf("gorm.First(blog)内でのエラー: %w", err)
 	}
 
 	blog := model.ConvertToEntity(ctx, blogDTO)
@@ -56,7 +56,7 @@ func (b blog) FindByTitle(ctx context.Context, title string) (*model.Blog, error
 }
 
 // Update : ブログ情報を1件更新
-func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) {
+func (b blog) Update(ctx context.Context, blog model.Blog) (model.Blog, error) {
 	// BlogモデルをDTOに変換
 	blogDTO := dto.BlogDTO{
 		Title: blog.Title().String(),
@@ -65,7 +65,7 @@ func (b blog) Update(ctx context.Context, blog model.Blog) (*model.Blog, error) 
 
 	err := b.db.Save(&blogDTO).Error
 	if err != nil {
-		return nil, fmt.Errorf("gorm.Save(blog)内でのエラー: %w", err)
+		return model.Blog{}, fmt.Errorf("gorm.Save(blog)内でのエラー: %w", err)
 	}
 
 	updatedBlog := model.ConvertToEntity(ctx, blogDTO)

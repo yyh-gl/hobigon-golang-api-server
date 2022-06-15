@@ -7,8 +7,8 @@ import (
 )
 
 // ConvertToEntity : DTOからエンティティへ変換
-func ConvertToEntity(ctx context.Context, b dto.BlogDTO) *Blog {
-	return &Blog{
+func ConvertToEntity(ctx context.Context, b dto.BlogDTO) Blog {
+	return Blog{
 		title: Title(b.Title),
 		count: Count(b.Count),
 	}

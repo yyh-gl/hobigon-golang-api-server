@@ -9,14 +9,13 @@ import (
 type WishList string
 
 // newWishList : WishListを生成
-func newWishList(val string) (*WishList, error) {
+func newWishList(val string) (WishList, error) {
 	// WishList が空じゃない場合は "https://" で始まっていることをチェック
 	if val != "" && !strings.HasPrefix(val, "https://") {
-		return nil, errors.New("バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません")
+		return "", errors.New("バリデーションエラー：【Birthday】WishListが\"https://\"から始まっていません")
 	}
 
-	wl := WishList(val)
-	return &wl, nil
+	return WishList(val), nil
 }
 
 // String : WishListの値を文字列として返却

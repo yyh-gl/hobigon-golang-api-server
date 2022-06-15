@@ -12,13 +12,12 @@ const maxLength = 30
 type Name string
 
 // newName : Name を生成
-func newName(val string) (*Name, error) {
+func newName(val string) (Name, error) {
 	if len(val) > maxLength {
-		return nil, errors.New("バリデーションエラー：【Birthday】Nameは" + strconv.Itoa(maxLength) + "文字以内です")
+		return "", errors.New("バリデーションエラー：【Birthday】Nameは" + strconv.Itoa(maxLength) + "文字以内です")
 	}
 
-	n := Name(val)
-	return &n, nil
+	return Name(val), nil
 }
 
 // String : Name の値を文字列として返却

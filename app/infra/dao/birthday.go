@@ -22,7 +22,7 @@ func NewBirthday(db *db.DB) repository.Birthday {
 }
 
 // Create : 誕生日データを新規作成
-func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.Birthday, error) {
+func (b birthday) Create(ctx context.Context, birthday model.Birthday) (model.Birthday, error) {
 	// Birthday モデル を DTO に変換
 	birthdayDTO := dto.BirthdayDTO{
 		Name:     birthday.Name().String(),
@@ -33,13 +33,13 @@ func (b birthday) Create(ctx context.Context, birthday model.Birthday) (*model.B
 	// date 指定で誕生日情報を取得
 	err := b.db.Create(&birthdayDTO).Error
 	if err != nil {
-		return nil, fmt.Errorf("gorm.Create()内でのエラー: %w", err)
+		return model.Birthday{}, fmt.Errorf("gorm.Create()内でのエラー: %w", err)
 	}
 
 	// DTO を ドメインモデルに変換
 	createdBirthday := model.ConvertToDomainModel(ctx, birthdayDTO)
 	if err != nil {
-		return nil, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
+		return model.Birthday{}, fmt.Errorf("birthdayDTO.ConvertToDomainModel()内でのエラー: %w", err)
 	}
 	return createdBirthday, nil
 }

@@ -23,31 +23,31 @@ func NewTask() gateway.Task {
 }
 
 // getBoard : ボード情報を取得
-func (t task) getBoard(ctx context.Context, boardID string) (board *trello.Board, err error) {
+func (t task) getBoard(ctx context.Context, boardID string) (trello.Board, error) {
 	client := trello.NewClient(t.APIKey, t.APIToken)
-	board, err = client.GetBoard(boardID, trello.Defaults())
+	board, err := client.GetBoard(boardID, trello.Defaults())
 	if err != nil {
-		return nil, err
+		return trello.Board{}, err
 	}
-	return board, nil
+	return *board, nil
 }
 
 // GetListsByBoardID : ボードIDからリスト情報を取得
-func (t task) GetListsByBoardID(ctx context.Context, boardID string) (lists []*trello.List, err error) {
+func (t task) GetListsByBoardID(ctx context.Context, boardID string) ([]*trello.List, error) {
 	board, err := t.getBoard(ctx, boardID)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: ここで todo と wip だけにしちゃう
-	lists, err = board.GetLists(trello.Defaults())
+	lists, err := board.GetLists(trello.Defaults())
 	if err != nil {
 		return nil, err
 	}
 
 	// Board情報付与
 	for _, list := range lists {
-		list.Board = board
+		list.Board = &board
 	}
 
 	return lists, nil

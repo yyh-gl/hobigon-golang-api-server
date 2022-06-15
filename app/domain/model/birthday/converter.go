@@ -7,8 +7,8 @@ import (
 )
 
 // ConvertToDomainModel : DTOからドメインモデルへ変換
-func ConvertToDomainModel(ctx context.Context, b dto.BirthdayDTO) *Birthday {
-	return &Birthday{
+func ConvertToDomainModel(ctx context.Context, b dto.BirthdayDTO) Birthday {
+	return Birthday{
 		name:     Name(b.Name),
 		date:     Date(b.Date),
 		wishList: WishList(b.WishList),
@@ -18,8 +18,7 @@ func ConvertToDomainModel(ctx context.Context, b dto.BirthdayDTO) *Birthday {
 // ConvertToDomainModelList : リスト型DTOからリスト型ドメインモデルへ変換
 func ConvertToDomainModelList(ctx context.Context, bl dto.BirthdayListDTO) (list BirthdayList) {
 	for _, b := range bl {
-		model := ConvertToDomainModel(ctx, b)
-		list = append(list, *model)
+		list = append(list, ConvertToDomainModel(ctx, b))
 	}
 	return list
 }
