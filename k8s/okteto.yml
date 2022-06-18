@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: hobigon-api
-          image: ghcr.io/yyh-gl/hobigon-golang-api-server/prd/hobigon-api:latest
+          image: ghcr.io/yyh-gl/hobigon-golang-api-server/rest:latest
           ports:
             - containerPort: 3000
           env:

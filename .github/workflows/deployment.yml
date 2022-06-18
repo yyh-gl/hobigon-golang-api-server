@@ -40,7 +40,7 @@ jobs:
           REF: ${{ github.ref }}
         run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Set TAG environment
-        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:${{ env.VERSION }}" >> $GITHUB_ENV
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -69,7 +69,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set TAG environment
-        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:latest" >> $GITHUB_ENV
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:latest" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -101,7 +101,7 @@ jobs:
           REF: ${{ github.ref }}
         run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Set TAG environment
-        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/prd/hobigon-api:${{ env.VERSION }}" >> $GITHUB_ENV
+        run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Deploy
         uses: actions-hub/kubectl@master
         env:
