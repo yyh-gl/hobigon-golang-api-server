@@ -94,7 +94,7 @@ func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
 		// CORS用ヘッダーを付与
 		switch {
 		case app.IsPrd():
-			w.Header().Add("Access-Control-Allow-Origin", "https://yyh-gl.github.io")
+			w.Header().Add("Access-Control-Allow-Origin", "https://tech.yyh-gl.dev")
 		case app.IsDev() || app.IsTest():
 			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
 			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
