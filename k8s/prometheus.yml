@@ -1,4 +1,18 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-pv-claim
+  namespace: hobigon-yyh-gl
+spec:
+  storageClassName: okteto-standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-server-conf
@@ -62,13 +76,21 @@ spec:
               mountPath: /etc/prometheus/
             - name: prometheus-storage-volume
               mountPath: /prometheus/
+      initContainers:
+        - name: prometheus-storage-volume-permission-fix
+          image: busybox
+          command: [ "/bin/chmod","-R","777", "/prometheus" ]
+          volumeMounts:
+            - name: prometheus-storage-volume
+              mountPath: /prometheus
       volumes:
         - name: prometheus-config-volume
           configMap:
             defaultMode: 420
             name: prometheus-server-conf
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: prometheus-pv-claim
 ---
 
 apiVersion: v1
