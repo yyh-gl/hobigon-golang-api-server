@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 )
 
 func main() {
@@ -27,7 +27,9 @@ func main() {
 	r := mux.NewRouter()
 
 	// Preflight handler
-	r.PathPrefix("/").Handler(wrapHandler(preflightHandler)).Methods(http.MethodOptions)
+	r.PathPrefix("/").Handler(middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}, "pleflight")).Methods(http.MethodOptions)
 
 	// Health Check
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
@@ -35,18 +37,32 @@ func main() {
 	}).Methods(http.MethodGet)
 
 	// Blog handlers
-	r.HandleFunc("/api/v1/blogs", wrapHandler(diContainer.HandlerBlog.Create)).Methods(http.MethodPost)
-	r.HandleFunc("/api/v1/blogs/{title}", wrapHandler(diContainer.HandlerBlog.Show)).Methods(http.MethodGet)
-	r.HandleFunc("/api/v1/blogs/{title}/like", wrapHandler(diContainer.HandlerBlog.Like)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/blogs", middleware.Attach(
+		diContainer.HandlerBlog.Create, "blog_create"),
+	).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/blogs/{title}", middleware.Attach(
+		diContainer.HandlerBlog.Show, "blog_show"),
+	).Methods(http.MethodGet)
+	r.HandleFunc("/api/v1/blogs/{title}/like", middleware.Attach(
+		diContainer.HandlerBlog.Like,
+		"blog_like"),
+	).Methods(http.MethodPost)
 
 	// Birthday handler
-	r.HandleFunc("/api/v1/birthday", wrapHandler(diContainer.HandlerBirthday.Create)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/birthday", middleware.Attach(
+		diContainer.HandlerBirthday.Create, "birthday_create"),
+	).Methods(http.MethodPost)
 
 	// Notification handlers
-	r.HandleFunc("/api/v1/notifications/slack/tasks/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayTasksToSlack)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/notifications/slack/tasks/today", middleware.Attach(
+		diContainer.HandlerNotification.NotifyTodayTasksToSlack,
+		"notification_notify_today_tasks_to_slack"),
+	).Methods(http.MethodPost)
 	// TODO: 誕生日の人が複数いたときに対応
-	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", wrapHandler(diContainer.HandlerNotification.NotifyTodayBirthdayToSlack)).Methods(http.MethodPost)
-	r.HandleFunc("/api/v1/notifications/slack/rankings/access", wrapHandler(diContainer.HandlerNotification.NotifyAccessRankingToSlack)).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", middleware.Attach(
+		diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
+		"notification_notify_today_birthday_to_slack")).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/notifications/slack/rankings/access", middleware.Attach(diContainer.HandlerNotification.NotifyAccessRankingToSlack, "notification_notify_access_ranking_to_slack")).Methods(http.MethodPost)
 
 	r.Handle("/metrics", promhttp.Handler())
 
@@ -80,51 +96,4 @@ func main() {
 		fmt.Println("Graceful shutdown failed:", err.Error())
 	}
 	fmt.Println("Server shutdown")
-}
-
-// wrapHandler : 全ハンドラー共通処理
-func wrapHandler(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		done := rest.ObserveLatency(r.Method, r.URL.Path)
-
-		// リクエスト内容をログ出力
-		// TODO: Bodyの内容を出力
-		app.Logger.Println("[AccessLog] " + r.Method + " " + r.URL.String())
-
-		// CORS用ヘッダーを付与
-		switch {
-		case app.IsPrd():
-			w.Header().Add("Access-Control-Allow-Origin", "https://tech.yyh-gl.dev")
-		case app.IsDev() || app.IsTest():
-			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:1313")
-			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3001")
-		}
-		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Content-Type", "application/json;charset=utf-8")
-
-		rw := NewResponseWriter(w)
-		h.ServeHTTP(rw, r)
-
-		rest.IncrementRequestCount(r.Method, r.URL.Path, rw.statusCode)
-		done()
-	}
-}
-
-// preflightHandler : preflight用のハンドラー
-func preflightHandler(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusNoContent)
-}
-
-type responseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func NewResponseWriter(w http.ResponseWriter) *responseWriter {
-	return &responseWriter{w, http.StatusOK}
-}
-
-func (rw *responseWriter) WriteHeader(code int) {
-	rw.statusCode = code
-	rw.ResponseWriter.WriteHeader(code)
 }
