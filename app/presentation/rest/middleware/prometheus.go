@@ -40,7 +40,14 @@ var (
 	)
 )
 
+func init() {
+	prometheus.MustRegister(inFlight, counter, duration, responseSize)
+}
+
 func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
+
+	// TODO https://christina04.hatenablog.com/entry/prometheus-application-over-http 全部やりきる
+
 	return promhttp.InstrumentHandlerInFlight(inFlight,
 		promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"handler": name}),
 			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": name}),
