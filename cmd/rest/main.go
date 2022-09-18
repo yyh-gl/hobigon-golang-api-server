@@ -27,9 +27,9 @@ func main() {
 	r := mux.NewRouter()
 
 	// Preflight handler
-	r.PathPrefix("/").Handler(middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
+	r.PathPrefix("/").Handler(middleware.CORS(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
-	}, "pleflight")).Methods(http.MethodOptions)
+	})).Methods(http.MethodOptions)
 
 	// Health Check
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
@@ -61,8 +61,12 @@ func main() {
 	// TODO: 誕生日の人が複数いたときに対応
 	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", middleware.Attach(
 		diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
-		"notification_notify_today_birthday_to_slack")).Methods(http.MethodPost)
-	r.HandleFunc("/api/v1/notifications/slack/rankings/access", middleware.Attach(diContainer.HandlerNotification.NotifyAccessRankingToSlack, "notification_notify_access_ranking_to_slack")).Methods(http.MethodPost)
+		"notification_notify_today_birthday_to_slack"),
+	).Methods(http.MethodPost)
+	r.HandleFunc("/api/v1/notifications/slack/rankings/access", middleware.Attach(
+		diContainer.HandlerNotification.NotifyAccessRankingToSlack,
+		"notification_notify_access_ranking_to_slack"),
+	).Methods(http.MethodPost)
 
 	r.Handle("/metrics", promhttp.Handler())
 
