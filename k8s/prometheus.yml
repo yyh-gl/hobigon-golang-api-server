@@ -20,20 +20,6 @@ metadata:
     name: prometheus-server-conf
   namespace: hobigon-yyh-gl
 data:
-  prometheus.rules: |-
-    groups:
-    - name: alert
-      rules:
-      - alert: High HTTP Request Total
-        expr: avg(rate(process_cpu_seconds_total{mode!="idle"}[1m])*60) >= 0.8
-        for: 5m
-        annotations:
-          summary: Detecting abnormal HTTP requests
-      - alert: High Count
-        expr: rate(hobigon_http_requests_total[5m])*300 > 100
-        for: 5m
-        annotations:
-          summary: Detecting abnormal CPU usage
   prometheus.yml: |-
     global:
       scrape_interval: 5s
