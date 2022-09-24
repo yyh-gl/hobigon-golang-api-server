@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
@@ -138,7 +138,9 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	blog, err := b.usecase.Like(ctx, req.Title)
+	isSilent, _ := strconv.ParseBool(r.Header.Get("x-is-silent"))
+
+	blog, err := b.usecase.Like(ctx, req.Title, isSilent)
 	if err != nil {
 		errInfo := fmt.Errorf("BlogUseCase.Like()でエラー: %w", err)
 		app.Logger.Println(errInfo)

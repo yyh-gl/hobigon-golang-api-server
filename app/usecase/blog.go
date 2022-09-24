@@ -17,7 +17,7 @@ var ErrBlogNotFound = errors.New("blog is not found")
 type Blog interface {
 	Create(context.Context, string) (model.Blog, error)
 	Show(context.Context, string) (model.Blog, error)
-	Like(context.Context, string) (model.Blog, error)
+	Like(context.Context, string, bool) (model.Blog, error)
 }
 
 type blog struct {
@@ -60,7 +60,7 @@ func (b blog) Show(ctx context.Context, title string) (model.Blog, error) {
 }
 
 // Like : 指定ブログにいいねをプラス1
-func (b blog) Like(ctx context.Context, title string) (model.Blog, error) {
+func (b blog) Like(ctx context.Context, title string, isSilent bool) (model.Blog, error) {
 	blog, err := b.r.FindByTitle(ctx, title)
 	if err != nil {
 		if errors.Is(err, repository.ErrBlogRecordNotFound) {
@@ -76,9 +76,11 @@ func (b blog) Like(ctx context.Context, title string) (model.Blog, error) {
 	}
 
 	// Slack に通知
-	err = b.sg.SendLikeNotify(ctx, blog)
-	if err != nil {
-		return model.Blog{}, fmt.Errorf("slackGateway.SendLikeNotify()内でのエラー: %w", err)
+	if !isSilent {
+		err = b.sg.SendLikeNotify(ctx, blog)
+		if err != nil {
+			return model.Blog{}, fmt.Errorf("slackGateway.SendLikeNotify()内でのエラー: %w", err)
+		}
 	}
 
 	return blog, nil
