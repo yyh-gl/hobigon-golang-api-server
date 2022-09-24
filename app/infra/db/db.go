@@ -2,7 +2,9 @@ package db
 
 import (
 	"os"
+	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	// justifying
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -26,17 +28,23 @@ func NewDB() (db *DB) {
 
 // newMySQLConnect : DB（MySQL）コネクションを生成
 func newMySQLConnect() *DB {
-	dbms := "mysql"
-	user := os.Getenv("MYSQL_USER")
-	password := os.Getenv("MYSQL_PASSWORD")
-	protocol := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
-	database := os.Getenv("MYSQL_DATABASE")
+	jst, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		panic(err.Error())
+	}
 
-	// charset=utf8mb4 により文字コードを utf8mb4 に変更
-	// parseTime=true によりレコードSELECT時のスキャンエラーとやらを無視できる
-	CONNECT := user + ":" + password + "@" + protocol + "/" + database + "?charset=utf8mb4,utf8&parseTime=true&loc=Asia%2FTokyo"
+	conf := mysql.Config{
+		Net:       "tcp",
+		Addr:      os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT"),
+		DBName:    os.Getenv("MYSQL_DATABASE"),
+		User:      os.Getenv("MYSQL_USER"),
+		Passwd:    os.Getenv("MYSQL_PASSWORD"),
+		Loc:       jst,
+		ParseTime: true,
+		Collation: "utf8mb4_unicode_ci",
+	}
 
-	db, err := gorm.Open(dbms, CONNECT)
+	db, err := gorm.Open("mysql", conf.FormatDSN())
 	if err != nil {
 		panic(err.Error())
 	}
