@@ -1,3 +1,38 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pv-claim
+  namespace: hobigon-yyh-gl
+spec:
+  storageClassName: okteto-standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: hobigon-yyh-gl
+data:
+  prometheus.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Hobigon Prometheus
+        type: prometheus
+        url: http://prometheus-service:9090
+        is_default: true
+  # FIXME: 初期設定ちゃんとする&ここに集約する
+#  grafana.ini: |
+#    [server]
+#    protocol  = https
+#    domain    = todo
+#    http_port = 443
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +54,38 @@ spec:
           image: grafana/grafana:latest
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: grafana-storage-volume
+              mountPath: /var/lib/grafana
+              readOnly: false
+#            - name: grafana-config-volume
+#              mountPath: /etc/grafana/
+#              readOnly: true
+            - name: grafana-datasources
+              mountPath: /etc/grafana/provisioning/datasources
+              readOnly: true
+      securityContext:
+        runAsUser: 472
+        fsGroup: 472
+      volumes:
+        - name: grafana-storage-volume
+          persistentVolumeClaim:
+            claimName: grafana-pv-claim
+#        - name: grafana-config-volume
+#          configMap:
+#            name: grafana-config
+#            defaultMode: 420
+#            items:
+#              - key: grafana.ini
+#                path: grafana.ini
+        - name: grafana-datasources
+          configMap:
+            name: grafana-config
+            defaultMode: 420
+            items:
+              - key: prometheus.yaml
+                path: prometheus.yaml
+        
 ---
 
 apiVersion: v1
