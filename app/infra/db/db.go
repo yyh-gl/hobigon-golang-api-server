@@ -45,10 +45,12 @@ func newMySQLConnect() *DB {
 	}
 
 	if app.IsPrd() {
-		mysql.RegisterTLSConfig("tidb", &tls.Config{
+		if err := mysql.RegisterTLSConfig("tidb", &tls.Config{
 			MinVersion: tls.VersionTLS12,
 			ServerName: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
-		})
+		}); err != nil {
+			panic(err.Error())
+		}
 
 		conf.TLSConfig = "tidb"
 		conf.AllowNativePasswords = true
