@@ -1,6 +1,7 @@
 package db
 
 import (
+	"crypto/tls"
 	"os"
 	"time"
 
@@ -41,6 +42,16 @@ func newMySQLConnect() *DB {
 		Loc:       jst,
 		ParseTime: true,
 		Collation: "utf8mb4_unicode_ci",
+	}
+
+	if app.IsPrd() {
+		mysql.RegisterTLSConfig("tidb", &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			ServerName: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
+		})
+
+		conf.TLSConfig = "tidb"
+		conf.AllowNativePasswords = true
 	}
 
 	db, err := gorm.Open("mysql", conf.FormatDSN())
