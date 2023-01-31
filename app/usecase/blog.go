@@ -77,10 +77,9 @@ func (b blog) Like(ctx context.Context, title string, isSilent bool) (model.Blog
 
 	// Slack に通知
 	if !isSilent {
-		err = b.sg.SendLikeNotify(ctx, blog)
-		if err != nil {
-			return model.Blog{}, fmt.Errorf("slackGateway.SendLikeNotify()内でのエラー: %w", err)
-		}
+		go func() {
+			_ = b.sg.SendLikeNotify(ctx, blog)
+		}()
 	}
 
 	return blog, nil
