@@ -79,7 +79,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.3.6",
       "targets": [
         {
           "datasource": {

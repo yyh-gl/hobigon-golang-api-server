@@ -582,7 +582,11 @@
               },
               {
                 "color": "red",
-                "value": 1
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 4
               }
             ]
           },
@@ -1788,7 +1792,7 @@
       }
     }
   ],
-  "refresh": "5s",
+  "refresh": false,
   "schemaVersion": 37,
   "style": "dark",
   "tags": [
@@ -1893,6 +1897,6 @@
   "timezone": "",
   "title": "Metrics",
   "uid": "CgCw8jKZz",
-  "version": 9,
+  "version": 11,
   "weekStart": ""
 }
