@@ -51,13 +51,12 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyTodayBirthdayToSlack(r.Context())
 	if err != nil {
-		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err))
-
 		if errors.Is(err, usecase.ErrBirthdayNotFound) {
 			DoResponse(w, resp, http.StatusOK)
 			return
 		}
 
+		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err))
 		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}

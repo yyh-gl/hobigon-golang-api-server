@@ -43,7 +43,6 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := bindReqWithValidate(ctx, r, &req); err != nil {
-		app.Error(fmt.Errorf("bindReqWithValidate()でエラー: %w", err))
 		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
