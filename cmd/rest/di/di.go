@@ -1,8 +1,6 @@
 package di
 
 import (
-	"log"
-
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
@@ -14,14 +12,12 @@ type ContainerAPI struct {
 	HandlerBirthday     rest.Birthday
 	HandlerNotification rest.Notification
 
-	DB     *db.DB
-	Logger *log.Logger
+	DB *db.DB
 }
 
 // ContainerCLI : CLI用DIコンテナ
 type ContainerCLI struct {
 	HandlerNotification cli.Notification
 
-	DB     *db.DB
-	Logger *log.Logger
+	DB *db.DB
 }

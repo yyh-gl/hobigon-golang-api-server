@@ -28,13 +28,11 @@ func NewNotification(u usecase.Notification) Notification {
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
-	logger := app.Logger
-
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
-		logger.Println(err)
+		app.Error(err)
 		return err
 	}
 	return nil
@@ -42,13 +40,11 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 
 // NotifyTodayBirthdayToSlack : 今日誕生日の人をSlackに通知
 func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
-	logger := app.Logger
-
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
-		logger.Println(err)
+		app.Error(err)
 		return err
 	}
 	return nil
@@ -56,13 +52,11 @@ func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
 
 // NotifyAccessRankingToSlack : アクセスランキングをSlackに通知
 func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
-	logger := app.Logger
-
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyAccessRanking(ctx); err != nil {
-		logger.Println(err)
+		app.Error(err)
 		return err
 	}
 	return nil

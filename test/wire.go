@@ -1,10 +1,10 @@
+//go:build wireinject
 // +build wireinject
 
 package test
 
 import (
 	"github.com/google/wire"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -12,7 +12,6 @@ import (
 )
 
 var testAppSet = wire.NewSet(
-	app.APISet,
 	infra.APISet,
 	usecase.APISet,
 	rest.WireSet,

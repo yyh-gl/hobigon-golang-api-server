@@ -1,6 +1,7 @@
 package rest_test
 
 import (
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"net/http"
 	"os"
 	"testing"
@@ -8,7 +9,6 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 
 	"github.com/gorilla/mux"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 
@@ -18,11 +18,10 @@ var (
 )
 
 func TestMain(m *testing.M) {
+	app.NewLogger()
+
 	DIContainer = test.InitTestApp()
 	defer func() { _ = DIContainer.DB.Close() }()
-
-	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
-	app.Logger = DIContainer.Logger
 
 	Router = mux.NewRouter()
 	// Blog handlers

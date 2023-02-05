@@ -43,18 +43,14 @@ func (b birthday) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := bindReqWithValidate(ctx, r, &req); err != nil {
-		errInfo := fmt.Errorf("bindReqWithValidate()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
+		app.Error(fmt.Errorf("bindReqWithValidate()でエラー: %w", err))
 		DoResponse(w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
 	birthday, err := b.bu.Create(ctx, req.Name, req.Date, req.WishList)
 	if err != nil {
-		errInfo := fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
+		app.Error(fmt.Errorf("BirthdayUseCase.Create()でエラー: %w", err))
 		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}

@@ -37,9 +37,7 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyTodayTasksToSlack(r.Context())
 	if err != nil {
-		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
+		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err))
 		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
@@ -53,8 +51,7 @@ func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyTodayBirthdayToSlack(r.Context())
 	if err != nil {
-		errInfo := fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err)
-		app.Logger.Println(errInfo)
+		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err))
 
 		if errors.Is(err, usecase.ErrBirthdayNotFound) {
 			DoResponse(w, resp, http.StatusOK)
@@ -74,9 +71,7 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyAccessRanking(r.Context())
 	if err != nil {
-		errInfo := fmt.Errorf("notificationUseCase.NotifyAccessRanking()でエラー: %w", err)
-		app.Logger.Println(errInfo)
-
+		app.Error(fmt.Errorf("notificationUseCase.NotifyAccessRanking()でエラー: %w", err))
 		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 	}
 	resp.NotifiedNum = notifiedNum
