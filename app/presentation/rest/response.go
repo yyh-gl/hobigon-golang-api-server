@@ -3,8 +3,9 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"net/http"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
 // DoResponse : JSON形式でレスポンスを返す

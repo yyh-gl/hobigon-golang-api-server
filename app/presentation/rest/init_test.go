@@ -1,14 +1,13 @@
 package rest_test
 
 import (
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"net/http"
 	"os"
 	"testing"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
-
 	"github.com/gorilla/mux"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 

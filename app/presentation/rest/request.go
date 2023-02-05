@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/mitchellh/mapstructure"
-
 	"github.com/go-playground/validator/v10"
+	"github.com/mitchellh/mapstructure"
 )
 
 // bindReqWithValidate : リクエスト内容を構造体にマッピングし、バリデーションを実施
