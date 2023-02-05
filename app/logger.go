@@ -1,51 +1,53 @@
 package app
 
 import (
-	"io"
-	"log"
-	"os"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-const (
-	// APILogFilename : APIサーバ関連のログファイル名
-	APILogFilename string = "api.log"
-	// CLILogFilename : CLI関連のログファイル名
-	CLILogFilename string = "cli.log"
-)
+var logger *zap.Logger
 
-// NewAPILogger : APIサーバ用のロガーを生成
-func NewAPILogger() *log.Logger {
-	logger := newLogger(APILogFilename)
-	return logger
-}
-
-// NewCLILogger : CLI用のロガーを生成
-func NewCLILogger() *log.Logger {
-	logger := newLogger(CLILogFilename)
-	return logger
-}
-
-// newLogger : 指定ファイルを出力先とするロガーを生成
-func newLogger(filename string) *log.Logger {
-	logger := log.New(os.Stderr, "", log.LstdFlags)
-
-	if IsTest() {
-		logger.SetOutput(os.Stdout)
-		return logger
+func NewLogger() {
+	encoding := "json"
+	if IsDev() || IsTest() {
+		encoding = "console"
 	}
 
-	// ログ出力先を設定
-	logPath := os.Getenv("LOG_PATH")
-	logfile, err := os.OpenFile(logPath+"/"+filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	atomicLevel := zap.NewAtomicLevel()
+	level := retrieveLeastLogLevel()
+	atomicLevel.SetLevel(level)
+
+	var err error
+	logger, err = zap.Config{
+		Level:       atomicLevel,
+		Development: !IsPrd(),
+		Encoding:    encoding,
+		EncoderConfig: zapcore.EncoderConfig{
+			MessageKey:     "message",
+			LevelKey:       "level",
+			TimeKey:        "time",
+			CallerKey:      "caller",
+			StacktraceKey:  "stacktrace",
+			EncodeLevel:    zapcore.CapitalLevelEncoder,
+			EncodeTime:     zapcore.ISO8601TimeEncoder,
+			EncodeDuration: zapcore.SecondsDurationEncoder,
+			EncodeCaller:   zapcore.ShortCallerEncoder,
+		},
+		OutputPaths:      []string{"/dev/stdout"},
+		ErrorOutputPaths: []string{"/dev/stderr"},
+	}.Build(zap.AddCallerSkip(1))
 	if err != nil {
-		panic("cannnot open " + logPath + "/" + filename + ": " + err.Error())
+		panic(err)
 	}
+}
 
-	if IsPrd() {
-		logger.SetOutput(logfile)
-	} else {
-		logger.SetOutput(io.MultiWriter(logfile, os.Stdout))
+func retrieveLeastLogLevel() zapcore.Level {
+	if IsDev() || IsTest() {
+		return zapcore.DebugLevel
 	}
+	return zapcore.InfoLevel
+}
 
-	return logger
+func Error(err error) {
+	logger.Error(err.Error(), zap.Error(err))
 }

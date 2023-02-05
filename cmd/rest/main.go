@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,18 +12,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 )
 
 func main() {
-	// 依存関係を定義
+	app.NewLogger()
+
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
-
-	// ロガー設定
-	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
-	app.Logger = diContainer.Logger
 
 	r := mux.NewRouter()
 
@@ -82,7 +79,6 @@ func main() {
 	go func() {
 		fmt.Println("========================")
 		fmt.Println("Server Start >> http://localhost" + s.Addr)
-		fmt.Println(" ↳  Log File -> " + os.Getenv("LOG_PATH") + "/" + app.APILogFilename)
 		fmt.Println("========================")
 		errCh <- s.ListenAndServe()
 	}()

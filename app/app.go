@@ -1,12 +1,6 @@
 package app
 
-import (
-	"log"
-	"os"
-)
-
-// Logger : システム共通ロガー
-var Logger *log.Logger
+import "os"
 
 // contextKey : コンテキストにセットするさいのキー用の型
 type contextKey int

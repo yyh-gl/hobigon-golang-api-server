@@ -9,13 +9,10 @@ import (
 )
 
 func main() {
-	// 依存関係を定義
+	app.NewLogger()
+
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
-
-	// ロガー設定
-	// TODO: いちいちdi.Containerにバインドする意味があるのかもう一度検討
-	app.Logger = diContainer.Logger
 
 	cliApp := cli.NewApp()
 
@@ -23,10 +20,7 @@ func main() {
 	cliApp.Usage = "This app can execute some commands in Hobigon."
 	cliApp.Version = "0.0.1"
 
-	// コマンドオプションを設定
 	cliApp.Flags = []cli.Flag{}
-
-	// コマンドを設定
 	cliApp.Commands = []cli.Command{
 		{
 			Name:    "notify-today-tasks",
@@ -48,9 +42,8 @@ func main() {
 		},
 	}
 
-	app.Logger.Print("[CLI-ExecuteLog] $ hobi " + os.Args[1])
-
 	if err := cliApp.Run(os.Args); err != nil {
-		app.Logger.Panic(fmt.Errorf("cliApp.Run()内でのエラー: %w", err))
+		app.Error(fmt.Errorf("cliApp.Run()内でのエラー: %w", err))
+		os.Exit(1)
 	}
 }
