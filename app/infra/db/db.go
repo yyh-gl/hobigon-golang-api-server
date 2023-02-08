@@ -3,6 +3,7 @@ package db
 import (
 	"crypto/tls"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -56,8 +57,17 @@ func newMySQLConnect() *DB {
 		conf.AllowNativePasswords = true
 	}
 
+CONNECT:
+
 	db, err := gorm.Open("mysql", conf.FormatDSN())
 	if err != nil {
+		if app.IsDev() {
+			if strings.Contains(err.Error(), "connection refused") {
+				time.Sleep(time.Second)
+				goto CONNECT
+			}
+		}
+
 		panic(err.Error())
 	}
 
