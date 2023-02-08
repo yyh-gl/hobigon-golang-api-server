@@ -7,7 +7,7 @@ tmp_dir = "tmp"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "make build target=graphql"
+cmd = "make build target=graphql version=local"
 # Binary file yields from `cmd`.
 bin = "cmd/graphql/bin/graphql-server"
 # Customize binary.

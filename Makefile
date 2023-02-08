@@ -13,28 +13,33 @@ build: ## build target=[rest, cli, graphql]
 		exit 1; \
 	fi
 	
+	@if [ -z ${version} ]; then \
+		echo 'versionを設定してください。'; \
+		exit 1; \
+	fi
+	
 	@if [ ${target} = rest ]; then \
 		echo 'build rest'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/rest/bin/api-server ./cmd/rest; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
 		echo 'build cli'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/cli/bin/hobi ./cmd/cli; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
 		echo 'build graphql'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
 	@exit 0;
 
 .PHONY: build-all
 build-all: ## build-all
-	make build target=rest
-	make build target=cli
-	make build target=graphql
+	make build target=rest version=$(version)
+	make build target=cli version=$(version)
+	make build target=graphql version=$(version)
 
 .PHONY: wire-all
 wire-all: ## all wire gen

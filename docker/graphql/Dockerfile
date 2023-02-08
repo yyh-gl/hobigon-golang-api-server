@@ -2,6 +2,8 @@ FROM golang:1.19-alpine AS builder
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-graphql-server
 
+ARG VERSION
+
 ENV TZ="Asia/Tokyo"
 
 COPY . .
@@ -17,7 +19,7 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/i
 RUN go install github.com/cosmtrek/air@latest
 RUN go install github.com/google/wire/cmd/wire@latest
 RUN go install github.com/99designs/gqlgen@latest
-RUN make build target=graphql
+RUN make build target=graphql version=$VERSION
 
 FROM gcr.io/distroless/base
 

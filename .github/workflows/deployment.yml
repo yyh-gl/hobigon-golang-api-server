@@ -54,6 +54,7 @@ jobs:
         with:
           context: .
           file: ./docker/rest/Dockerfile
+          build-args: VERSION=${{ env.TAG }}
           push: true
           tags: ${{ env.TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -83,6 +84,7 @@ jobs:
         with:
           context: .
           file: ./docker/rest/Dockerfile
+          build-args: VERSION=${{ env.TAG }}
           push: true
           tags: ${{ env.TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -127,8 +129,12 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Set VERSION environment
+        env:
+          REF: ${{ github.ref }}
+        run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Build
-        run: make build-all
+        run: make build-all version=${{ env.VERSION }}
       - uses: actions/upload-artifact@v2
         with:
           name: binaries

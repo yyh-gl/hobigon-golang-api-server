@@ -2,6 +2,8 @@ FROM golang:1.19-alpine AS builder
 
 WORKDIR /go/src/github.com/yyh-gl/hobigon-golang-api-server
 
+ARG VERSION
+
 ENV TZ="Asia/Tokyo"
 
 COPY . .
@@ -16,7 +18,7 @@ RUN apk add --no-cache \
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 RUN go install github.com/cosmtrek/air@latest
 RUN go install github.com/google/wire/cmd/wire@latest
-RUN make build target=rest
+RUN make build target=rest version=$VERSION
 
 FROM gcr.io/distroless/base
 
