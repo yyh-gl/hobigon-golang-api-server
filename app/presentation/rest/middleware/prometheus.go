@@ -64,7 +64,6 @@ func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
 
 // FIXME: ミドルウェア的な機能ではないので別の場所に移動させたい
 // FIXME: 正しくカウントアップできていないので修正する
-// FIXME: バージョン情報にコンテナイメージの名称が含まれているので削除
 func CountUpRunningVersion(version string) {
 	runningVersion.With(prometheus.Labels{"version": version}).Inc()
 }

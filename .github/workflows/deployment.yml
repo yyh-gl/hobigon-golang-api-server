@@ -54,7 +54,7 @@ jobs:
         with:
           context: .
           file: ./docker/rest/Dockerfile
-          build-args: VERSION=${{ env.TAG }}
+          build-args: VERSION=${{ env.VERSION }}
           push: true
           tags: ${{ env.TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -69,6 +69,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Set VERSION environment
+        env:
+          REF: ${{ github.ref }}
+        run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Set TAG environment
         run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:latest" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
@@ -84,7 +88,7 @@ jobs:
         with:
           context: .
           file: ./docker/rest/Dockerfile
-          build-args: VERSION=${{ env.TAG }}
+          build-args: VERSION=${{ env.VERSION }}
           push: true
           tags: ${{ env.TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
