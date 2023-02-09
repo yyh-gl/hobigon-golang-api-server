@@ -15,6 +15,10 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 )
 
+// version : アプリケーションのバージョン情報（GitHubのReleasesに対応）
+// build時に埋め込む
+var version string
+
 func main() {
 	app.NewLogger()
 
@@ -80,6 +84,7 @@ func main() {
 		fmt.Println("========================")
 		fmt.Println("Server Start >> http://localhost" + s.Addr)
 		fmt.Println("========================")
+		middleware.CountUpRunningVersion(version)
 		errCh <- s.ListenAndServe()
 	}()
 
@@ -95,5 +100,6 @@ func main() {
 	if err := s.Shutdown(ctx); err != nil {
 		fmt.Println("Graceful shutdown failed:", err.Error())
 	}
+	middleware.CountDownRunningVersion(version)
 	fmt.Println("Server shutdown")
 }

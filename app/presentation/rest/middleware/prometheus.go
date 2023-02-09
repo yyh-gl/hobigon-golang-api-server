@@ -38,10 +38,15 @@ var (
 		},
 		[]string{},
 	)
+
+	runningVersion = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "running_version",
+		Help: "A gauge of running version.",
+	}, []string{"version"})
 )
 
 func init() {
-	prometheus.MustRegister(inFlight, counter, duration, responseSize)
+	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
 }
 
 func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
@@ -55,4 +60,13 @@ func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
 			),
 		),
 	).(http.HandlerFunc)
+}
+
+// FIXME: ミドルウェア的な機能ではないので別の場所に移動させたい
+func CountUpRunningVersion(version string) {
+	runningVersion.With(prometheus.Labels{"version": version}).Inc()
+}
+
+func CountDownRunningVersion(version string) {
+	runningVersion.With(prometheus.Labels{"version": version}).Dec()
 }
