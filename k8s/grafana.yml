@@ -80,7 +80,6 @@ spec:
             items:
               - key: prometheus.yaml
                 path: prometheus.yaml
-        
 ---
 apiVersion: v1
 kind: Service
