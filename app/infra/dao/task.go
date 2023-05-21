@@ -1,116 +1,139 @@
 package dao
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto/notion"
+	"io"
+	"net/http"
 	"os"
+	"time"
 
-	"github.com/adlio/trello"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
+const defaultPageSize = 100
+
 type task struct {
-	APIKey   string
-	APIToken string
+	NotionAPIToken   string
+	NotionDatabaseID string
 }
 
 // NewTask : タスク用のゲートウェイを取得
 func NewTask() gateway.Task {
 	return &task{
-		APIKey:   os.Getenv("TRELLO_API_KEY"),
-		APIToken: os.Getenv("TRELLO_API_TOKEN"),
+		NotionAPIToken:   os.Getenv("NOTION_API_TOKEN"),
+		NotionDatabaseID: os.Getenv("NOTION_DATABASE_ID"),
 	}
 }
 
-// getBoard : ボード情報を取得
-func (t task) getBoard(ctx context.Context, boardID string) (trello.Board, error) {
-	client := trello.NewClient(t.APIKey, t.APIToken)
-	board, err := client.GetBoard(boardID, trello.Defaults())
+// FetchCautionTasks : 今後1週間以内に期限が迫っているタスクを取得
+// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
+func (t task) FetchCautionTasks(ctx context.Context) (model.List, error) {
+	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
+
+	body := notion.FetchTasksRequestBody{
+		PageSize: defaultPageSize,
+		Filter: notion.AndFilter{
+			And: []notion.SingleFilter{
+				{
+					Property: "Deadline",
+					Date: notion.Date{
+						OnOrAfter: time.Now().Format("2006-01-02"),
+					},
+				},
+				{
+					Property: "Deadline",
+					Date: notion.Date{
+						OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
+					},
+				},
+			},
+		},
+		Sorts: []notion.Sort{
+			{Property: "Deadline", Direction: "ascending"},
+			{Property: "Date Created", Direction: "ascending"},
+		},
+	}
+	bodyBytes, err := json.Marshal(body)
 	if err != nil {
-		return trello.Board{}, err
+		return nil, err
 	}
-	return *board, nil
-}
-
-// GetListsByBoardID : ボードIDからリスト情報を取得
-func (t task) GetListsByBoardID(ctx context.Context, boardID string) ([]*trello.List, error) {
-	board, err := t.getBoard(ctx, boardID)
+	payload := bytes.NewReader(bodyBytes)
+	req, err := http.NewRequest(http.MethodPost, url, payload)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: ここで todo と wip だけにしちゃう
-	lists, err := board.GetLists(trello.Defaults())
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
+	req.Header.Add("Notion-Version", "2022-06-28")
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Board情報付与
-	for _, list := range lists {
-		list.Board = &board
-	}
-
-	return lists, nil
-}
-
-// GetTasksFromList : リストからタスク一覧を取得
-func (t task) GetTasksFromList(ctx context.Context, list trello.List) (taskList model.List, dueOverTaskList model.List, err error) {
-	trelloTasks, err := list.GetCards(trello.Defaults())
+	defer res.Body.Close()
+	resp, err := io.ReadAll(res.Body)
 	if err != nil {
-		return model.List{}, model.List{}, err
+		return nil, err
 	}
 
-	allTask := convertToTasksModel(ctx, trelloTasks)
-
-	for _, t := range allTask.Tasks {
-		t.Board = list.Board.Name
-		t.List = list.Name
-
-		// 期限切れタスクを抽出
-		if t.Due != nil && t.IsDueOver() {
-			dueOverTaskList.Tasks = append(dueOverTaskList.Tasks, t)
-		} else {
-			taskList.Tasks = append(taskList.Tasks, t)
-		}
+	var taskDTO notion.NotionTaskDTO
+	if err := json.Unmarshal(resp, &taskDTO); err != nil {
+		return nil, err
 	}
-	return taskList, dueOverTaskList, nil
+	return taskDTO.ToTaskListDomainModel(), nil
 }
 
-// convertToTasksModel : infra層用のTaskモデルをドメインモデルに変換
-func convertToTasksModel(ctx context.Context, trelloCards []*trello.Card) (taskList model.List) {
-	for _, card := range trelloCards {
-		t := model.Task{}
-		t.Title = card.Name
-		t.Description = card.Desc
-		t.ShortURL = card.ShortURL
-		if card.Due != nil {
-			t.Due = t.GetJSTDue(card.Due)
-		}
-		t.OriginalModel = card
-		taskList.Tasks = append(taskList.Tasks, t)
-	}
-	return taskList
-}
+func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
+	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
 
-// MoveToWIP : 指定タスクをWIPリストに移動
-func (t task) MoveToWIP(ctx context.Context, tasks []model.Task) (err error) {
-	for _, t := range tasks {
-		var wipListID string
-		switch t.Board {
-		case "Main":
-			wipListID = os.Getenv("MAIN_WIP_LIST_ID")
-		case "Tech":
-			wipListID = os.Getenv("TECH_WIP_LIST_ID")
-		case "Work":
-			wipListID = os.Getenv("WORK_WIP_LIST_ID")
-		}
-
-		card := t.OriginalModel.(*trello.Card)
-		err = card.MoveToList(wipListID, trello.Defaults())
-		if err != nil {
-			// TODO: DB操作ではないので、途中で失敗した場合ロールバックできない問題を考える
-			return err
-		}
+	body := notion.FetchTasksRequestBody{
+		PageSize: defaultPageSize,
+		Filter: notion.SingleFilter{
+			Property: "Deadline",
+			Date: notion.Date{
+				OnOrBefore: time.Now().Add(-1 * 24 * time.Hour).Format("2006-01-02"),
+			},
+		},
+		Sorts: []notion.Sort{
+			{Property: "Deadline", Direction: "ascending"},
+			{Property: "Date Created", Direction: "ascending"},
+		},
 	}
-	return nil
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	payload := bytes.NewReader(bodyBytes)
+	req, err := http.NewRequest(http.MethodPost, url, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
+	req.Header.Add("Notion-Version", "2022-06-28")
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+	resp, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var taskDTO notion.NotionTaskDTO
+	if err := json.Unmarshal(resp, &taskDTO); err != nil {
+		return nil, err
+	}
+	return taskDTO.ToTaskListDomainModel(), nil
 }

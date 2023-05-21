@@ -1,10 +1,9 @@
 package slack
 
 import (
-	"os"
-	"strconv"
-
+	"fmt"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
+	"os"
 )
 
 // Slack : Slackを表すドメインモデル
@@ -30,130 +29,17 @@ func (s Slack) GetWebHookURL() (webHookURL string) {
 }
 
 // CreateTaskMessage : タスク通知用のメッセージを作成
-func (s Slack) CreateTaskMessage(todayTasks []task.Task, dueOverTasks []task.Task) string {
-	var mainTodayTasks []task.Task
-	var techTodayTasks []task.Task
-	var workTodayTasks []task.Task
-	for _, t := range todayTasks {
-		switch t.Board {
-		case "Main":
-			mainTodayTasks = append(mainTodayTasks, t)
-		case "Tech":
-			techTodayTasks = append(techTodayTasks, t)
-		case "Work":
-			workTodayTasks = append(workTodayTasks, t)
-		}
+// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
+func (s Slack) CreateTaskMessage(cautionTasks []task.Task, deadTasks []task.Task) string {
+	message := ":mario2:Caution Tasks:mario2:\n"
+	for i, t := range cautionTasks {
+		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, t.Due.Format("2006-01-02"))
 	}
 
-	var mainDueOverTasks []task.Task
-	var techDueOverTasks []task.Task
-	var workDueOverTasks []task.Task
-	for _, t := range dueOverTasks {
-		switch t.Board {
-		case "Main":
-			mainDueOverTasks = append(mainDueOverTasks, t)
-		case "Tech":
-			techDueOverTasks = append(techDueOverTasks, t)
-		case "Work":
-			workDueOverTasks = append(workDueOverTasks, t)
-		}
+	message += "\n\n:space_invader:Dead Tasks:space_invader:\n"
+	for i, t := range deadTasks {
+		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, t.Due.Format("2006-01-02"))
 	}
 
-	header := ":pencil2::pencil2::pencil2: 今日のタスク :pencil2::pencil2::pencil2:\n\n"
-	header += "           :mega: 総タスク数 " + strconv.Itoa(len(todayTasks)+len(dueOverTasks)) + " 個 :mega:\n"
-	header += "   :space_invader: → 期限切れタスク数" + strconv.Itoa(len(dueOverTasks)) + "個 :space_invader:\n\n"
-
-	body := ""
-
-	// Mainボードのタスクをメッセージ化
-	if len(mainTodayTasks) > 0 || len(mainDueOverTasks) > 0 {
-		body += "\n           :mario2::dash: :kata-me::kata-i::kata-nn: :mario2::dash:\n"
-	}
-	index := 1
-	for _, t := range mainTodayTasks {
-		if t.IsTodayTask() {
-			body += "\n:cubimal_chick:【M" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		} else {
-			body += "\n:small_orange_diamond:【M" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		}
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-
-		if t.Due == nil {
-			body += "    :alarm_clock: `なるはや`\n\n"
-		} else {
-			body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
-		}
-
-		index++
-	}
-
-	for _, t := range mainDueOverTasks {
-		body += "\n:space_invader:【M" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-		body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
-
-		index++
-	}
-
-	// Techボードのタスクをメッセージ化
-	if len(techTodayTasks) > 0 || len(techDueOverTasks) > 0 {
-		body += "\n          :mario2::dash: :kanji-waza::kanji-jutsu::kanji-mukau::kanji-ue: :mario2::dash:\n\n"
-	}
-	index = 1
-	for _, t := range techTodayTasks {
-		if t.IsTodayTask() {
-			body += "\n:cubimal_chick:【T" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		} else {
-			body += "\n:small_orange_diamond:【T" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		}
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-
-		if t.Due == nil {
-			body += "    :alarm_clock: `なるはや`\n\n"
-		} else {
-			body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
-		}
-
-		index++
-	}
-
-	for _, t := range techDueOverTasks {
-		body += "\n:space_invader:【T" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-		body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
-
-		index++
-	}
-
-	// Workボードのタスクをメッセージ化
-	if len(workTodayTasks) > 0 || len(workDueOverTasks) > 0 {
-		body += "\n          :mario2::dash: :en-w::en-o::en-r::en-k: :mario2::dash:\n\n"
-	}
-	index = 1
-	for _, t := range workTodayTasks {
-		if t.IsTodayTask() {
-			body += "\n:cubimal_chick:【W" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		} else {
-			body += "\n:small_orange_diamond:【W" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		}
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-
-		if t.Due == nil {
-			body += "    :alarm_clock: `なるはや`\n\n"
-		} else {
-			body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "`\n\n"
-		}
-
-		index++
-	}
-
-	for _, t := range workDueOverTasks {
-		body += "\n:space_invader:【W" + strconv.Itoa(index) + "】 *_" + t.Title + "_*\n"
-		body += "    :curly_loop: _" + t.ShortURL + " _\n"
-		body += "    :alarm_clock: `" + t.Due.Format("2006年1月2日 15時04分まで") + "` :face_palm:\n\n"
-
-		index++
-	}
-
-	return header + body
+	return message
 }

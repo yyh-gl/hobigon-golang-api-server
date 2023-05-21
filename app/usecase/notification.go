@@ -4,11 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
 )
@@ -45,58 +43,23 @@ func NewNotification(
 // TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
+// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	var todayTasks []model.Task
-	var dueOverTasks []model.Task
-
-	// TODO: ビジネスロジックを結構持ってしまっているのでドメインサービスに移す
-	boardIDList := [3]string{os.Getenv("MAIN_BOARD_ID"), os.Getenv("TECH_BOARD_ID"), os.Getenv("WORK_BOARD_ID")}
-	for _, boardID := range boardIDList {
-		lists, err := n.tg.GetListsByBoardID(ctx, boardID)
-		if err != nil {
-			return 0, fmt.Errorf("taskGateway.GetListsByBoardID()内でのエラー: %w", err)
-		}
-
-		for _, list := range lists {
-			// TODO: 今後必要があれば動的に変更できる仕組みを追加
-			if list.Name == "TODO" || list.Name == "WIP" {
-				taskList, dueOverTaskList, err := n.tg.GetTasksFromList(ctx, *list)
-				if err != nil {
-					return 0, fmt.Errorf("taskGateway.GetTasksFromList()内でのエラー: %w", err)
-				}
-
-				switch list.Name {
-				case "TODO":
-					// TODOリストからは今日のタスクのみ出力
-					tasks := taskList.GetTodayTasks()
-					todayTasks = append(todayTasks, tasks...)
-				case "WIP":
-					// WIPリストにあるタスクは全て出力
-					todayTasks = append(todayTasks, taskList.Tasks...)
-				}
-
-				// 期限切れタスクは問答無用で通知
-				dueOverTasks = append(dueOverTasks, dueOverTaskList.Tasks...)
-			}
-		}
+	cautionTasks, err := n.tg.FetchCautionTasks(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("taskGateway.FetchCautionTasks()内でのエラー: %w", err)
 	}
 
-	// 今日のタスクをWIPリストに移動
-	if err := n.tg.MoveToWIP(ctx, todayTasks); err != nil {
-		return 0, fmt.Errorf("taskGateway.MoveToWIP(todayTasks)内でのエラー: %w", err)
+	deadTasks, err := n.tg.FetchDeadTasks(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("taskGateway.FetchDeadTasks()内でのエラー: %w", err)
 	}
 
-	// 期限切れのタスクをWIPリストに移動
-	if err := n.tg.MoveToWIP(ctx, dueOverTasks); err != nil {
-		return 0, fmt.Errorf("taskGateway.MoveToWIP(dueOverTasks)内でのエラー: %w", err)
-	}
-
-	// 今日および期限切れのタスクをSlackに通知
-	if err := n.sg.SendTask(ctx, todayTasks, dueOverTasks); err != nil {
+	if err := n.sg.SendTask(ctx, cautionTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
 	}
 
-	notifiedNum := len(todayTasks) + len(dueOverTasks)
+	notifiedNum := len(cautionTasks) + len(deadTasks)
 	return notifiedNum, nil
 }
 
