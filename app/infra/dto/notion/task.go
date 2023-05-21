@@ -101,14 +101,19 @@ type NotionTaskDTO struct {
 func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
 	tasks := make(task.List, len(dto.Results))
 	for i, r := range dto.Results {
-		deadline, err := time.Parse("2006-01-02", r.Properties.Deadline.Date.Start)
-		if err != nil {
-			continue
+		var deadline *time.Time
+		if r.Properties.Deadline.Date.Start != "" {
+			t, err := time.Parse("2006-01-02", r.Properties.Deadline.Date.Start)
+			if err != nil {
+				continue
+			}
+			deadline = &t
 		}
+		title := r.Properties.Name.Title[0].PlainText
 		tasks[i] = task.Task{
-			Title:         r.Properties.Name.Title[0].PlainText,
+			Title:         title,
 			Description:   "",
-			Due:           &deadline,
+			Due:           deadline,
 			Board:         r.Properties.Status.Select.Name,
 			List:          "All",
 			ShortURL:      r.URL,

@@ -4,24 +4,31 @@ package notion
 
 type FetchTasksRequestBody struct {
 	PageSize int    `json:"page_size"`
-	Filter   Filter `json:"filter,omitempty"`
+	Filter   any    `json:"filter,omitempty"`
 	Sorts    []Sort `json:"sorts,omitempty"`
 }
 
-type Filter interface{}
-
 type SingleFilter struct {
-	Property string `json:"property"`
-	Date     Date   `json:"date,omitempty"`
+	Property string  `json:"property"`
+	Date     *Date   `json:"date,omitempty"`
+	Select   *Select `json:"select,omitempty"`
 }
 
 type AndFilter struct {
-	And []SingleFilter `json:"and"`
+	And any `json:"and"`
+}
+
+type OrFilter struct {
+	Or any `json:"or"`
 }
 
 type Date struct {
 	OnOrBefore string `json:"on_or_before,omitempty"`
 	OnOrAfter  string `json:"on_or_after,omitempty"`
+}
+
+type Select struct {
+	Equals string `json:"equals,omitempty"`
 }
 
 type Sort struct {

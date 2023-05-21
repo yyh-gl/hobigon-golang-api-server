@@ -45,7 +45,7 @@ func NewNotification(
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 // FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	cautionTasks, err := n.tg.FetchCautionTasks(ctx)
+	cautionAndToDoTasks, err := n.tg.FetchCautionAndToDoTasks(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("taskGateway.FetchCautionTasks()内でのエラー: %w", err)
 	}
@@ -55,11 +55,11 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		return 0, fmt.Errorf("taskGateway.FetchDeadTasks()内でのエラー: %w", err)
 	}
 
-	if err := n.sg.SendTask(ctx, cautionTasks, deadTasks); err != nil {
+	if err := n.sg.SendTask(ctx, cautionAndToDoTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
 	}
 
-	notifiedNum := len(cautionTasks) + len(deadTasks)
+	notifiedNum := len(cautionAndToDoTasks) + len(deadTasks)
 	return notifiedNum, nil
 }
 

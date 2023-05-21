@@ -30,25 +30,37 @@ func NewTask() gateway.Task {
 	}
 }
 
-// FetchCautionTasks : 今後1週間以内に期限が迫っているタスクを取得
+// FetchCautionAndToDoTasks : 今後1週間以内に期限が迫っているタスクと『To Do』レーンにあるタスクを取得
 // FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
-func (t task) FetchCautionTasks(ctx context.Context) (model.List, error) {
+func (t task) FetchCautionAndToDoTasks(ctx context.Context) (model.List, error) {
 	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
 
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
-		Filter: notion.AndFilter{
-			And: []notion.SingleFilter{
-				{
-					Property: "Deadline",
-					Date: notion.Date{
-						OnOrAfter: time.Now().Format("2006-01-02"),
-					},
+		Filter: notion.OrFilter{
+			Or: []any{
+				notion.SingleFilter{
+					Property: "Status",
+					Select:   &notion.Select{Equals: "Doing"},
 				},
-				{
-					Property: "Deadline",
-					Date: notion.Date{
-						OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
+				notion.AndFilter{
+					And: []notion.SingleFilter{
+						{
+							Property: "Status",
+							Select:   &notion.Select{Equals: "To Do"},
+						},
+						{
+							Property: "Deadline",
+							Date: &notion.Date{
+								OnOrAfter: time.Now().Format("2006-01-02"),
+							},
+						},
+						{
+							Property: "Deadline",
+							Date: &notion.Date{
+								OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
+							},
+						},
 					},
 				},
 			},
@@ -95,10 +107,18 @@ func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
 
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
-		Filter: notion.SingleFilter{
-			Property: "Deadline",
-			Date: notion.Date{
-				OnOrBefore: time.Now().Add(-1 * 24 * time.Hour).Format("2006-01-02"),
+		Filter: notion.AndFilter{
+			And: []notion.SingleFilter{
+				{
+					Property: "Status",
+					Select:   &notion.Select{Equals: "To Do"},
+				},
+				{
+					Property: "Deadline",
+					Date: &notion.Date{
+						OnOrBefore: time.Now().Add(-1 * 24 * time.Hour).Format("2006-01-02"),
+					},
+				},
 			},
 		},
 		Sorts: []notion.Sort{
