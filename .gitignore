@@ -92,3 +92,5 @@ cmd/**/bin/*
 
 # k8s secret
 k8s/secret.yml
+
+backup
