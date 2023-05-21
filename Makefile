@@ -14,8 +14,7 @@ build: ## build target=[rest, cli, graphql]
 	fi
 	
 	@if [ -z ${version} ]; then \
-		echo 'versionを設定してください。'; \
-		exit 1; \
+		version='latest'; \
 	fi
 	
 	@if [ ${target} = rest ]; then \
