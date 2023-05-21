@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto/notion"
 	"io"
 	"net/http"
 	"os"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto/notion"
 )
 
 const defaultPageSize = 100
@@ -77,7 +77,7 @@ func (t task) FetchCautionTasks(ctx context.Context) (model.List, error) {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	resp, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
@@ -125,7 +125,7 @@ func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	resp, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err

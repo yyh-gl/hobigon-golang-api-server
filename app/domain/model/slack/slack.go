@@ -2,8 +2,9 @@ package slack
 
 import (
 	"fmt"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"os"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
 // Slack : Slackを表すドメインモデル
