@@ -150,6 +150,18 @@ spec:
                   name: slack-secret
                   key: webhook_url_to_shinsotsu
                   optional: false
+            - name: NOTION_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: notion-secret
+                  key: notion_api_token
+                  optional: false
+            - name: NOTION_DATABASE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: notion-secret
+                  key: notion_database_id
+                  optional: false
 ---
 apiVersion: v1
 kind: Service
