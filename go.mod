@@ -4,9 +4,9 @@ go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.10
-	github.com/adlio/trello v1.6.0
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.2.0
+	github.com/go-sql-driver/mysql v1.4.1
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.7.4
 	github.com/jinzhu/gorm v1.9.12
@@ -15,6 +15,7 @@ require (
 	github.com/prometheus/client_golang v1.12.2
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.4.5
+	go.uber.org/zap v1.24.0
 )
 
 require (
@@ -25,7 +26,6 @@ require (
 	github.com/elazarl/goproxy v0.0.0-20200710112657-153946a5f232 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
-	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
@@ -41,9 +41,8 @@ require (
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	go.uber.org/zap v1.24.0 // indirect
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	moul.io/http2curl v1.0.0 // indirect
