@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
@@ -25,14 +24,6 @@ func main() {
 
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
-
-	prometheus.MustRegister(
-		middleware.InFlight,
-		middleware.Counter,
-		middleware.Duration,
-		middleware.ResponseSize,
-		middleware.RunningVersion,
-	)
 
 	r := mux.NewRouter()
 
