@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.10
-	github.com/adlio/trello v1.6.0
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.2.0
 	github.com/go-sql-driver/mysql v1.4.1
