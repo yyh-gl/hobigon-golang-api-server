@@ -3,6 +3,8 @@ package rest
 import (
 	"errors"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 	"net/http"
 	"strconv"
 
@@ -66,6 +68,8 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 // Show : ブログ情報を1件取得
 func (b blog) Show(w http.ResponseWriter, r *http.Request) {
+	middleware.Counter2.With(prometheus.Labels{"handler": "test", "code": "200", "method": "GET"}).Inc()
+
 	type (
 		request struct {
 			Title string `validate:"required,max=50"`
