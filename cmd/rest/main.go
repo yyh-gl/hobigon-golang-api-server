@@ -38,35 +38,42 @@ func main() {
 	}).Methods(http.MethodGet)
 
 	// Blog handlers
-	r.HandleFunc("/api/v1/blogs", middleware.Attach(
-		diContainer.HandlerBlog.Create, "blog_create"),
-	).Methods(http.MethodPost)
-	r.HandleFunc("/api/v1/blogs/{title}", middleware.Attach(
-		diContainer.HandlerBlog.Show, "blog_show"),
-	).Methods(http.MethodGet)
-	r.HandleFunc("/api/v1/blogs/{title}/like", middleware.Attach(
-		diContainer.HandlerBlog.Like,
-		"blog_like"),
-	).Methods(http.MethodPost)
+	blogCreateFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Create, "blog_create")
+	r.HandleFunc("/api/v1/blogs", middleware.Attach(blogCreateFunc)).Methods(http.MethodPost)
+	blogShowFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Show, "blog_show")
+	r.HandleFunc("/api/v1/blogs/{title}", middleware.Attach(blogShowFunc)).Methods(http.MethodGet)
+	blogLikeFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Like, "blog_like")
+	r.HandleFunc("/api/v1/blogs/{title}/like", middleware.Attach(blogLikeFunc)).Methods(http.MethodPost)
 
 	// Birthday handler
-	r.HandleFunc("/api/v1/birthday", middleware.Attach(
-		diContainer.HandlerBirthday.Create, "birthday_create"),
-	).Methods(http.MethodPost)
+	birthdayCreateFunc := middleware.InstrumentPrometheus(diContainer.HandlerBirthday.Create, "birthday_create")
+	r.HandleFunc("/api/v1/birthday", middleware.Attach(birthdayCreateFunc)).Methods(http.MethodPost)
 
 	// Notification handlers
-	r.HandleFunc("/api/v1/notifications/slack/tasks/today", middleware.Attach(
+	notificationTaskFunc := middleware.InstrumentPrometheus(
 		diContainer.HandlerNotification.NotifyTodayTasksToSlack,
-		"notification_notify_today_tasks_to_slack"),
+		"notification_notify_today_tasks_to_slack",
+	)
+	r.HandleFunc(
+		"/api/v1/notifications/slack/tasks/today",
+		middleware.Attach(notificationTaskFunc),
 	).Methods(http.MethodPost)
 	// TODO: 誕生日の人が複数いたときに対応
-	r.HandleFunc("/api/v1/notifications/slack/birthdays/today", middleware.Attach(
+	notificationBirthdayFunc := middleware.InstrumentPrometheus(
 		diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
-		"notification_notify_today_birthday_to_slack"),
+		"notification_notify_today_birthday_to_slack",
+	)
+	r.HandleFunc(
+		"/api/v1/notifications/slack/birthdays/today",
+		middleware.Attach(notificationBirthdayFunc),
 	).Methods(http.MethodPost)
-	r.HandleFunc("/api/v1/notifications/slack/rankings/access", middleware.Attach(
+	notificationRankingFunc := middleware.InstrumentPrometheus(
 		diContainer.HandlerNotification.NotifyAccessRankingToSlack,
-		"notification_notify_access_ranking_to_slack"),
+		"notification_notify_access_ranking_to_slack",
+	)
+	r.HandleFunc(
+		"/api/v1/notifications/slack/rankings/access",
+		middleware.Attach(notificationRankingFunc),
 	).Methods(http.MethodPost)
 
 	r.Handle("/metrics", promhttp.Handler())

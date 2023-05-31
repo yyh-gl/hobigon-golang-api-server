@@ -49,7 +49,7 @@ func init() {
 	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
 }
 
-func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
+func InstrumentPrometheus(h http.HandlerFunc, name string) http.HandlerFunc {
 	return promhttp.InstrumentHandlerInFlight(inFlight,
 		promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"handler": name}),
 			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": name}),
@@ -59,7 +59,6 @@ func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
 	).(http.HandlerFunc)
 }
 
-// FIXME: ミドルウェア的な機能ではないので別の場所に移動させたい
 func CountUpRunningVersion(version string) {
 	runningVersion.With(prometheus.Labels{"version": version}).Inc()
 }
