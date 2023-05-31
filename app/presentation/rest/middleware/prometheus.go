@@ -21,22 +21,6 @@ var (
 		[]string{"handler", "code", "method"},
 	)
 
-	Counter = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "http_requests_total_test1",
-			Help: "A counter for requests to the wrapped handler.",
-		},
-		[]string{"handler", "code", "method"},
-	)
-
-	Counter2 = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "http_requests_total_test2",
-			Help: "A counter for requests to the wrapped handler.",
-		},
-		[]string{"handler", "code", "method"},
-	)
-
 	duration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Name:    "request_duration_seconds",
@@ -62,7 +46,7 @@ var (
 )
 
 func init() {
-	prometheus.MustRegister(inFlight, counter, Counter, Counter2, duration, responseSize, runningVersion)
+	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
 }
 
 func prometheusInstrument(h http.HandlerFunc, name string) http.HandlerFunc {
