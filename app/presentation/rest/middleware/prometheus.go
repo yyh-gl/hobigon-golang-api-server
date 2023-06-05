@@ -18,7 +18,7 @@ var (
 			Name: "http_requests_total",
 			Help: "A counter for requests to the wrapped handler.",
 		},
-		[]string{"handler", "code", "method"},
+		[]string{"handler", "code", "method", "path"},
 	)
 
 	duration = prometheus.NewHistogramVec(
@@ -49,10 +49,10 @@ func init() {
 	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
 }
 
-func InstrumentPrometheus(h http.HandlerFunc, name string) http.HandlerFunc {
+func InstrumentPrometheus(h http.HandlerFunc, name, path string) http.HandlerFunc {
 	return promhttp.InstrumentHandlerInFlight(inFlight,
 		promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"handler": name}),
-			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": name}),
+			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": name, "path": path}),
 				promhttp.InstrumentHandlerResponseSize(responseSize, h),
 			),
 		),
