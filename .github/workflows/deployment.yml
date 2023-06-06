@@ -108,16 +108,18 @@ jobs:
         run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Set TAG environment
         run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:${{ env.VERSION }}" >> $GITHUB_ENV
-      - name: Tailscale
-        uses: tailscale/github-action@v1
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-      - name: Deploy
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: set image deployment/hobigon-api-deployment hobigon-api=${{ env.TAG }}
+      # - name: Tailscale
+      #   uses: tailscale/github-action@v1
+      #   with:
+      #     authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      # FIXME: GitHub ActionsからアクセスするためにTailscale発行のIPベースでアクセスしないとだめ
+      #        でも、k8sクラスターの証明書がTailscale発行のIPになっていないので証明書の確認でエラーとなる
+      # - name: Deploy
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      #   with:
+      #     args: set image deployment/hobigon-api-deployment hobigon-api=${{ env.TAG }}
 
   build:
     name: Build
