@@ -94,7 +94,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-  deploy_to_k8s_okteto:
+  deploy_to_k8s:
     runs-on: ubuntu-latest
     needs: [ create_release_note, publish_container_image_specified_version ]
     steps:
@@ -152,7 +152,7 @@ jobs:
   deploy_to_gce:
     name: Deploy to GCE
     runs-on: ubuntu-latest
-    needs: [create_release_note, build]
+    needs: [ create_release_note, build ]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -181,7 +181,7 @@ jobs:
 
   success_notification:
     name: Success notification
-    needs: [publish_container_image_latest_version, deploy_to_k8s_okteto, deploy_to_gce]
+    needs: [ publish_container_image_latest_version, deploy_to_k8s, deploy_to_gce ]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -195,7 +195,7 @@ jobs:
 
   failure_notification:
     name: Failure notification
-    needs: [publish_container_image_latest_version, deploy_to_k8s_okteto, deploy_to_gce]
+    needs: [ publish_container_image_latest_version, deploy_to_k8s, deploy_to_gce ]
     runs-on: ubuntu-latest
     if: always()
     steps:
