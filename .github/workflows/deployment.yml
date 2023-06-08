@@ -108,10 +108,10 @@ jobs:
         run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
       - name: Set TAG environment
         run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:${{ env.VERSION }}" >> $GITHUB_ENV
-      - name: Tailscale
-        uses: tailscale/github-action@v1
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      #      - name: Tailscale
+      #        uses: tailscale/github-action@v1
+      #        with:
+      #          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Deploy
         uses: actions-hub/kubectl@master
         env:
