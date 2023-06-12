@@ -1,7 +1,8 @@
 # Hobigon Server
 
 ![Go](https://img.shields.io/badge/Go-1.20-blue.svg)
-![GitHub Actions](https://img.shields.io/github/workflow/status/yyh-gl/hobigon-golang-api-server/Workflow%20for%20Golang)
+![CI](https://github.com/yyh-gl/hobigon-golang-api-server/actions/workflows/integration.yml/badge.svg)
+![CD](https://github.com/yyh-gl/hobigon-golang-api-server/actions/workflows/deployment.yml/badge.svg)
 
 **Hobby + [KANEGON](https://m-78.jp/ultraman-archives/kanegons-cocoon/) = Hobigon**
 
