@@ -38,12 +38,22 @@ func main() {
 	}).Methods(http.MethodGet)
 
 	// Debug Handlers
-	r.HandleFunc("/api/debug", middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})).Methods(http.MethodGet)
-	r.HandleFunc("/api/debug", middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusCreated)
-	})).Methods(http.MethodPost)
+	debugGetFunc := middleware.InstrumentPrometheus(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		},
+		"debug_get",
+		"/api/debug",
+	)
+	r.HandleFunc("/api/debug", middleware.Attach(debugGetFunc)).Methods(http.MethodGet)
+	debugPostFunc := middleware.InstrumentPrometheus(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusCreated)
+		},
+		"debug_post",
+		"/api/debug",
+	)
+	r.HandleFunc("/api/debug", middleware.Attach(debugPostFunc)).Methods(http.MethodPost)
 
 	// Blog handlers
 	blogCreatePath := "/api/v1/blogs"
