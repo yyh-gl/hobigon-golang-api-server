@@ -9,7 +9,7 @@ import (
 )
 
 // DoResponse : JSON形式でレスポンスを返す
-func DoResponse(w http.ResponseWriter, resp interface{}, status int) {
+func DoResponse(w http.ResponseWriter, resp any, status int) {
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(resp)
 	if err != nil {

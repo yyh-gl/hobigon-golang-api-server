@@ -13,7 +13,7 @@ import (
 )
 
 // bindReqWithValidate : リクエスト内容を構造体にマッピングし、バリデーションを実施
-func bindReqWithValidate(ctx context.Context, src, dist interface{}) error {
+func bindReqWithValidate(ctx context.Context, src, dist any) error {
 	switch reflect.TypeOf(src) {
 	case reflect.TypeOf(&http.Request{}):
 		if err := bindFromHTTPBody(ctx, src.(*http.Request), dist); err != nil {
@@ -35,7 +35,7 @@ func bindReqWithValidate(ctx context.Context, src, dist interface{}) error {
 }
 
 // bindFromHTTPBody: リクエストボディの内容を構造体にマッピング
-func bindFromHTTPBody(ctx context.Context, r *http.Request, dist interface{}) error {
+func bindFromHTTPBody(ctx context.Context, r *http.Request, dist any) error {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("ioutil.ReadAll() > %w", err)
@@ -51,7 +51,7 @@ func bindFromHTTPBody(ctx context.Context, r *http.Request, dist interface{}) er
 }
 
 // bindFromPathParams : パスパラメータの内容を構造体にマッピング（bindReqWithValidate()からしか呼び出さない）
-func bindFromPathParams(ctx context.Context, src map[string]string, dist interface{}) error {
+func bindFromPathParams(ctx context.Context, src map[string]string, dist any) error {
 	if err := mapstructure.Decode(src, &dist); err != nil {
 		return fmt.Errorf("mapstructure.Decode() > %w", err)
 	}

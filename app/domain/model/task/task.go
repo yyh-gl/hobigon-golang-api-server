@@ -7,13 +7,13 @@ import (
 // Task : タスクを表すドメインモデル
 // TODO: ドメインモデル貧血症を治す
 type Task struct {
-	Title         string      `json:"title"`
-	Description   string      `json:"description"`
-	Due           *time.Time  `json:"due"`
-	Board         string      `json:"board"`
-	List          string      `json:"list"`
-	ShortURL      string      `json:"short_url"`
-	OriginalModel interface{} `json:"-"`
+	Title         string     `json:"title"`
+	Description   string     `json:"description"`
+	Due           *time.Time `json:"due"`
+	Board         string     `json:"board"`
+	List          string     `json:"list"`
+	ShortURL      string     `json:"short_url"`
+	OriginalModel any        `json:"-"`
 }
 
 // GetJSTDue : 日本時間の期限を取得
