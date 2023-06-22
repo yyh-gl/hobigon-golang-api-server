@@ -37,6 +37,14 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
 
+	// Debug Handlers
+	r.HandleFunc("/api/debug", middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})).Methods(http.MethodGet)
+	r.HandleFunc("/api/debug", middleware.Attach(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusCreated)
+	})).Methods(http.MethodPost)
+
 	// Blog handlers
 	blogCreatePath := "/api/v1/blogs"
 	blogCreateFunc := middleware.InstrumentPrometheus(
