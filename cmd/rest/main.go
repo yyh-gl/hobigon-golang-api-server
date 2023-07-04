@@ -63,6 +63,7 @@ func main() {
 		blogCreatePath,
 	)
 	r.HandleFunc(blogCreatePath, middleware.Attach(blogCreateFunc)).Methods(http.MethodPost)
+
 	blogShowPath := "/api/v1/blogs/{title}"
 	blogShowFunc := middleware.InstrumentPrometheus(
 		diContainer.HandlerBlog.Show,
@@ -73,15 +74,6 @@ func main() {
 	blogLikePath := "/api/v1/blogs/{title}/like"
 	blogLikeFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Like, "blog_like", blogLikePath)
 	r.HandleFunc(blogLikePath, middleware.Attach(blogLikeFunc)).Methods(http.MethodPost)
-
-	// Birthday handler
-	birthdayCreatePath := "/api/v1/birthday"
-	birthdayCreateFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerBirthday.Create,
-		"birthday_create",
-		birthdayCreatePath,
-	)
-	r.HandleFunc(birthdayCreatePath, middleware.Attach(birthdayCreateFunc)).Methods(http.MethodPost)
 
 	// Notification handlers
 	notificationTaskPath := "/api/v1/notifications/slack/tasks/today"
@@ -94,17 +86,7 @@ func main() {
 		notificationTaskPath,
 		middleware.Attach(notificationTaskFunc),
 	).Methods(http.MethodPost)
-	// TODO: 誕生日の人が複数いたときに対応
-	notificationBirthdayPath := "/api/v1/notifications/slack/birthdays/today"
-	notificationBirthdayFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
-		"notification_notify_today_birthday_to_slack",
-		notificationBirthdayPath,
-	)
-	r.HandleFunc(
-		notificationBirthdayPath,
-		middleware.Attach(notificationBirthdayFunc),
-	).Methods(http.MethodPost)
+
 	notificationRankingPath := "/api/v1/notifications/slack/rankings/access"
 	notificationRankingFunc := middleware.InstrumentPrometheus(
 		diContainer.HandlerNotification.NotifyAccessRankingToSlack,

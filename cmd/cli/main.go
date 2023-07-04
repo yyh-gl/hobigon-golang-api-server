@@ -29,12 +29,6 @@ func main() {
 			Action:  diContainer.HandlerNotification.NotifyTodayTasksToSlack,
 		},
 		{
-			Name:    "notify-today-birthday",
-			Aliases: []string{"ntb"},
-			Usage:   "Notify the today's birthday to Slack",
-			Action:  diContainer.HandlerNotification.NotifyTodayBirthdayToSlack,
-		},
-		{
 			Name:    "notify-access-ranking",
 			Aliases: []string{"nar"},
 			Usage:   "Notify the access ranking to Slack",

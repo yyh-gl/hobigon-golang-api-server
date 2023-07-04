@@ -9,7 +9,6 @@ import (
 // ContainerAPI : API用DIコンテナ
 type ContainerAPI struct {
 	HandlerBlog         rest.Blog
-	HandlerBirthday     rest.Birthday
 	HandlerNotification rest.Notification
 
 	DB *db.DB

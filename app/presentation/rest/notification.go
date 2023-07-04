@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -12,7 +11,6 @@ import (
 // Notification : Notification用REST Handlerのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
-	NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request)
 }
 
@@ -38,25 +36,6 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 	notifiedNum, err := n.u.NotifyTodayTasksToSlack(r.Context())
 	if err != nil {
 		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayTasksToSlack()でエラー: %w", err))
-		DoResponse(w, errInterServerError, http.StatusInternalServerError)
-		return
-	}
-	resp.NotifiedNum = notifiedNum
-
-	DoResponse(w, resp, http.StatusOK)
-}
-
-// NotifyTodayBirthdayToSlack : 今日誕生日の人を Slack に通知
-func (n notification) NotifyTodayBirthdayToSlack(w http.ResponseWriter, r *http.Request) {
-	resp := notificationResponse{}
-	notifiedNum, err := n.u.NotifyTodayBirthdayToSlack(r.Context())
-	if err != nil {
-		if errors.Is(err, usecase.ErrBirthdayNotFound) {
-			DoResponse(w, resp, http.StatusOK)
-			return
-		}
-
-		app.Error(fmt.Errorf("notificationUseCase.NotifyTodayBirthdayToSlack()でエラー: %w", err))
 		DoResponse(w, errInterServerError, http.StatusInternalServerError)
 		return
 	}

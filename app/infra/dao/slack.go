@@ -7,7 +7,6 @@ import (
 	slackWebHook "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	modelBd "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/birthday"
 	modelB "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	modelS "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/slack"
 	modelT "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
@@ -54,31 +53,6 @@ func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTa
 
 	if err := s.send(ctx, data); err != nil {
 		return err
-	}
-	return nil
-}
-
-// SendBirthday : Slack に誕生日通知を送信
-func (s slack) SendBirthday(ctx context.Context, birthdayList modelBd.BirthdayList) error {
-	var data modelS.Slack
-	switch {
-	case app.IsPrd():
-		data = modelS.Slack{
-			Username: "聖母マリア様",
-			Channel:  "2019新卒技術_雑談",
-		}
-	default:
-		data = modelS.Slack{
-			Username: "まりお",
-			Channel:  "00_today_tasks",
-		}
-	}
-
-	for _, birthday := range birthdayList {
-		data.Text = birthday.CreateBirthdayMessage()
-		if err := s.send(ctx, data); err != nil {
-			return err
-		}
 	}
 	return nil
 }

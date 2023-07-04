@@ -30,13 +30,10 @@ until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c
 - Slack Notification
     - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
     - Today's task list
-    - Today's birthday people
 - [My Blog](https://yyh-gl.github.io/tech-blog/)
     - Create post data
     - Get post data
     - Like👍 post
-- Birthday
-    - Create birthday data
 
 ## CLI
 
@@ -47,7 +44,6 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
 - Slack Notification
     - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
     - Today's task list
-    - Today's birthday people
 
 ## GraphQL
 
@@ -64,7 +60,14 @@ This is completely experimental implementation.(Just out of interest)
 
 # ▼ Infrastructure
 
-k8s on [Okteto](https://www.okteto.com/)
+## Now
+
+Self-hosted k8s
+
+## Past
+
+- k8s on [Okteto](https://www.okteto.com/)
+- GCE
 
 <br>
 

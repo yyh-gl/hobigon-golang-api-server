@@ -11,7 +11,6 @@ import (
 // Notification : Notification用CLIサービスのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(c *cli.Context) error
-	NotifyTodayBirthdayToSlack(c *cli.Context) error
 	NotifyAccessRankingToSlack(c *cli.Context) error
 }
 
@@ -32,18 +31,6 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
-		app.Error(err)
-		return err
-	}
-	return nil
-}
-
-// NotifyTodayBirthdayToSlack : 今日誕生日の人をSlackに通知
-func (n notification) NotifyTodayBirthdayToSlack(c *cli.Context) error {
-	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CLIContextKey, c)
-
-	if _, err := n.u.NotifyTodayBirthdayToSlack(ctx); err != nil {
 		app.Error(err)
 		return err
 	}

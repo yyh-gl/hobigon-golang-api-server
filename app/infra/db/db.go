@@ -90,5 +90,5 @@ func newSQLiteConnect() *DB {
 
 // migrate : マイグレーション実施
 func migrate(db *DB) {
-	db.AutoMigrate(&dto.BlogDTO{}, &dto.BirthdayDTO{})
+	db.AutoMigrate(&dto.BlogDTO{})
 }

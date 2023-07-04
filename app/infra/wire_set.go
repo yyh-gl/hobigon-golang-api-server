@@ -10,7 +10,6 @@ import (
 var APISet = wire.NewSet(
 	db.NewDB,
 	dao.NewBlog,
-	dao.NewBirthday,
 	dao.NewSlack,
 	dao.NewTask,
 )
@@ -18,7 +17,6 @@ var APISet = wire.NewSet(
 // CLISet : infra層のWireSet（CLI用）
 var CLISet = wire.NewSet(
 	db.NewDB,
-	dao.NewBirthday,
 	dao.NewSlack,
 	dao.NewTask,
 )

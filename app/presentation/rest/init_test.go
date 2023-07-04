@@ -28,8 +28,5 @@ func TestMain(m *testing.M) {
 	Router.HandleFunc("/api/v1/blogs/{title}", DIContainer.HandlerBlog.Show).Methods(http.MethodGet)
 	Router.HandleFunc("/api/v1/blogs/{title}/like", DIContainer.HandlerBlog.Like).Methods(http.MethodPost)
 
-	// Birthday handler
-	Router.HandleFunc("/api/v1/birthday", DIContainer.HandlerBirthday.Create).Methods(http.MethodPost)
-
 	os.Exit(m.Run())
 }
