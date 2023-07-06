@@ -94,3 +94,6 @@ cmd/**/bin/*
 k8s/secret.yml
 
 backup
+
+img/*
+!img/.keep
