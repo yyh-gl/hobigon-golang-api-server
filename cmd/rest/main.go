@@ -71,10 +71,20 @@ func main() {
 		blogShowPath,
 	)
 	r.HandleFunc(blogShowPath, middleware.Attach(blogShowFunc)).Methods(http.MethodGet)
+
 	blogLikePath := "/api/v1/blogs/{title}/like"
 	blogLikeFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Like, "blog_like", blogLikePath)
 	r.HandleFunc(blogLikePath, middleware.Attach(blogLikeFunc)).Methods(http.MethodPost)
 
+	// Calender handlers
+	calenderCreatePath := "/api/v1/calenders"
+	calenderCreateFunc := middleware.InstrumentPrometheus(
+		diContainer.HandlerCalender.Create,
+		"calender_create",
+		calenderCreatePath,
+	)
+	r.HandleFunc(calenderCreatePath, middleware.Attach(calenderCreateFunc)).Methods(http.MethodPost)
+	
 	// Notification handlers
 	notificationTaskPath := "/api/v1/notifications/slack/tasks/today"
 	notificationTaskFunc := middleware.InstrumentPrometheus(

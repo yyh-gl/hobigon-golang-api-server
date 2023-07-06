@@ -24,11 +24,13 @@ func initApp() *di.ContainerAPI {
 	slack := dao.NewSlack()
 	usecaseBlog := usecase.NewBlog(blog, slack)
 	restBlog := rest.NewBlog(usecaseBlog)
+	calender := rest.NewCalender()
 	task := dao.NewTask()
 	notification := usecase.NewNotification(task, slack)
 	restNotification := rest.NewNotification(notification)
 	containerAPI := &di.ContainerAPI{
 		HandlerBlog:         restBlog,
+		HandlerCalender:     calender,
 		HandlerNotification: restNotification,
 		DB:                  gormDB,
 	}
