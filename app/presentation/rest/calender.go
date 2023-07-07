@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"image"
 	"image/draw"
@@ -26,6 +28,31 @@ func NewCalendar() Calendar {
 	return &calendar{}
 }
 
+// FIXME: Move to external storage
+//
+//go:embed img/2023-08.png
+var calender202308 []byte
+
+//go:embed img/2023-09.png
+var calender202309 []byte
+
+//go:embed img/2023-10.png
+var calender202310 []byte
+
+//go:embed img/2023-11.png
+var calender202311 []byte
+
+//go:embed img/2023-12.png
+var calender202312 []byte
+
+var calendarMap = map[string][]byte{
+	"2023-08": calender202308,
+	"2023-09": calender202309,
+	"2023-10": calender202310,
+	"2023-11": calender202311,
+	"2023-12": calender202312,
+}
+
 // Create : Create calendar images
 // FIXME: Move logics from controller (手抜き実装 now)
 func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
@@ -43,22 +70,12 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	targetDate := r.FormValue("target_date")
-	dateFileName := fmt.Sprintf("./img/%s.png", targetDate)
-	dateFile, err := os.Open(dateFileName)
-	if err != nil {
-		errMsg := fmt.Sprintf("date file is gone (%s)", dateFileName)
-		DoResponse(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-	defer func() { _ = dateFile.Close() }()
-
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
 		DoResponse(w, "decoding base file is failed", http.StatusInternalServerError)
 		return
 	}
-	dateImg, err := png.Decode(dateFile)
+	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
 		DoResponse(w, "decoding date file is failed", http.StatusInternalServerError)
 		return
@@ -90,7 +107,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 			draw.Draw(out, baseImgRect, baseImg, image.Point{X: 0, Y: 0}, draw.Src)
 			xdraw.CatmullRom.Scale(out, rect, dateImg, dateImgBounds, draw.Over, nil)
 
-			outputFile, err := os.Create(fmt.Sprintf("./img/%s_%s.jpg", filename, key))
+			outputFile, err := os.Create(fmt.Sprintf("./%s_%s.jpg", filename, key))
 			if err != nil {
 				DoResponse(w, "creating output file is failed", http.StatusInternalServerError)
 				return
