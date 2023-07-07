@@ -73,6 +73,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
+		app.Error(err)
 		DoResponse(w, "decoding base file is failed", http.StatusInternalServerError)
 		return
 	}
@@ -81,6 +82,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("========================")
 	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
+		app.Error(err)
 		DoResponse(w, "decoding date file is failed", http.StatusInternalServerError)
 		return
 	}
