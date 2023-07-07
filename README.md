@@ -34,6 +34,7 @@ until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c
     - Create post data
     - Get post data
     - Like👍 post
+- Calendar generator
 
 ## CLI
 
