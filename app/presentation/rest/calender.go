@@ -69,22 +69,15 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("========================")
-	fmt.Println("1")
-	fmt.Println("========================")
-
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
-		app.Error(err)
+		app.Error(fmt.Errorf("image.Decode(): %w", err))
 		DoResponse(w, "decoding base file is failed", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("========================")
-	fmt.Println("2")
-	fmt.Println("========================")
 	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
-		app.Error(err)
+		app.Error(fmt.Errorf("png.Decode(): %w", err))
 		DoResponse(w, "decoding date file is failed", http.StatusInternalServerError)
 		return
 	}
@@ -110,19 +103,10 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		DoResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("========================")
-	fmt.Println("3")
-	fmt.Println("========================")
 
 	out := image.NewRGBA(baseImgRect)
 	draw.Draw(out, baseImgRect, baseImg, image.Point{X: 0, Y: 0}, draw.Src)
-	fmt.Println("========================")
-	fmt.Println("4")
-	fmt.Println("========================")
 	xdraw.CatmullRom.Scale(out, rect, dateImg, dateImgBounds, draw.Over, nil)
-	fmt.Println("========================")
-	fmt.Println("5")
-	fmt.Println("========================")
 
 	var output bytes.Buffer
 	if err := png.Encode(&output, out); err != nil {
@@ -130,10 +114,6 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		DoResponse(w, "encoding output file is failed", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("========================")
-	fmt.Println("6")
-	fmt.Println("========================")
 
 	DoImageResponse(w, output.Bytes(), "image/png", http.StatusCreated)
 }
