@@ -2,8 +2,6 @@ package rest
 
 import (
 	"fmt"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	xdraw "golang.org/x/image/draw"
 	"image"
 	"image/draw"
 	"image/jpeg"
@@ -13,6 +11,9 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	xdraw "golang.org/x/image/draw"
 )
 
 type Calendar interface {
