@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"reflect"
 
@@ -36,7 +36,7 @@ func bindReqWithValidate(ctx context.Context, src, dist any) error {
 
 // bindFromHTTPBody: リクエストボディの内容を構造体にマッピング
 func bindFromHTTPBody(ctx context.Context, r *http.Request, dist any) error {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("ioutil.ReadAll() > %w", err)
 	}
