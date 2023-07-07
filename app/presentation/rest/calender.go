@@ -2,6 +2,8 @@ package rest
 
 import (
 	"fmt"
+	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	xdraw "golang.org/x/image/draw"
 	"image"
 	"image/draw"
 	"image/jpeg"
@@ -11,9 +13,6 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	xdraw "golang.org/x/image/draw"
 )
 
 type Calendar interface {
@@ -43,9 +42,12 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dateFile, err := os.Open("./img/2023-08.png")
+	targetDate := r.FormValue("target_date")
+	dateFileName := fmt.Sprintf("./img/%s.png", targetDate)
+	dateFile, err := os.Open(dateFileName)
 	if err != nil {
-		DoResponse(w, "date file is gone", http.StatusInternalServerError)
+		errMsg := fmt.Sprintf("date file is gone (%s)", dateFileName)
+		DoResponse(w, errMsg, http.StatusInternalServerError)
 		return
 	}
 	defer func() { _ = dateFile.Close() }()
