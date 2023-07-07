@@ -3,16 +3,14 @@ package rest
 import (
 	"bytes"
 	_ "embed"
+	"errors"
 	"fmt"
 	"image"
 	"image/draw"
-	"image/jpeg"
 	"image/png"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	xdraw "golang.org/x/image/draw"
@@ -63,7 +61,6 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer func() { _ = baseFile.Close() }()
 
-	filename := strings.Split(baseFileHeader.Filename, ".")[0]
 	ext := strings.ToLower(filepath.Ext(baseFileHeader.Filename))
 	if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
 		DoResponse(w, "base file has invalid extension", http.StatusBadRequest)
@@ -96,37 +93,25 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 		"lower_right": getDateImgRectAtLowerRight(baseImgBounds),
 	}
 
-	var wg sync.WaitGroup
-	for key, rect := range dateImgRectMap {
-		rect := rect
-		key := key
-
-		wg.Add(1)
-		go func() {
-			out := image.NewRGBA(baseImgRect)
-			draw.Draw(out, baseImgRect, baseImg, image.Point{X: 0, Y: 0}, draw.Src)
-			xdraw.CatmullRom.Scale(out, rect, dateImg, dateImgBounds, draw.Over, nil)
-
-			outputFile, err := os.Create(fmt.Sprintf("./%s_%s.jpg", filename, key))
-			if err != nil {
-				DoResponse(w, "creating output file is failed", http.StatusInternalServerError)
-				return
-			}
-
-			var opt jpeg.Options
-			opt.Quality = 100
-
-			if err := jpeg.Encode(outputFile, out, &opt); err != nil {
-				DoResponse(w, "encoding output file is failed", http.StatusInternalServerError)
-				return
-			}
-
-			wg.Done()
-		}()
+	rect, ok := dateImgRectMap[r.FormValue("date_position")]
+	if !ok {
+		app.Error(errors.New("invalid date position"))
+		DoResponse(w, err.Error(), http.StatusBadRequest)
+		return
 	}
-	wg.Wait()
 
-	DoResponse(w, nil, http.StatusCreated)
+	out := image.NewRGBA(baseImgRect)
+	draw.Draw(out, baseImgRect, baseImg, image.Point{X: 0, Y: 0}, draw.Src)
+	xdraw.CatmullRom.Scale(out, rect, dateImg, dateImgBounds, draw.Over, nil)
+
+	var output bytes.Buffer
+	if err := png.Encode(&output, out); err != nil {
+		app.Error(fmt.Errorf("png.Encode(): %w", err))
+		DoResponse(w, "encoding output file is failed", http.StatusInternalServerError)
+		return
+	}
+
+	DoImageResponse(w, output.Bytes(), "image/png", http.StatusCreated)
 }
 
 func getDateImgRectAtUpperLeft(baseImgBounds image.Rectangle) image.Rectangle {

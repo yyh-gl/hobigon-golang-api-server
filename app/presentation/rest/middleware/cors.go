@@ -17,7 +17,6 @@ func CORS(h http.HandlerFunc) http.HandlerFunc {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Content-Type", "application/json;charset=utf-8")
 
 		h.ServeHTTP(w, r)
 	}
