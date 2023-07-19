@@ -34,9 +34,7 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
-		fmt.Println("========================")
-		fmt.Println("Server Start >> http://localhost" + s.Addr)
-		fmt.Println("========================")
+		app.Info(context.Background(), "Server Start >> http://localhost"+s.Addr)
 		middleware.CountUpRunningVersion(app.GetVersion())
 		errCh <- s.ListenAndServe()
 	}()

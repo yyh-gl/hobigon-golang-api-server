@@ -56,29 +56,31 @@ var calendarMap = map[string][]byte{
 // Create : Create calendar images
 // FIXME: Move logics from controller (手抜き実装 now)
 func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	baseFile, baseFileHeader, err := r.FormFile("base_file")
 	if err != nil {
-		app.Error(fmt.Errorf("error in http.Request.FormFile(): %w", err))
-		DoResponse(w, err, http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("error in http.Request.FormFile(): %w", err))
+		DoResponse(ctx, w, err, http.StatusInternalServerError)
 	}
 	defer func() { _ = baseFile.Close() }()
 
 	ext := strings.ToLower(filepath.Ext(baseFileHeader.Filename))
 	if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
-		DoResponse(w, "base file has invalid extension", http.StatusBadRequest)
+		DoResponse(ctx, w, "base file has invalid extension", http.StatusBadRequest)
 		return
 	}
 
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
-		app.Error(fmt.Errorf("image.Decode(): %w", err))
-		DoResponse(w, "decoding base file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("image.Decode(): %w", err))
+		DoResponse(ctx, w, "decoding base file is failed", http.StatusInternalServerError)
 		return
 	}
 	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
-		app.Error(fmt.Errorf("png.Decode(): %w", err))
-		DoResponse(w, "decoding date file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("png.Decode(): %w", err))
+		DoResponse(ctx, w, "decoding date file is failed", http.StatusInternalServerError)
 		return
 	}
 
@@ -99,8 +101,8 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	rect, ok := dateImgRectMap[r.FormValue("date_position")]
 	if !ok {
-		app.Error(errors.New("invalid date position"))
-		DoResponse(w, err.Error(), http.StatusBadRequest)
+		app.Error(ctx, errors.New("invalid date position"))
+		DoResponse(ctx, w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -110,12 +112,12 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	var output bytes.Buffer
 	if err := png.Encode(&output, out); err != nil {
-		app.Error(fmt.Errorf("png.Encode(): %w", err))
-		DoResponse(w, "encoding output file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("png.Encode(): %w", err))
+		DoResponse(ctx, w, "encoding output file is failed", http.StatusInternalServerError)
 		return
 	}
 
-	DoImageResponse(w, output.Bytes(), "image/png", http.StatusCreated)
+	DoImageResponse(ctx, w, output.Bytes(), "image/png", http.StatusCreated)
 }
 
 func getDateImgRectAtUpperLeft(baseImgBounds image.Rectangle) image.Rectangle {
