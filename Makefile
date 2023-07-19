@@ -19,17 +19,17 @@ build: ## build target=[rest, cli, graphql]
 	
 	@if [ ${target} = rest ]; then \
 		echo 'build rest'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/rest/bin/api-server ./cmd/rest; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X github.com/yyh-gl/hobigon-golang-api-server/app.version=$(version)' -o ./cmd/rest/bin/api-server ./cmd/rest; \
 	fi
 	
 	@if [ ${target} = cli ]; then \
 		echo 'build cli'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/cli/bin/hobi ./cmd/cli; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X github.com/yyh-gl/hobigon-golang-api-server/app.version=$(version)' -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
 		echo 'build graphql'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X main.version=$(version)' -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X github.com/yyh-gl/hobigon-golang-api-server/app.version=$(version)' -o ./cmd/graphql/bin/graphql-server ./cmd/graphql; \
 	fi
 	
 	@exit 0;

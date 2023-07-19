@@ -2,6 +2,10 @@ package app
 
 import "os"
 
+// version : アプリケーションのバージョン情報（GitHubのReleasesに対応）
+// build時に埋め込む
+var version string
+
 // contextKey : コンテキストにセットするさいのキー用の型
 type contextKey int
 
@@ -21,4 +25,8 @@ func IsTest() bool {
 // IsPrd : 実行環境がProductionかどうかを確認
 func IsPrd() bool {
 	return os.Getenv("APP_ENV") == "production"
+}
+
+func GetVersion() string {
+	return version
 }
