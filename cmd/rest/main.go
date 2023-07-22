@@ -75,74 +75,69 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 	}).Methods(http.MethodGet)
 
 	// Debug Handlers
-	debugGetFunc := middleware.InstrumentPrometheus(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		},
-		"debug_get",
-		"/api/debug",
-	)
-	r.HandleFunc("/api/debug", middleware.Attach(debugGetFunc)).Methods(http.MethodGet)
-	debugPostFunc := middleware.InstrumentPrometheus(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusCreated)
-		},
-		"debug_post",
-		"/api/debug",
-	)
-	r.HandleFunc("/api/debug", middleware.Attach(debugPostFunc)).Methods(http.MethodPost)
-
-	// Blog handlers
-	blogCreatePath := "/api/v1/blogs"
-	blogCreateFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerBlog.Create,
-		"blog_create",
-		blogCreatePath,
-	)
-	r.HandleFunc(blogCreatePath, middleware.Attach(blogCreateFunc)).Methods(http.MethodPost)
-
-	blogShowPath := "/api/v1/blogs/{title}"
-	blogShowFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerBlog.Show,
-		"blog_show",
-		blogShowPath,
-	)
-	r.HandleFunc(blogShowPath, middleware.Attach(blogShowFunc)).Methods(http.MethodGet)
-
-	blogLikePath := "/api/v1/blogs/{title}/like"
-	blogLikeFunc := middleware.InstrumentPrometheus(diContainer.HandlerBlog.Like, "blog_like", blogLikePath)
-	r.HandleFunc(blogLikePath, middleware.Attach(blogLikeFunc)).Methods(http.MethodPost)
-
-	// Calendar handlers
-	calendarCreatePath := "/api/v1/calendars"
-	calendarCreateFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerCalendar.Create,
-		"calendar_create",
-		calendarCreatePath,
-	)
-	r.HandleFunc(calendarCreatePath, middleware.Attach(calendarCreateFunc)).Methods(http.MethodPost)
-
-	// Notification handlers
-	notificationTaskPath := "/api/v1/notifications/slack/tasks/today"
-	notificationTaskFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerNotification.NotifyTodayTasksToSlack,
-		"notification_notify_today_tasks_to_slack",
-		notificationTaskPath,
-	)
+	debugGetFunc := func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
 	r.HandleFunc(
-		notificationTaskPath,
-		middleware.Attach(notificationTaskFunc),
+		middleware.CreateHandlerFuncWithMiddleware(debugGetFunc, "/api/debug", "debug_get"),
+	).Methods(http.MethodGet)
+
+	debugPostFunc := func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusCreated)
+	}
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(debugPostFunc, "/api/debug", "debug_post"),
 	).Methods(http.MethodPost)
 
-	notificationRankingPath := "/api/v1/notifications/slack/rankings/access"
-	notificationRankingFunc := middleware.InstrumentPrometheus(
-		diContainer.HandlerNotification.NotifyAccessRankingToSlack,
-		"notification_notify_access_ranking_to_slack",
-		notificationRankingPath,
-	)
+	// Blog handlers
 	r.HandleFunc(
-		notificationRankingPath,
-		middleware.Attach(notificationRankingFunc),
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerBlog.Create,
+			"/api/v1/blogs",
+			"blog_create",
+		),
+	).Methods(http.MethodPost)
+
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerBlog.Show,
+			"/api/v1/blogs/{title}",
+			"blog_show",
+		),
+	).Methods(http.MethodGet)
+
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerBlog.Like,
+			"/api/v1/blogs/{title}/like",
+			"blog_like",
+		),
+	).Methods(http.MethodPost)
+
+	// Calendar handlers
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerCalendar.Create,
+			"/api/v1/calendars",
+			"calendar_create",
+		),
+	).Methods(http.MethodPost)
+
+	// Notification handlers
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerNotification.NotifyTodayTasksToSlack,
+			"/api/v1/notifications/slack/tasks/today",
+			"today_tasks_notification_send",
+		),
+	).Methods(http.MethodPost)
+
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerNotification.NotifyAccessRankingToSlack,
+			"/api/v1/notifications/slack/rankings/access",
+			"access_ranking_notification_send",
+		),
 	).Methods(http.MethodPost)
 
 	r.Handle("/metrics", promhttp.Handler())

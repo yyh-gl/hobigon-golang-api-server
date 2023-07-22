@@ -49,10 +49,10 @@ func init() {
 	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
 }
 
-func InstrumentPrometheus(h http.HandlerFunc, name, path string) http.HandlerFunc {
+func InstrumentPrometheus(h http.HandlerFunc, path Path, handlerName string) http.HandlerFunc {
 	return promhttp.InstrumentHandlerInFlight(inFlight,
-		promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"handler": name}),
-			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": name, "path": path}),
+		promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+			promhttp.InstrumentHandlerCounter(counter.MustCurryWith(prometheus.Labels{"handler": handlerName, "path": path}),
 				promhttp.InstrumentHandlerResponseSize(responseSize, h),
 			),
 		),
