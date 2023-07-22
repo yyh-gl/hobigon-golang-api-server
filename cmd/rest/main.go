@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 )
 
 // version : アプリケーションのバージョン情報（GitHubのReleasesに対応）
@@ -25,6 +26,42 @@ func main() {
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
 
+	router := newRouter(diContainer)
+
+	s := &http.Server{
+		Addr:    ":3000",
+		Handler: router,
+	}
+
+	errCh := make(chan error, 1)
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		fmt.Println("========================")
+		fmt.Println("Server Start >> http://localhost" + s.Addr)
+		fmt.Println("========================")
+		middleware.CountUpRunningVersion(version)
+		errCh <- s.ListenAndServe()
+	}()
+
+	select {
+	case err := <-errCh:
+		fmt.Println("Error happened:", err.Error())
+	case sig := <-sigCh:
+		fmt.Println("Signal received:", sig)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil {
+		fmt.Println("Graceful shutdown failed:", err.Error())
+	}
+	middleware.CountDownRunningVersion(version)
+	fmt.Println("Server shutdown")
+}
+
+func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 	r := mux.NewRouter()
 
 	// Preflight handler
@@ -110,35 +147,5 @@ func main() {
 
 	r.Handle("/metrics", promhttp.Handler())
 
-	s := &http.Server{
-		Addr:    ":3000",
-		Handler: r,
-	}
-
-	errCh := make(chan error, 1)
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
-
-	go func() {
-		fmt.Println("========================")
-		fmt.Println("Server Start >> http://localhost" + s.Addr)
-		fmt.Println("========================")
-		middleware.CountUpRunningVersion(version)
-		errCh <- s.ListenAndServe()
-	}()
-
-	select {
-	case err := <-errCh:
-		fmt.Println("Error happened:", err.Error())
-	case sig := <-sigCh:
-		fmt.Println("Signal received:", sig)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	if err := s.Shutdown(ctx); err != nil {
-		fmt.Println("Graceful shutdown failed:", err.Error())
-	}
-	middleware.CountDownRunningVersion(version)
-	fmt.Println("Server shutdown")
+	return r
 }
