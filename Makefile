@@ -56,5 +56,5 @@ test: ## go test
 
 .PHONY: lint
 lint: ## lint
-	docker compose exec -T rest golangci-lint --timeout 5m0s run ./...
+	docker compose exec -T rest golangci-lint run
 
