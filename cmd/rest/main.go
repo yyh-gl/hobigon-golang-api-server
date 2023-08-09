@@ -36,7 +36,7 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
-		app.Info(ctx, "Server Start >> http://localhost"+s.Addr)
+		app.Info(ctx, "server start >> http://localhost"+s.Addr)
 		middleware.CountUpRunningVersion(app.GetVersion())
 		errCh <- s.ListenAndServe()
 	}()

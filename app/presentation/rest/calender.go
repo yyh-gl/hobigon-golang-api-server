@@ -60,7 +60,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	baseFile, baseFileHeader, err := r.FormFile("base_file")
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("error in http.Request.FormFile(): %w", err))
+		app.Error(ctx, fmt.Errorf("failed to http.Request.FormFile(): %w", err))
 		DoResponse(ctx, w, err, http.StatusInternalServerError)
 	}
 	defer func() { _ = baseFile.Close() }()
@@ -73,14 +73,14 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("image.Decode(): %w", err))
-		DoResponse(ctx, w, "decoding base file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("failed to image.Decode(): %w", err))
+		DoResponse(ctx, w, "failed to decode base file", http.StatusInternalServerError)
 		return
 	}
 	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("png.Decode(): %w", err))
-		DoResponse(ctx, w, "decoding date file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("failed to png.Decode(): %w", err))
+		DoResponse(ctx, w, "failed to decode date file", http.StatusInternalServerError)
 		return
 	}
 
@@ -112,8 +112,8 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	var output bytes.Buffer
 	if err := png.Encode(&output, out); err != nil {
-		app.Error(ctx, fmt.Errorf("png.Encode(): %w", err))
-		DoResponse(ctx, w, "encoding output file is failed", http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("failed to png.Encode(): %w", err))
+		DoResponse(ctx, w, "failed to encode output file", http.StatusInternalServerError)
 		return
 	}
 

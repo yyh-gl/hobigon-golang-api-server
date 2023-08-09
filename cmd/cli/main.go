@@ -38,7 +38,7 @@ func main() {
 	}
 
 	if err := cliApp.Run(os.Args); err != nil {
-		app.Error(context.Background(), fmt.Errorf("cliApp.Run()内でのエラー: %w", err))
+		app.Error(context.Background(), fmt.Errorf("failed to cliApp.Run(): %w", err))
 		os.Exit(1)
 	}
 }
