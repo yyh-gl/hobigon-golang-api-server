@@ -17,6 +17,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	app.NewLogger()
 
 	diContainer := initApp()
@@ -34,25 +36,25 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
-		app.Info(context.Background(), "Server Start >> http://localhost"+s.Addr)
+		app.Info(ctx, "Server Start >> http://localhost"+s.Addr)
 		middleware.CountUpRunningVersion(app.GetVersion())
 		errCh <- s.ListenAndServe()
 	}()
 
 	select {
 	case err := <-errCh:
-		fmt.Println("Error happened:", err.Error())
+		app.Error(ctx, fmt.Errorf("received error signal: %w", err))
 	case sig := <-sigCh:
-		fmt.Println("Signal received:", sig)
+		app.Info(ctx, "received signal: "+sig.String())
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx); err != nil {
-		fmt.Println("Graceful shutdown failed:", err.Error())
+		app.Error(ctx, fmt.Errorf("failed to graceful shutdown: %w", err))
 	}
 	middleware.CountDownRunningVersion(app.GetVersion())
-	fmt.Println("Server shutdown")
+	app.Info(ctx, "succeeded to server shutdown")
 }
 
 func newRouter(diContainer *di.ContainerAPI) *mux.Router {
