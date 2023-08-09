@@ -44,15 +44,15 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	req := request{}
 	if err := bindReqWithValidate(ctx, r, &req); err != nil {
-		DoResponse(w, errBadRequest, http.StatusBadRequest)
+		DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
 	blog, err := b.usecase.Create(ctx, req.Title)
 	if err != nil {
 		// TODO: 全て500エラーにしているのでより詳細なエラーを出す（重複エラーとか）
-		app.Error(fmt.Errorf("BlogUseCase.Create()でエラー: %w", err))
-		DoResponse(w, errInterServerError, http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("BlogUseCase.Create()でエラー: %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
-	DoResponse(w, resp, http.StatusCreated)
+	DoResponse(ctx, w, resp, http.StatusCreated)
 }
 
 // Show : ブログ情報を1件取得
@@ -80,19 +80,19 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
-		DoResponse(w, errBadRequest, http.StatusBadRequest)
+		DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
 	blog, err := b.usecase.Show(ctx, req.Title)
 	if err != nil {
 		if errors.Is(err, usecase.ErrBlogNotFound) {
-			DoResponse(w, errNotFound, http.StatusNotFound)
+			DoResponse(ctx, w, errNotFound, http.StatusNotFound)
 			return
 		}
 
-		app.Error(fmt.Errorf("BlogUseCase.Show()でエラー: %w", err))
-		DoResponse(w, errInterServerError, http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("BlogUseCase.Show()でエラー: %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
-	DoResponse(w, resp, http.StatusOK)
+	DoResponse(ctx, w, resp, http.StatusOK)
 }
 
 // Like : 指定ブログにいいねをプラス1
@@ -120,7 +120,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
-		DoResponse(w, errBadRequest, http.StatusBadRequest)
+		DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
@@ -129,12 +129,12 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 	blog, err := b.usecase.Like(ctx, req.Title, isSilent)
 	if err != nil {
 		if errors.Is(err, usecase.ErrBlogNotFound) {
-			DoResponse(w, nil, http.StatusNoContent)
+			DoResponse(ctx, w, nil, http.StatusNoContent)
 			return
 		}
 
-		app.Error(fmt.Errorf("BlogUseCase.Like()でエラー: %w", err))
-		DoResponse(w, errInterServerError, http.StatusInternalServerError)
+		app.Error(ctx, fmt.Errorf("BlogUseCase.Like()でエラー: %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
 
@@ -143,5 +143,5 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 		Title: blog.Title().String(),
 		Count: blog.Count().Int(),
 	}
-	DoResponse(w, resp, http.StatusOK)
+	DoResponse(ctx, w, resp, http.StatusOK)
 }

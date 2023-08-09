@@ -1,6 +1,6 @@
 module github.com/yyh-gl/hobigon-golang-api-server
 
-go 1.20
+go 1.21
 
 require (
 	github.com/99designs/gqlgen v0.17.10
@@ -15,7 +15,7 @@ require (
 	github.com/prometheus/client_golang v1.12.2
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.4.5
-	go.uber.org/zap v1.24.0
+	golang.org/x/image v0.9.0
 )
 
 require (
@@ -23,7 +23,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
-	github.com/elazarl/goproxy v0.0.0-20200710112657-153946a5f232 // indirect
+	github.com/elazarl/goproxy v0.0.0-20230731152917-f99041a5c027 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -39,9 +39,7 @@ require (
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	go.uber.org/atomic v1.10.0 // indirect
-	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/image v0.9.0 // indirect
+	github.com/stretchr/testify v1.8.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
