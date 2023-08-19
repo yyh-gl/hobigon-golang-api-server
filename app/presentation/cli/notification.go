@@ -5,6 +5,7 @@ import (
 
 	"github.com/urfave/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
@@ -31,7 +32,7 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
-		app.Error(ctx, err)
+		log.Error(ctx, err)
 		return err
 	}
 	return nil
@@ -43,7 +44,7 @@ func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
 	ctx = context.WithValue(ctx, app.CLIContextKey, c)
 
 	if _, err := n.u.NotifyAccessRanking(ctx); err != nil {
-		app.Error(ctx, err)
+		log.Error(ctx, err)
 		return err
 	}
 	return nil

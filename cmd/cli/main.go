@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/urfave/cli"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 func main() {
-	app.NewLogger()
+	log.NewLogger()
 
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	if err := cliApp.Run(os.Args); err != nil {
-		app.Error(context.Background(), fmt.Errorf("failed to cliApp.Run(): %w", err))
+		log.Error(context.Background(), fmt.Errorf("failed to cliApp.Run(): %w", err))
 		os.Exit(1)
 	}
 }

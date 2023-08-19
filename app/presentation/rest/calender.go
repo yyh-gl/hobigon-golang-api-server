@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	xdraw "golang.org/x/image/draw"
 )
 
@@ -60,7 +60,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	baseFile, baseFileHeader, err := r.FormFile("base_file")
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("failed to http.Request.FormFile(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to http.Request.FormFile(): %w", err))
 		DoResponse(ctx, w, err, http.StatusInternalServerError)
 	}
 	defer func() { _ = baseFile.Close() }()
@@ -73,13 +73,13 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	baseImg, _, err := image.Decode(baseFile)
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("failed to image.Decode(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to image.Decode(): %w", err))
 		DoResponse(ctx, w, "failed to decode base file", http.StatusInternalServerError)
 		return
 	}
 	dateImg, err := png.Decode(bytes.NewReader(calendarMap[r.FormValue("target_date")]))
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("failed to png.Decode(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to png.Decode(): %w", err))
 		DoResponse(ctx, w, "failed to decode date file", http.StatusInternalServerError)
 		return
 	}
@@ -101,7 +101,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	rect, ok := dateImgRectMap[r.FormValue("date_position")]
 	if !ok {
-		app.Error(ctx, errors.New("invalid date position"))
+		log.Error(ctx, errors.New("invalid date position"))
 		DoResponse(ctx, w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -112,7 +112,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 
 	var output bytes.Buffer
 	if err := png.Encode(&output, out); err != nil {
-		app.Error(ctx, fmt.Errorf("failed to png.Encode(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to png.Encode(): %w", err))
 		DoResponse(ctx, w, "failed to encode output file", http.StatusInternalServerError)
 		return
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 )
@@ -19,7 +20,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	app.NewLogger()
+	log.NewLogger()
 
 	diContainer := initApp()
 	defer func() { _ = diContainer.DB.Close() }()
@@ -36,25 +37,25 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
-		app.Info(ctx, "server start >> http://localhost"+s.Addr)
+		log.Info(ctx, "server start >> http://localhost"+s.Addr)
 		middleware.CountUpRunningVersion(app.GetVersion())
 		errCh <- s.ListenAndServe()
 	}()
 
 	select {
 	case err := <-errCh:
-		app.Error(ctx, fmt.Errorf("received error signal: %w", err))
+		log.Error(ctx, fmt.Errorf("received error signal: %w", err))
 	case sig := <-sigCh:
-		app.Info(ctx, "received signal: "+sig.String())
+		log.Info(ctx, "received signal: "+sig.String())
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx); err != nil {
-		app.Error(ctx, fmt.Errorf("failed to graceful shutdown: %w", err))
+		log.Error(ctx, fmt.Errorf("failed to graceful shutdown: %w", err))
 	}
 	middleware.CountDownRunningVersion(app.GetVersion())
-	app.Info(ctx, "succeeded to server shutdown")
+	log.Info(ctx, "succeeded to server shutdown")
 }
 
 func newRouter(diContainer *di.ContainerAPI) *mux.Router {

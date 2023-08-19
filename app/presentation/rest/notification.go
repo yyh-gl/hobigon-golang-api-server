@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
@@ -37,7 +37,7 @@ func (n notification) NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Req
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyTodayTasksToSlack(r.Context())
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyTodayTasksToSlack(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyTodayTasksToSlack(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
@@ -53,7 +53,7 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 	resp := notificationResponse{}
 	notifiedNum, err := n.u.NotifyAccessRanking(r.Context())
 	if err != nil {
-		app.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyAccessRanking(): %w", err))
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyAccessRanking(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 	}
 	resp.NotifiedNum = notifiedNum

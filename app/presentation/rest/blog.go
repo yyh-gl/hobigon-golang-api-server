@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
 
@@ -51,7 +51,7 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 	blog, err := b.usecase.Create(ctx, req.Title)
 	if err != nil {
 		// TODO: 全て500エラーにしているのでより詳細なエラーを出す（重複エラーとか）
-		app.Error(ctx, fmt.Errorf("failed to create blog: %w", err))
+		log.Error(ctx, fmt.Errorf("failed to create blog: %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
@@ -91,7 +91,7 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		app.Error(ctx, fmt.Errorf("failed to show blog: %w", err))
+		log.Error(ctx, fmt.Errorf("failed to show blog: %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
@@ -133,7 +133,7 @@ func (b blog) Like(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		app.Error(ctx, fmt.Errorf("failed to like blog: %w", err))
+		log.Error(ctx, fmt.Errorf("failed to like blog: %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
