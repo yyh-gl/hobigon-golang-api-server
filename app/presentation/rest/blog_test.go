@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
 
@@ -62,6 +63,7 @@ func TestBlogHandler_Create(t *testing.T) {
 	for _, tt := range tests {
 		reqBody := strings.NewReader(`{"title":"` + tt.title + `"}`)
 		req, _ := http.NewRequest(http.MethodPost, "/api/v1/blogs", reqBody)
+		req = req.WithContext(log.SetTraceIDToContext(req.Context()))
 		rr := httptest.NewRecorder()
 		Router.ServeHTTP(rr, req)
 
@@ -124,6 +126,7 @@ func TestBlogHandler_Show(t *testing.T) {
 
 	for _, tt := range tests {
 		req, _ := http.NewRequest(http.MethodGet, "/api/v1/blogs/"+tt.title, nil)
+		req = req.WithContext(log.SetTraceIDToContext(req.Context()))
 		rr := httptest.NewRecorder()
 		Router.ServeHTTP(rr, req)
 
@@ -187,6 +190,7 @@ func TestBlogHandler_Like(t *testing.T) {
 
 	for _, tt := range tests {
 		req, _ := http.NewRequest(http.MethodPost, "/api/v1/blogs/"+tt.title+"/like", nil)
+		req = req.WithContext(log.SetTraceIDToContext(req.Context()))
 		rr := httptest.NewRecorder()
 		Router.ServeHTTP(rr, req)
 
