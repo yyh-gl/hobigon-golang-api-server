@@ -10,11 +10,11 @@ var version string
 type contextKey int
 
 const (
-	// CLIContextKey : cli.Contextをcontext.Contextにセットするさいのキー
-	CLIContextKey contextKey = iota
+	// ContextKeyCLI : cli.Contextをcontext.Contextにセットするさいのキー
+	ContextKeyCLI contextKey = iota
 
-	// TraceIdContextKey is context key for trace id
-	TraceIdContextKey
+	// ContextKeyTraceId is context key for trace id
+	ContextKeyTraceId
 )
 
 // IsDev : 実行環境がDevelopmentかどうかを確認

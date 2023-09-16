@@ -11,5 +11,5 @@ func NewTraceID() string {
 }
 
 func SetTraceIDToContext(ctx context.Context) context.Context {
-	return context.WithValue(ctx, app.TraceIdContextKey, NewTraceID())
+	return context.WithValue(ctx, app.ContextKeyTraceId, NewTraceID())
 }

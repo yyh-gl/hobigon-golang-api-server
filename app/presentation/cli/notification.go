@@ -29,7 +29,7 @@ func NewNotification(u usecase.Notification) Notification {
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CLIContextKey, c)
+	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
 		log.Error(ctx, err)
@@ -41,7 +41,7 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 // NotifyAccessRankingToSlack : アクセスランキングをSlackに通知
 func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
 	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.CLIContextKey, c)
+	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
 
 	if _, err := n.u.NotifyAccessRanking(ctx); err != nil {
 		log.Error(ctx, err)
