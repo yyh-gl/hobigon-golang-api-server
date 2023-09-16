@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"net/http"
+
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 type Path = string
