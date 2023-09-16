@@ -9,8 +9,13 @@ var version string
 // contextKey : コンテキストにセットするさいのキー用の型
 type contextKey int
 
-// CLIContextKey : cli.Contextをcontext.Contextにセットするさいのキー
-const CLIContextKey contextKey = iota
+const (
+	// CLIContextKey : cli.Contextをcontext.Contextにセットするさいのキー
+	CLIContextKey contextKey = iota
+
+	// TraceIdContextKey is context key for trace id
+	TraceIdContextKey
+)
 
 // IsDev : 実行環境がDevelopmentかどうかを確認
 func IsDev() bool {

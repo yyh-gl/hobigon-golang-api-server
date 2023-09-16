@@ -18,10 +18,17 @@ func NewLogger() {
 }
 
 func Info(ctx context.Context, msg string) {
+	traceID := ctx.Value(app.TraceIdContextKey)
+	// The only time traceID is nil is in the server start log.
+	if traceID == nil {
+		traceID = ""
+	}
+
 	logger.InfoContext(
 		ctx,
 		msg,
 		slog.String("version", app.GetVersion()),
+		slog.String("trace_id", traceID.(string)),
 	)
 }
 
@@ -35,6 +42,8 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 	logger.InfoContext(
 		ctx,
 		"request and response log",
+		slog.String("version", app.GetVersion()),
+		slog.String("trace_id", ctx.Value(app.TraceIdContextKey).(string)),
 		slog.Group("request",
 			slog.String("method", req.Method),
 			slog.String("host", req.Host),
@@ -48,7 +57,6 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 			slog.Int("status_code", resp.StatusCode),
 			slog.String("body", resp.Body.String()),
 		),
-		slog.String("version", app.GetVersion()),
 	)
 }
 
@@ -57,5 +65,5 @@ func Error(ctx context.Context, err error) {
 		ctx,
 		err.Error(),
 		slog.String("version", app.GetVersion()),
-	)
+		slog.String("trace_id", ctx.Value(app.TraceIdContextKey).(string)))
 }

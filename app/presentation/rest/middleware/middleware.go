@@ -1,6 +1,9 @@
 package middleware
 
-import "net/http"
+import (
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
+	"net/http"
+)
 
 type Path = string
 
@@ -10,6 +13,7 @@ func CreateHandlerFuncWithMiddleware(h http.HandlerFunc, path Path, handlerName 
 	h = InstrumentPrometheus(h, path, handlerName)
 
 	return path, func(w http.ResponseWriter, r *http.Request) {
+		r = r.WithContext(log.SetTraceIDToContext(r.Context()))
 		h.ServeHTTP(w, r)
 	}
 }
