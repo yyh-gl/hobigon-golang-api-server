@@ -95,6 +95,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
 
   deploy_to_k8s:
+    name: Deploy to k8s
     runs-on: ubuntu-latest
     needs: [ create_release_note, publish_container_image_specified_version ]
     steps:
