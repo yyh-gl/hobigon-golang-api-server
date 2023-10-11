@@ -13,9 +13,11 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mitchellh/mapstructure v1.3.2
 	github.com/prometheus/client_golang v1.12.2
+	github.com/rs/xid v1.5.0
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.4.5
 	golang.org/x/image v0.9.0
+	golang.org/x/net v0.17.0
 )
 
 require (
@@ -37,12 +39,10 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/rs/xid v1.5.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	moul.io/http2curl v1.0.0 // indirect
