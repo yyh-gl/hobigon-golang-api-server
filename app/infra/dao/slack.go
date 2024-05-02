@@ -12,6 +12,8 @@ import (
 	modelT "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
+// FIXME: It's strange that this file is under the dao package, so fix it.
+
 type slack struct{}
 
 // NewSlack : Slack用のゲートウェイを取得
