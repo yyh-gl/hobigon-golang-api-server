@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   rest:
     build:
@@ -10,7 +9,7 @@ services:
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "air -c .air.rest.toml"]
+    command: [ "sh", "-c", "air -c .air.rest.toml" ]
     environment:
       APP_ENV: "develop"
       MYSQL_HOST: "db"
@@ -34,7 +33,7 @@ services:
     volumes:
       - .:/go/src/github.com/yyh-gl/hobigon-golang-api-server
     working_dir: /go/src/github.com/yyh-gl/hobigon-golang-api-server
-    command: ["sh", "-c", "air -c .air.graphql.toml"]
+    command: [ "sh", "-c", "air -c .air.graphql.toml" ]
     environment:
       APP_ENV: "develop"
       MYSQL_HOST: "db"
