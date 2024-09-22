@@ -3,15 +3,18 @@ package usecase
 import (
 	"context"
 	"fmt"
-
+	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
+	"strings"
 )
 
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
 	NotifyAccessRanking(ctx context.Context) (int, error)
+	NotifyPokemonEvent(ctx context.Context) (int, error)
 }
 
 type notification struct {
@@ -69,4 +72,64 @@ func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
 	}
 
 	return notifiedNum, nil
+}
+
+// NotifyPokemonEvent : Notify event notifications about Pokemon card to Slack.
+func (n notification) NotifyPokemonEvent(ctx context.Context) (int, error) {
+	notifications, err := crawlNotifications()
+	if err != nil {
+		return 0, err
+	}
+
+	events := extractNewEventNotifications(notifications)
+	eventsNum := len(events)
+	if eventsNum == 0 {
+		return 0, nil
+	}
+
+	if err := n.sg.SendPokemonEvents(ctx, events); err != nil {
+		return 0, err
+	}
+
+	return eventsNum, nil
+}
+
+func crawlNotifications() ([]pokemon.Notification, error) {
+	c := colly.NewCollector()
+
+	var events []pokemon.Notification
+	c.OnHTML("li.List_item a div.List_body", func(e *colly.HTMLElement) {
+		strs := strings.Split(e.Text, "\n")
+		events = append(events, pokemon.NewNotification(
+			strings.TrimSpace(strs[1]),
+			strings.TrimSpace(strs[2]),
+			strings.TrimSpace(strs[3]),
+		))
+	})
+
+	if err := c.Visit("https://www.pokemon-card.com/info"); err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
+
+func extractNewEventNotifications(notifications []pokemon.Notification) []pokemon.Notification {
+	existenceMap := make(map[string]struct{})
+	events := make([]pokemon.Notification, 0, len(notifications))
+	for _, n := range notifications {
+		if !n.IsEventCategory() {
+			continue
+		}
+
+		if _, ok := existenceMap[n.Title()]; ok {
+			continue
+		}
+
+		if n.IsReceivedInToday() {
+			events = append(events, n)
+			existenceMap[n.Title()] = struct{}{}
+		}
+	}
+	return events
 }

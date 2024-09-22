@@ -12,6 +12,7 @@ import (
 type Notification interface {
 	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.Request)
+	NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.Request)
 }
 
 type notification struct {
@@ -54,6 +55,21 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 	notifiedNum, err := n.u.NotifyAccessRanking(r.Context())
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyAccessRanking(): %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+	}
+	resp.NotifiedNum = notifiedNum
+
+	DoResponse(ctx, w, resp, http.StatusOK)
+}
+
+// NotifyPokemonEventToSlack : Notify event notifications about Pokemon card to Slack.
+func (n notification) NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	resp := notificationResponse{}
+	notifiedNum, err := n.u.NotifyPokemonEvent(r.Context())
+	if err != nil {
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyPokemonEvent(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 	}
 	resp.NotifiedNum = notifiedNum
