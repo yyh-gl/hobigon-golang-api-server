@@ -27,6 +27,6 @@ func (n Notification) IsEventCategory() bool {
 }
 
 func (n Notification) IsReceivedInToday() bool {
-	today := time.Now().Add(-48 * time.Hour).Format("2006.1.2")
+	today := time.Now().Format("2006.1.2")
 	return n.date == today
 }
