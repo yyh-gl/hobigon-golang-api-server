@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"errors"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 
 	slackWebHook "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
@@ -11,6 +12,8 @@ import (
 	modelS "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/slack"
 	modelT "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
+
+// TODO: It's strange that this file is under the dao package, so fix it.
 
 type slack struct{}
 
@@ -77,6 +80,24 @@ func (s slack) SendRanking(ctx context.Context, ranking string) error {
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
 		Text:     ranking,
+	}
+
+	if err := s.send(ctx, data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s slack) SendPokemonEvents(ctx context.Context, events []pokemon.Notification) error {
+	text := ""
+	for _, e := range events {
+		text += "・" + e.Title() + "\n"
+	}
+
+	data := modelS.Slack{
+		Username: "まりお",
+		Channel:  "03_pokemon",
+		Text:     text,
 	}
 
 	if err := s.send(ctx, data); err != nil {
