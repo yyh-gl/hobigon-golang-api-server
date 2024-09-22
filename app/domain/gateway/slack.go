@@ -2,9 +2,9 @@ package gateway
 
 import (
 	"context"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 

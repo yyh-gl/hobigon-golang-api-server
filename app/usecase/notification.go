@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
-	"strings"
 )
 
 // Notification : Notification用ユースケースのインターフェース
