@@ -17,7 +17,7 @@ require (
 	github.com/rs/xid v1.5.0
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.4.5
-	golang.org/x/image v0.9.0
+	golang.org/x/image v0.10.0
 	golang.org/x/net v0.17.0
 )
 
