@@ -3,12 +3,12 @@ package dao
 import (
 	"context"
 	"errors"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 
 	slackWebHook "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	modelB "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 	modelS "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/slack"
 	modelT "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
