@@ -17,7 +17,7 @@ require (
 	github.com/rs/xid v1.5.0
 	github.com/urfave/cli v1.22.2
 	github.com/vektah/gqlparser/v2 v2.4.5
-	golang.org/x/image v0.10.0
+	golang.org/x/image v0.18.0
 	golang.org/x/net v0.23.0
 )
 
@@ -54,7 +54,7 @@ require (
 	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	moul.io/http2curl v1.0.0 // indirect
