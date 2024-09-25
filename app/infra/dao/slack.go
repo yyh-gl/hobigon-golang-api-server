@@ -90,8 +90,12 @@ func (s slack) SendRanking(ctx context.Context, ranking string) error {
 
 func (s slack) SendPokemonEvents(ctx context.Context, events []pokemon.Notification) error {
 	text := ""
-	for _, e := range events {
-		text += "・" + e.Title() + "\n"
+	if len(events) == 0 {
+		text = "新しいイベント情報はありません。"
+	} else {
+		for _, e := range events {
+			text += "・" + e.Title() + "\n"
+		}
 	}
 
 	data := modelS.Slack{

@@ -83,16 +83,11 @@ func (n notification) NotifyPokemonEvent(ctx context.Context) (int, error) {
 	}
 
 	events := extractNewEventNotifications(notifications)
-	eventsNum := len(events)
-	if eventsNum == 0 {
-		return 0, nil
-	}
-
 	if err := n.sg.SendPokemonEvents(ctx, events); err != nil {
 		return 0, err
 	}
 
-	return eventsNum, nil
+	return len(events), nil
 }
 
 func crawlNotifications() ([]pokemon.Notification, error) {
