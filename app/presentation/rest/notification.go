@@ -63,7 +63,7 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 	DoResponse(ctx, w, resp, http.StatusOK)
 }
 
-// NotifyPokemonEventToSlack : Notify event notifications about Pokemon card to Slack.
+// NotifyPokemonEventToSlack : Notify event notifications about Pokémon card to Slack.
 func (n notification) NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
