@@ -56,6 +56,7 @@ func (n notification) NotifyAccessRankingToSlack(w http.ResponseWriter, r *http.
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyAccessRanking(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+		return
 	}
 	resp.NotifiedNum = notifiedNum
 
@@ -71,6 +72,7 @@ func (n notification) NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.R
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyPokemonEvent(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+		return
 	}
 	resp.NotifiedNum = notifiedNum
 

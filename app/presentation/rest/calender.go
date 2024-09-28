@@ -62,6 +62,7 @@ func (c calendar) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to http.Request.FormFile(): %w", err))
 		DoResponse(ctx, w, err, http.StatusInternalServerError)
+		return
 	}
 	defer func() { _ = baseFile.Close() }()
 
