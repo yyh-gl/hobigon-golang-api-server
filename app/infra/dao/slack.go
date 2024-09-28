@@ -89,9 +89,9 @@ func (s slack) SendRanking(ctx context.Context, ranking string) error {
 }
 
 func (s slack) SendPokemonEvents(ctx context.Context, events []pokemon.Notification) error {
-	text := ""
+	text := "<https://www.pokemon-card.com/info/#event|ポケカイベント通知>：\n"
 	if len(events) == 0 {
-		text = "新しいイベント情報はありません。"
+		text += "新しいイベント情報はありません。"
 	} else {
 		for _, e := range events {
 			text += "・" + e.Title() + "\n"
