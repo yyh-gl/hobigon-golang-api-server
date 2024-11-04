@@ -30,3 +30,8 @@ func (n Notification) IsReceivedInToday() bool {
 	today := time.Now().Format("2006.1.2")
 	return n.date == today
 }
+
+func (n Notification) IsReceivedInYesterday() bool {
+	yesterday := time.Now().Add(-24 * time.Hour).Format("2006.1.2")
+	return n.date == yesterday
+}

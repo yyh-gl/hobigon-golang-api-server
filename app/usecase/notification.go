@@ -122,7 +122,7 @@ func extractNewEventNotifications(notifications []pokemon.Notification) []pokemo
 			continue
 		}
 
-		if n.IsReceivedInToday() {
+		if n.IsReceivedInToday() || n.IsReceivedInYesterday() {
 			events = append(events, n)
 			existenceMap[n.Title()] = struct{}{}
 		}
