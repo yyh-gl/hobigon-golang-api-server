@@ -94,7 +94,11 @@ func (s slack) SendPokemonEvents(ctx context.Context, events []pokemon.Notificat
 		text += "新しいイベント情報はありません。"
 	} else {
 		for _, e := range events {
-			text += "・" + e.Title() + "\n"
+			text += "・" + e.Title()
+			if e.IsImportantEvent() {
+				text += ":star2:"
+			}
+			text += "\n"
 		}
 	}
 
