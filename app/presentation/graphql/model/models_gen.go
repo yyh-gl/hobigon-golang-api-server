@@ -7,6 +7,12 @@ type Blog struct {
 	Count int    `json:"count"`
 }
 
+type Mutation struct {
+}
+
 type NewBlog struct {
 	Title string `json:"title"`
+}
+
+type Query struct {
 }
