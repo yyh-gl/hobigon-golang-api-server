@@ -122,40 +122,6 @@ jobs:
         with:
           args: set image -n hobigon deployment/hobigon-api-deployment hobigon-api=${{ env.TAG }}
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version-file: 'go.mod'
-      - uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Set VERSION environment
-        env:
-          REF: ${{ github.ref }}
-        run: echo "VERSION=${REF##*/}" >> $GITHUB_ENV
-      - name: Build
-        run: make build-all version=${{ env.VERSION }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binaries
-          path: |
-            ./cmd/rest/bin/api-server
-            ./cmd/cli/bin/hobi
-            ./cmd/graphql/bin/graphql-server
-          retention-days: 1
-          if-no-files-found: error
-
   success_notification:
     name: Success notification
     needs: [ publish_container_image_latest_version, deploy_to_k8s ]
