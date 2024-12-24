@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
@@ -67,7 +66,6 @@ func (b blog) Create(w http.ResponseWriter, r *http.Request) {
 
 // Show : ブログ情報を1件取得
 func (b blog) Show(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
 	type (
 		request struct {
 			Title string `validate:"required,max=50"`
@@ -80,14 +78,12 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	fmt.Println("time1: ", time.Since(start).Nanoseconds())
 	var req request
 	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
 		DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println("time2: ", time.Since(start).Nanoseconds())
 	blog, err := b.usecase.Show(ctx, req.Title)
 	if err != nil {
 		if errors.Is(err, usecase.ErrBlogNotFound) {
@@ -99,8 +95,6 @@ func (b blog) Show(w http.ResponseWriter, r *http.Request) {
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("time3: ", time.Since(start).Nanoseconds())
 
 	resp := response{
 		// 簡略化のためにドメインモデルを直接参照
