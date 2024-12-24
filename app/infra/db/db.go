@@ -1,7 +1,6 @@
 package db
 
 import (
-	"crypto/tls"
 	"os"
 	"strings"
 	"time"
@@ -45,17 +44,17 @@ func newMySQLConnect() *DB {
 		Collation: "utf8mb4_unicode_ci",
 	}
 
-	if app.IsPrd() {
-		if err := mysql.RegisterTLSConfig("tidb", &tls.Config{
-			MinVersion: tls.VersionTLS12,
-			ServerName: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
-		}); err != nil {
-			panic(err.Error())
-		}
-
-		conf.TLSConfig = "tidb"
-		conf.AllowNativePasswords = true
-	}
+	//if app.IsPrd() {
+	//	if err := mysql.RegisterTLSConfig("tidb", &tls.Config{
+	//		MinVersion: tls.VersionTLS12,
+	//		ServerName: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
+	//	}); err != nil {
+	//		panic(err.Error())
+	//	}
+	//
+	//	conf.TLSConfig = "tidb"
+	//	conf.AllowNativePasswords = true
+	//}
 
 CONNECT:
 
