@@ -43,10 +43,15 @@ var (
 		Name: "running_version",
 		Help: "A gauge of running version.",
 	}, []string{"version"})
+
+	requestCountPerPath = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "request_count_per_path",
+		Help: "A gauge of request count per path.",
+	}, []string{"path"})
 )
 
 func init() {
-	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion)
+	prometheus.MustRegister(inFlight, counter, duration, responseSize, runningVersion, requestCountPerPath)
 }
 
 func InstrumentPrometheus(h http.HandlerFunc, path Path, handlerName string) http.HandlerFunc {
@@ -65,4 +70,8 @@ func CountUpRunningVersion(version string) {
 
 func CountDownRunningVersion(version string) {
 	runningVersion.With(prometheus.Labels{"version": version}).Dec()
+}
+
+func CountUpRequestCountPerPath(path string) {
+	requestCountPerPath.With(prometheus.Labels{"path": path}).Inc()
 }

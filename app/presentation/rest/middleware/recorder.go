@@ -11,6 +11,8 @@ func Recorder(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rec := log.NewResponseRecorder(w)
 
+		CountUpRequestCountPerPath(r.URL.Path)
+
 		h.ServeHTTP(&rec, r)
 
 		log.InfoRequestAndResponse(r.Context(), *r, rec)
