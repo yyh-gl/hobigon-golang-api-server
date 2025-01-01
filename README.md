@@ -28,8 +28,8 @@ until [This commit](https://github.com/yyh-gl/hobigon-golang-api-server/tree/b0c
 ### Features
 
 - Slack Notification
-    - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
     - Today's task list
+    - Pokemon Event list
 - [My Blog](https://yyh-gl.github.io/tech-blog/)
     - Create post data
     - Get post data
@@ -43,7 +43,6 @@ Hobigon use [urfave/cli](https://github.com/urfave/cli).
 ### Features
 
 - Slack Notification
-    - Access ranking of [My Blog](https://yyh-gl.github.io/tech-blog/)'s posts.
     - Today's task list
 
 ## GraphQL
