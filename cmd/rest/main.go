@@ -52,10 +52,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx); err != nil {
-		log.Error(ctx, fmt.Errorf("failed to graceful shutdown: %w", err))
+		log.Error(ctx, fmt.Errorf("graceful shutdown is failed: %w", err))
 	}
 	middleware.CountDownRunningVersion(app.GetVersion())
-	log.Info(ctx, "succeeded to server shutdown")
+	log.Info(ctx, "server shutdown is succeeded")
 }
 
 func newRouter(diContainer *di.ContainerAPI) *mux.Router {
