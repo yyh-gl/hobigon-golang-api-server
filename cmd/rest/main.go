@@ -111,15 +111,6 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 		),
 	).Methods(http.MethodPost)
 
-	// Calendar handlers
-	r.HandleFunc(
-		middleware.CreateHandlerFuncWithMiddleware(
-			diContainer.HandlerCalendar.Create,
-			"/api/v1/calendars",
-			"calendar_create",
-		),
-	).Methods(http.MethodPost)
-
 	// Notification handlers
 	r.HandleFunc(
 		middleware.CreateHandlerFuncWithMiddleware(
