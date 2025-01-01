@@ -8,13 +8,11 @@ import (
 	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/analysis"
 )
 
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
-	NotifyAccessRanking(ctx context.Context) (int, error)
 	NotifyPokemonEvent(ctx context.Context) (int, error)
 }
 
@@ -54,24 +52,6 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 	}
 
 	notifiedNum := len(cautionAndToDoTasks) + len(deadTasks)
-	return notifiedNum, nil
-}
-
-// NotifyAccessRanking : アクセスランキングをSlackに通知
-func (n notification) NotifyAccessRanking(ctx context.Context) (int, error) {
-	// アクセスランキングの結果を取得
-	// NOTE: シンプルさのためにinfraを直参照
-	rankingMsg, notifiedNum, err := analysis.GetAccessRanking(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("infra.GetAccessRanking()内でのエラー: %w", err)
-	}
-
-	// アクセスランキングの結果を Slack に通知
-	err = n.sg.SendRanking(ctx, rankingMsg)
-	if err != nil {
-		return 0, fmt.Errorf("slackGateway.SendRanking()内でのエラー: %w", err)
-	}
-
 	return notifiedNum, nil
 }
 

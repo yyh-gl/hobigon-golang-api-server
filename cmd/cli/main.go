@@ -29,12 +29,6 @@ func main() {
 			Usage:   "Notify the today's tasks to Slack",
 			Action:  diContainer.HandlerNotification.NotifyTodayTasksToSlack,
 		},
-		{
-			Name:    "notify-access-ranking",
-			Aliases: []string{"nar"},
-			Usage:   "Notify the access ranking to Slack",
-			Action:  diContainer.HandlerNotification.NotifyAccessRankingToSlack,
-		},
 	}
 
 	if err := cliApp.Run(os.Args); err != nil {

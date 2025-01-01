@@ -12,7 +12,6 @@ import (
 // Notification : Notification用CLIサービスのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(c *cli.Context) error
-	NotifyAccessRankingToSlack(c *cli.Context) error
 }
 
 type notification struct {
@@ -32,18 +31,6 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
-		log.Error(ctx, err)
-		return err
-	}
-	return nil
-}
-
-// NotifyAccessRankingToSlack : アクセスランキングをSlackに通知
-func (n notification) NotifyAccessRankingToSlack(c *cli.Context) error {
-	ctx := context.TODO()
-	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
-
-	if _, err := n.u.NotifyAccessRanking(ctx); err != nil {
 		log.Error(ctx, err)
 		return err
 	}

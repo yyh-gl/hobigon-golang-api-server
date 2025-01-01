@@ -131,14 +131,6 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 
 	r.HandleFunc(
 		middleware.CreateHandlerFuncWithMiddleware(
-			diContainer.HandlerNotification.NotifyAccessRankingToSlack,
-			"/api/v1/notifications/slack/rankings/access",
-			"access_ranking_notification_send",
-		),
-	).Methods(http.MethodPost)
-
-	r.HandleFunc(
-		middleware.CreateHandlerFuncWithMiddleware(
 			diContainer.HandlerNotification.NotifyPokemonEventToSlack,
 			"/api/v1/notifications/slack/pokemon/events",
 			"pokemon_events_notification_send",

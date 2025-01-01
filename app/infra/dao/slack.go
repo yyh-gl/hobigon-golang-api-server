@@ -74,20 +74,6 @@ func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) error {
 	return nil
 }
 
-// SendRanking : Slack にアクセスラキングを送信
-func (s slack) SendRanking(ctx context.Context, ranking string) error {
-	data := modelS.Slack{
-		Username: "くりぼー",
-		Channel:  "51_tech_blog",
-		Text:     ranking,
-	}
-
-	if err := s.send(ctx, data); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s slack) SendPokemonEvents(ctx context.Context, events []pokemon.Notification) error {
 	text := "<https://www.pokemon-card.com/info/#event|ポケカイベント通知>：\n"
 	if len(events) == 0 {
