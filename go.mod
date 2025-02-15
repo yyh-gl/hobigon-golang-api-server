@@ -3,7 +3,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 go 1.23
 
 require (
-	github.com/99designs/gqlgen v0.17.64
+	github.com/99designs/gqlgen v0.17.65
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.24.0
 	github.com/go-sql-driver/mysql v1.8.1
@@ -65,6 +65,6 @@ require (
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )
