@@ -1,9 +1,6 @@
 run:
   tests: true
   timeout: 5m
-  skip-files:
-    # FIXME: I don't know why this file (golang/go's file) is target. I skip this file in temporary.
-    - sort.go
 
 linters:
   disable-all: true
