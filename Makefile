@@ -24,7 +24,7 @@ build: ## build target=[rest, cli, graphql]
 	
 	@if [ ${target} = cli ]; then \
 		echo 'build cli'; \
-		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X github.com/yyh-gl/hobigon-golang-api-server/app.version=$(version)' -o ./cmd/cli/bin/hobi ./cmd/cli; \
+		GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-X github.com/yyh-gl/hobigon-golang-api-server/app.version=$(version)' -tags timetzdata -o ./cmd/cli/bin/hobi ./cmd/cli; \
 	fi
 	
 	@if [ ${target} = graphql ]; then \
