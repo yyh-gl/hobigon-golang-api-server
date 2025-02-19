@@ -57,4 +57,3 @@ test: ## go test
 .PHONY: lint
 lint: ## lint
 	docker compose exec -T rest golangci-lint run
-
