@@ -18,9 +18,7 @@ require (
 	github.com/prometheus/client_golang v1.21.1
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.16
-	github.com/urfave/cli/v2 v2.27.6
 	github.com/vektah/gqlparser/v2 v2.5.23
-	golang.org/x/image v0.25.0
 	golang.org/x/net v0.37.0
 )
 
@@ -50,7 +48,6 @@ require (
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/parnurzeal/gorequest v0.3.0 // indirect
@@ -68,5 +65,4 @@ require (
 	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
-	moul.io/http2curl v1.0.0 // indirect
 )
