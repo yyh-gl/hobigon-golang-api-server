@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## helpを表示
-	@echo '  see: https://git.dmm.com/dmm-app/pointclub-api'
+	@echo '  see: https://github.com/yyh-gl/hobigon-golang-api-server'
 	@echo ''
 	@grep -E '^[%/0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo ''
