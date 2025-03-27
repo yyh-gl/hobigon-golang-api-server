@@ -9,7 +9,7 @@ require (
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/go-sql-driver/mysql v1.9.1
-	github.com/gocolly/colly/v2 v2.1.0
+	github.com/gocolly/colly/v2 v2.2.0
 	github.com/google/wire v0.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
@@ -29,9 +29,10 @@ require (
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/antchfx/htmlquery v1.3.4 // indirect
-	github.com/antchfx/xmlquery v1.4.3 // indirect
+	github.com/antchfx/xmlquery v1.4.4 // indirect
 	github.com/antchfx/xpath v1.3.3 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bits-and-blooms/bitset v1.22.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/elazarl/goproxy v0.0.0-20230731152917-f99041a5c027 // indirect
@@ -51,6 +52,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/nlnwa/whatwg-url v0.6.1 // indirect
 	github.com/parnurzeal/gorequest v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
@@ -65,5 +67,5 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.36.5 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
 )
