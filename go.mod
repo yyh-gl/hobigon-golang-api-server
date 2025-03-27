@@ -20,7 +20,7 @@ require (
 	github.com/urfave/cli v1.22.16
 	github.com/urfave/cli/v2 v2.27.6
 	github.com/vektah/gqlparser/v2 v2.5.23
-	golang.org/x/net v0.37.0
+	golang.org/x/net v0.38.0
 )
 
 require (
