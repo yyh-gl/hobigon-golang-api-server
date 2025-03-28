@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/99designs/gqlgen v0.17.70
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
-	github.com/go-playground/validator/v10 v10.25.0
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-sql-driver/mysql v1.9.1
 	github.com/gocolly/colly/v2 v2.2.0
 	github.com/google/wire v0.6.0
