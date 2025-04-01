@@ -2,7 +2,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 
 go 1.23.0
 
-toolchain go1.24.1
+toolchain go1.24.2
 
 require (
 	github.com/99designs/gqlgen v0.17.70
@@ -13,7 +13,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
-	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/mattn/go-sqlite3 v1.14.25
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/prometheus/client_golang v1.21.1
 	github.com/rs/xid v1.6.0
