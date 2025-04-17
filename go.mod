@@ -19,7 +19,7 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.16
 	github.com/urfave/cli/v2 v2.27.6
-	github.com/vektah/gqlparser/v2 v2.5.24
+	github.com/vektah/gqlparser/v2 v2.5.25
 	golang.org/x/net v0.39.0
 )
 
