@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.24.2
 
 require (
-	github.com/99designs/gqlgen v0.17.70
+	github.com/99designs/gqlgen v0.17.73
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-sql-driver/mysql v1.9.2
@@ -19,13 +19,13 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.16
 	github.com/urfave/cli/v2 v2.27.6
-	github.com/vektah/gqlparser/v2 v2.5.25
-	golang.org/x/net v0.39.0
+	github.com/vektah/gqlparser/v2 v2.5.26
+	golang.org/x/net v0.40.0
 )
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/PuerkitoBio/goquery v1.10.2 // indirect
+	github.com/PuerkitoBio/goquery v1.10.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/antchfx/htmlquery v1.3.4 // indirect
@@ -63,9 +63,9 @@ require (
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
