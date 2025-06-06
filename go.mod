@@ -2,7 +2,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 
 go 1.23.0
 
-toolchain go1.24.3
+toolchain go1.24.4
 
 require (
 	github.com/99designs/gqlgen v0.17.74
@@ -19,7 +19,7 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.16
 	github.com/vektah/gqlparser/v2 v2.5.27
-	golang.org/x/net v0.40.0
+	golang.org/x/net v0.41.0
 )
 
 require (
@@ -61,9 +61,9 @@ require (
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
