@@ -13,7 +13,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
-	github.com/mattn/go-sqlite3 v1.14.30
+	github.com/mattn/go-sqlite3 v1.14.31
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/prometheus/client_golang v1.23.0
 	github.com/rs/xid v1.6.0
