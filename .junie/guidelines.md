@@ -79,7 +79,7 @@ Implements application-specific business rules and coordinates the flow of data 
 - CLI interface for administrative tasks
 
 ## Technology Stack
-- Go 1.23+
+- Go 1.25+
 - Kubernetes for deployment
 - Docker for containerization
 - GraphQL for flexible API queries
