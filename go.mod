@@ -1,6 +1,6 @@
 module github.com/yyh-gl/hobigon-golang-api-server
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/99designs/gqlgen v0.17.87
@@ -18,7 +18,7 @@ require (
 	github.com/urfave/cli v1.22.17
 	github.com/urfave/cli/v3 v3.6.2
 	github.com/vektah/gqlparser/v2 v2.5.32
-	golang.org/x/net v0.50.0
+	golang.org/x/net v0.51.0
 )
 
 require (
