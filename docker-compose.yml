@@ -48,7 +48,7 @@ services:
       - db
   
   db:
-    image: mysql:8
+    image: mysql:9
     ports:
       - "13306:3306"
     volumes:
