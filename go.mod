@@ -16,13 +16,12 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
-	github.com/urfave/cli/v3 v3.7.0
 	github.com/vektah/gqlparser/v2 v2.5.32
 	golang.org/x/net v0.51.0
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
+	filippo.io/edwards25519 v1.1.1 // indirect
 	github.com/PuerkitoBio/goquery v1.11.0 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
