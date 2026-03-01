@@ -16,7 +16,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
-	github.com/urfave/cli/v3 v3.6.2
+	github.com/urfave/cli/v3 v3.7.0
 	github.com/vektah/gqlparser/v2 v2.5.32
 	golang.org/x/net v0.51.0
 )
