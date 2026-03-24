@@ -3,7 +3,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 go 1.25.0
 
 require (
-	github.com/99designs/gqlgen v0.17.88
+	github.com/99designs/gqlgen v0.17.89
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/go-sql-driver/mysql v1.9.3
