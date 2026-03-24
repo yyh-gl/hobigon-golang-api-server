@@ -42,7 +42,7 @@ jobs:
       - name: Set TAG environment
         run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ secrets.CONTAINER_REGISTORY }}
           username: ${{ github.repository_owner }}
@@ -76,7 +76,7 @@ jobs:
       - name: Set TAG environment
         run: echo "TAG=${{ secrets.CONTAINER_REGISTORY }}/${{ github.repository }}/rest:latest" >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ secrets.CONTAINER_REGISTORY }}
           username: ${{ github.repository_owner }}
