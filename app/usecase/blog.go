@@ -78,7 +78,7 @@ func (b blog) Like(ctx context.Context, title string, isSilent bool) (model.Blog
 	// Slack に通知
 	if !isSilent {
 		go func() {
-			_ = b.sg.SendLikeNotify(ctx, blog)
+			_ = b.sg.SendLikeNotification(ctx, blog)
 		}()
 	}
 

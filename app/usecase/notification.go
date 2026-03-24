@@ -47,8 +47,8 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		return 0, fmt.Errorf("taskGateway.FetchDeadTasks()内でのエラー: %w", err)
 	}
 
-	if err := n.sg.SendTask(ctx, cautionAndToDoTasks, deadTasks); err != nil {
-		return 0, fmt.Errorf("slackGateway.SendTask()内でのエラー: %w", err)
+	if err := n.sg.SendTasks(ctx, cautionAndToDoTasks, deadTasks); err != nil {
+		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
 	}
 
 	notifiedNum := len(cautionAndToDoTasks) + len(deadTasks)

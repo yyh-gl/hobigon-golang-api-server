@@ -45,8 +45,8 @@ func (s slack) send(ctx context.Context, data modelS.Slack) error {
 	return nil
 }
 
-// SendTask : Slack にタスクを送信
-func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTasks []modelT.Task) error {
+// SendTasks : Slack にタスクを送信
+func (s slack) SendTasks(ctx context.Context, todayTasks []modelT.Task, dueOverTasks []modelT.Task) error {
 	data := modelS.Slack{
 		Username: "まりお",
 		Channel:  "00_today_tasks",
@@ -60,8 +60,8 @@ func (s slack) SendTask(ctx context.Context, todayTasks []modelT.Task, dueOverTa
 	return nil
 }
 
-// SendLikeNotify : Slack にいいね（ブログ）通知を送信
-func (s slack) SendLikeNotify(ctx context.Context, blog modelB.Blog) error {
+// SendLikeNotification : Slack にいいね（ブログ）通知を送信
+func (s slack) SendLikeNotification(ctx context.Context, blog modelB.Blog) error {
 	data := modelS.Slack{
 		Username: "くりぼー",
 		Channel:  "51_tech_blog",
