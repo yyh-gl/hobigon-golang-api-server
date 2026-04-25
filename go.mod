@@ -17,7 +17,7 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
 	github.com/urfave/cli/v3 v3.8.0
-	github.com/vektah/gqlparser/v2 v2.5.32
+	github.com/vektah/gqlparser/v2 v2.5.33
 	golang.org/x/net v0.53.0
 )
 
