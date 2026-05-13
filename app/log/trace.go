@@ -1,9 +1,10 @@
 package log
 
 import (
+	"context"
+
 	"github.com/rs/xid"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
-	"golang.org/x/net/context"
 )
 
 func NewTraceID() string {
