@@ -13,9 +13,8 @@ RUN apk add --no-cache \
     git \
     make \
     gcc \
-    libc-dev \
-    curl
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+    libc-dev
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 RUN go install github.com/air-verse/air@latest
 RUN go install github.com/google/wire/cmd/wire@latest
 RUN make build target=rest version=$VERSION
