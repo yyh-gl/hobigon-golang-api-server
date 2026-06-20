@@ -8,6 +8,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 // ErrBlogNotFound : 該当Blogが存在しないエラー
@@ -75,10 +76,18 @@ func (b blog) Like(ctx context.Context, title string, isSilent bool) (model.Blog
 		return model.Blog{}, fmt.Errorf("blogRepository.Update()内でのエラー: %w", err)
 	}
 
-	// Slack に通知
+	// Slack に通知（リクエスト完了後も継続させるため context の cancel を切り離す）
 	if !isSilent {
+		notifyCtx := context.WithoutCancel(ctx)
 		go func() {
-			_ = b.sg.SendLikeNotification(ctx, blog)
+			defer func() {
+				if r := recover(); r != nil {
+					log.Error(notifyCtx, fmt.Errorf("panic in SendLikeNotification: %v", r))
+				}
+			}()
+			if err := b.sg.SendLikeNotification(notifyCtx, blog); err != nil {
+				log.Error(notifyCtx, fmt.Errorf("failed to SendLikeNotification: %w", err))
+			}
 		}()
 	}
 
