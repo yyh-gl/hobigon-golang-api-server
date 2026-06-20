@@ -17,6 +17,8 @@ import (
 
 const defaultPageSize = 100
 
+var notionHTTPClient = &http.Client{Timeout: 10 * time.Second}
+
 type task struct {
 	NotionAPIToken   string
 	NotionDatabaseID string
@@ -30,11 +32,44 @@ func NewTask() gateway.Task {
 	}
 }
 
+func (t task) fetchTasks(ctx context.Context, body notion.FetchTasksRequestBody) (model.List, error) {
+	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
+
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
+	req.Header.Add("Notion-Version", "2022-06-28")
+
+	res, err := notionHTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = res.Body.Close() }()
+
+	resp, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var taskDTO notion.NotionTaskDTO
+	if err := json.Unmarshal(resp, &taskDTO); err != nil {
+		return nil, err
+	}
+	return taskDTO.ToTaskListDomainModel(), nil
+}
+
 // FetchCautionAndToDoTasks : 今後1週間以内に期限が迫っているタスクと『To Do』レーンにあるタスクを取得
 // FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (t task) FetchCautionAndToDoTasks(ctx context.Context) (model.List, error) {
-	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
-
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
 		Filter: notion.OrFilter{
@@ -70,41 +105,10 @@ func (t task) FetchCautionAndToDoTasks(ctx context.Context) (model.List, error) 
 			{Property: "Date Created", Direction: "ascending"},
 		},
 	}
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	payload := bytes.NewReader(bodyBytes)
-	req, err := http.NewRequest(http.MethodPost, url, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
-	req.Header.Add("Notion-Version", "2022-06-28")
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = res.Body.Close() }()
-	resp, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var taskDTO notion.NotionTaskDTO
-	if err := json.Unmarshal(resp, &taskDTO); err != nil {
-		return nil, err
-	}
-	return taskDTO.ToTaskListDomainModel(), nil
+	return t.fetchTasks(ctx, body)
 }
 
 func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
-	url := fmt.Sprintf("https://api.notion.com/v1/databases/%s/query", t.NotionDatabaseID)
-
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
 		Filter: notion.AndFilter{
@@ -126,34 +130,5 @@ func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
 			{Property: "Date Created", Direction: "ascending"},
 		},
 	}
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	payload := bytes.NewReader(bodyBytes)
-	req, err := http.NewRequest(http.MethodPost, url, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
-	req.Header.Add("Notion-Version", "2022-06-28")
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = res.Body.Close() }()
-	resp, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var taskDTO notion.NotionTaskDTO
-	if err := json.Unmarshal(resp, &taskDTO); err != nil {
-		return nil, err
-	}
-	return taskDTO.ToTaskListDomainModel(), nil
+	return t.fetchTasks(ctx, body)
 }
