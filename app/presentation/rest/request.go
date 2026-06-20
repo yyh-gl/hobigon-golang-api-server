@@ -12,6 +12,12 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// maxRequestBodySize : リクエストボディの最大サイズ（1MB）
+const maxRequestBodySize = 1 << 20
+
+// validate : バリデータのシングルトンインスタンス
+var validate = validator.New()
+
 // bindReqWithValidate : リクエスト内容を構造体にマッピングし、バリデーションを実施
 func bindReqWithValidate(ctx context.Context, src, dist any) error {
 	switch reflect.TypeOf(src) {
@@ -26,9 +32,7 @@ func bindReqWithValidate(ctx context.Context, src, dist any) error {
 	}
 
 	// TODO: バリデーションエラー専用のエラーレスポンスを用意
-	v := validator.New()
-	err := v.Struct(dist)
-	if err != nil {
+	if err := validate.Struct(dist); err != nil {
 		return fmt.Errorf("validation error > %w", err)
 	}
 	return nil
@@ -36,6 +40,7 @@ func bindReqWithValidate(ctx context.Context, src, dist any) error {
 
 // bindFromHTTPBody: リクエストボディの内容を構造体にマッピング
 func bindFromHTTPBody(ctx context.Context, r *http.Request, dist any) error {
+	r.Body = http.MaxBytesReader(nil, r.Body, maxRequestBodySize)
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("ioutil.ReadAll() > %w", err)
@@ -54,13 +59,6 @@ func bindFromHTTPBody(ctx context.Context, r *http.Request, dist any) error {
 func bindFromPathParams(ctx context.Context, src map[string]string, dist any) error {
 	if err := mapstructure.Decode(src, &dist); err != nil {
 		return fmt.Errorf("mapstructure.Decode() > %w", err)
-	}
-
-	// TODO: バリデーションエラー専用のエラーレスポンスを用意
-	v := validator.New()
-	err := v.Struct(dist)
-	if err != nil {
-		return fmt.Errorf("validate error > %w", err)
 	}
 
 	return nil
