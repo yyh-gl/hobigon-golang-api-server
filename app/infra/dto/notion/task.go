@@ -99,8 +99,13 @@ type NotionTaskDTO struct {
 }
 
 func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
-	tasks := make(task.List, len(dto.Results))
-	for i, r := range dto.Results {
+	tasks := make(task.List, 0, len(dto.Results))
+	for _, r := range dto.Results {
+		// タイトルが空のページはスキップ（panic 防止）
+		if len(r.Properties.Name.Title) == 0 {
+			continue
+		}
+
 		var deadline *time.Time
 		if r.Properties.Deadline.Date.Start != "" {
 			t, err := time.Parse("2006-01-02", r.Properties.Deadline.Date.Start)
@@ -109,16 +114,16 @@ func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
 			}
 			deadline = &t
 		}
-		title := r.Properties.Name.Title[0].PlainText
-		tasks[i] = task.Task{
-			Title:         title,
+
+		tasks = append(tasks, task.Task{
+			Title:         r.Properties.Name.Title[0].PlainText,
 			Description:   "",
 			Due:           deadline,
 			Board:         r.Properties.Status.Select.Name,
 			List:          "All",
 			ShortURL:      r.URL,
 			OriginalModel: nil,
-		}
+		})
 	}
 	return tasks
 }

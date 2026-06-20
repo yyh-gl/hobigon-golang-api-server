@@ -43,7 +43,11 @@ func (s Slack) CreateTaskMessage(cautionTasks []task.Task, deadTasks []task.Task
 
 	message += "\n\n:space_invader: Dead Tasks :space_invader:\n"
 	for i, t := range deadTasks {
-		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, t.Due.Format("2006-01-02"))
+		due := "なるはや"
+		if t.Due != nil {
+			due = t.Due.Format("2006-01-02")
+		}
+		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, due)
 	}
 
 	return message

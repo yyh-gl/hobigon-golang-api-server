@@ -28,8 +28,12 @@ func main() {
 	router := newRouter(diContainer)
 
 	s := &http.Server{
-		Addr:    ":3000",
-		Handler: router,
+		Addr:              ":3000",
+		Handler:           router,
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       120 * time.Second,
 	}
 
 	errCh := make(chan error, 1)
