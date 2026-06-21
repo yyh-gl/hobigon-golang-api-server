@@ -6,9 +6,8 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 
-	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
@@ -16,15 +15,7 @@ import (
 var logger *slog.Logger
 
 func NewLogger() {
-	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-}
-
-func traceIDFromContext(ctx context.Context) string {
-	span := trace.SpanFromContext(ctx)
-	if span.SpanContext().IsValid() {
-		return span.SpanContext().TraceID().String()
-	}
-	return ""
+	logger = otelslog.NewLogger("hobigon-rest")
 }
 
 func Info(ctx context.Context, msg string) {
@@ -32,7 +23,6 @@ func Info(ctx context.Context, msg string) {
 		ctx,
 		msg,
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", traceIDFromContext(ctx)),
 	)
 }
 
@@ -47,7 +37,6 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 		ctx,
 		"request and response log",
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", traceIDFromContext(ctx)),
 		slog.Group("request",
 			slog.String("method", req.Method),
 			slog.String("host", req.Host),
@@ -69,5 +58,5 @@ func Error(ctx context.Context, err error) {
 		ctx,
 		err.Error(),
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", traceIDFromContext(ctx)))
+	)
 }

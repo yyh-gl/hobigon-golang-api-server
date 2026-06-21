@@ -12,7 +12,7 @@ import (
 func TestDoResponse_NoContent(t *testing.T) {
 	log.NewLogger()
 
-	ctx := log.SetTraceIDToContext(context.Background())
+	ctx := context.Background()
 	w := httptest.NewRecorder()
 	DoResponse(ctx, w, nil, http.StatusNoContent)
 
