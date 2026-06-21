@@ -100,10 +100,8 @@ const otelSpanKey = "otel:span"
 func registerOTelCallbacks(db *DB) {
 	tracer := otel.Tracer("hobigon-gorm")
 
-	for _, op := range []string{"create", "query", "update", "delete", "row", "raw"} {
-		opName := op
-
-		db.Callback().Create().Before("gorm:"+opName).Register("otel:before_"+opName, func(tx *gorm.DB) {
+	beforeFn := func(opName string) func(*gorm.DB) {
+		return func(tx *gorm.DB) {
 			if tx.Statement == nil || tx.Statement.Context == nil {
 				return
 			}
@@ -114,25 +112,43 @@ func registerOTelCallbacks(db *DB) {
 			)
 			tx.Statement.Context = ctx
 			tx.Statement.InstanceSet(otelSpanKey, span)
-		})
-
-		db.Callback().Create().After("gorm:"+opName).Register("otel:after_"+opName, func(tx *gorm.DB) {
-			if tx.Statement == nil {
-				return
-			}
-			val, ok := tx.Statement.InstanceGet(otelSpanKey)
-			if !ok {
-				return
-			}
-			span, ok := val.(trace.Span)
-			if !ok {
-				return
-			}
-			defer span.End()
-			if tx.Error != nil {
-				span.RecordError(tx.Error)
-				span.SetStatus(codes.Error, tx.Error.Error())
-			}
-		})
+		}
 	}
+
+	endSpan := func(tx *gorm.DB) {
+		if tx.Statement == nil {
+			return
+		}
+		val, ok := tx.Statement.InstanceGet(otelSpanKey)
+		if !ok {
+			return
+		}
+		span, ok := val.(trace.Span)
+		if !ok {
+			return
+		}
+		defer span.End()
+		if tx.Error != nil {
+			span.RecordError(tx.Error)
+			span.SetStatus(codes.Error, tx.Error.Error())
+		}
+	}
+
+	db.Callback().Create().Before("gorm:create").Register("otel:before_create", beforeFn("create"))
+	db.Callback().Create().After("gorm:create").Register("otel:after_create", endSpan)
+
+	db.Callback().Query().Before("gorm:query").Register("otel:before_query", beforeFn("query"))
+	db.Callback().Query().After("gorm:query").Register("otel:after_query", endSpan)
+
+	db.Callback().Update().Before("gorm:update").Register("otel:before_update", beforeFn("update"))
+	db.Callback().Update().After("gorm:update").Register("otel:after_update", endSpan)
+
+	db.Callback().Delete().Before("gorm:delete").Register("otel:before_delete", beforeFn("delete"))
+	db.Callback().Delete().After("gorm:delete").Register("otel:after_delete", endSpan)
+
+	db.Callback().Row().Before("gorm:row").Register("otel:before_row", beforeFn("row"))
+	db.Callback().Row().After("gorm:row").Register("otel:after_row", endSpan)
+
+	db.Callback().Raw().Before("gorm:raw").Register("otel:before_raw", beforeFn("raw"))
+	db.Callback().Raw().After("gorm:raw").Register("otel:after_raw", endSpan)
 }
