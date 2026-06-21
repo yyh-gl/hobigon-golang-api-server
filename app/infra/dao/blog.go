@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/blog"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/repository"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"

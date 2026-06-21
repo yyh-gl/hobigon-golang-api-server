@@ -20,7 +20,12 @@ func TestMain(m *testing.M) {
 	log.NewLogger()
 
 	DIContainer = test.InitTestApp()
-	defer func() { _ = DIContainer.DB.Close() }()
+	defer func() {
+		sqlDB, err := DIContainer.DB.DB()
+		if err == nil {
+			_ = sqlDB.Close()
+		}
+	}()
 
 	Router = mux.NewRouter()
 	// Blog handlers
