@@ -12,7 +12,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
-var logger *slog.Logger
+var logger = otelslog.NewLogger("hobigon-rest")
 
 func NewLogger() {
 	logger = otelslog.NewLogger("hobigon-rest")
