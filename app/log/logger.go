@@ -14,10 +14,6 @@ import (
 
 var logger = otelslog.NewLogger("hobigon-rest")
 
-func NewLogger() {
-	logger = otelslog.NewLogger("hobigon-rest")
-}
-
 func Info(ctx context.Context, msg string) {
 	logger.InfoContext(
 		ctx,

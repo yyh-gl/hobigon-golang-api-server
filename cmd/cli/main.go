@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	log.NewLogger()
-
 	diContainer := initApp()
 	defer func() {
 		sqlDB, err := diContainer.DB.DB()

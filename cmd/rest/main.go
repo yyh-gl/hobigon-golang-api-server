@@ -20,8 +20,6 @@ import (
 func main() {
 	ctx := context.Background()
 
-	log.NewLogger()
-
 	shutdown, err := telemetry.SetupOTel(ctx)
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to setup OpenTelemetry: %w", err))

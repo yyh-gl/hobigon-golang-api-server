@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
 	"github.com/yyh-gl/hobigon-golang-api-server/test"
 )
@@ -17,8 +16,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	log.NewLogger()
-
 	DIContainer = test.InitTestApp()
 	defer func() {
 		sqlDB, err := DIContainer.DB.DB()

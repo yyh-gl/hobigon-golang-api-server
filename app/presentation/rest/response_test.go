@@ -5,13 +5,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 func TestDoResponse_NoContent(t *testing.T) {
-	log.NewLogger()
-
 	ctx := context.Background()
 	w := httptest.NewRecorder()
 	DoResponse(ctx, w, nil, http.StatusNoContent)
