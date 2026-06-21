@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
@@ -91,6 +92,7 @@ func crawlNotifications() ([]pokemon.Notification, error) {
 }
 
 func extractNewEventNotifications(notifications []pokemon.Notification) []pokemon.Notification {
+	now := time.Now()
 	existenceMap := make(map[string]struct{})
 	events := make([]pokemon.Notification, 0, len(notifications))
 	for _, n := range notifications {
@@ -102,7 +104,7 @@ func extractNewEventNotifications(notifications []pokemon.Notification) []pokemo
 			continue
 		}
 
-		if n.IsReceivedInToday() || n.IsReceivedInYesterday() {
+		if n.IsReceivedInToday(now) || n.IsReceivedInYesterday(now) {
 			events = append(events, n)
 			existenceMap[n.Title()] = struct{}{}
 		}

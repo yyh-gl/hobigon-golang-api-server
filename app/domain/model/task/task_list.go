@@ -1,12 +1,14 @@
 package task
 
+import "time"
+
 // List : タスクリストを表すドメインモデル
 type List []Task
 
 // GetTodayTasks : タスクリストから今日のタスクを取得
-func (l List) GetTodayTasks() (todayTasks []Task) {
+func (l List) GetTodayTasks(now time.Time) (todayTasks []Task) {
 	for _, task := range l {
-		if task.IsTodayTask() {
+		if task.IsTodayTask(now) {
 			todayTasks = append(todayTasks, task)
 		}
 	}

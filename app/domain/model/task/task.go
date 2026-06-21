@@ -24,19 +24,17 @@ func (t Task) GetJSTDue(utcDue *time.Time) *time.Time {
 }
 
 // IsDueOver : 期限切れかどうか判定
-func (t Task) IsDueOver() (isDueOver bool) {
+func (t Task) IsDueOver(now time.Time) (isDueOver bool) {
 	jst := getJSTNow()
-	today := time.Now()
-	todayStart := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, jst)
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, jst)
 	return !t.Due.Equal(todayStart) && t.Due.Before(todayStart)
 }
 
 // IsTodayTask : 今日のタスクかどうか判定
-func (t Task) IsTodayTask() (isTodayTask bool) {
+func (t Task) IsTodayTask(now time.Time) (isTodayTask bool) {
 	jst := getJSTNow()
-	today := time.Now()
-	todayStart := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, jst)
-	todayEnd := time.Date(today.Year(), today.Month(), today.Day(), 23, 59, 59, 0, jst)
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, jst)
+	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, jst)
 	if t.Due != nil && t.Due.After(todayStart) && t.Due.Before(todayEnd) {
 		return true
 	}

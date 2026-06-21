@@ -175,7 +175,6 @@ func TestBlogHandler_Like(t *testing.T) {
 			},
 		},
 		{ // 異常系：51文字タイトル
-			// TODO: ドメインモデル用テストを作って、NewTitle()におけるバリデーションが動作するか確認
 			title: "hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-hoge-title-over",
 			want: want{
 				body:       `{"error":{"detail":"不正なリクエスト形式です"}}`,
