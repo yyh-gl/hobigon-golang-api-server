@@ -25,6 +25,15 @@ func SetupOTel(ctx context.Context) (shutdown func(context.Context) error, err e
 		return func(context.Context) error { return nil }, nil
 	}
 
+	var shutdowns []func(context.Context) error
+	shutdown = func(ctx context.Context) error {
+		var errs []error
+		for i := len(shutdowns) - 1; i >= 0; i-- {
+			errs = append(errs, shutdowns[i](ctx))
+		}
+		return errors.Join(errs...)
+	}
+
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
 			semconv.ServiceName("hobigon-rest"),
@@ -32,14 +41,12 @@ func SetupOTel(ctx context.Context) (shutdown func(context.Context) error, err e
 		),
 	)
 	if err != nil {
-		return nil, err
+		return shutdown, err
 	}
-
-	var shutdowns []func(context.Context) error
 
 	traceExporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		return nil, err
+		return shutdown, err
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(traceExporter),
@@ -51,7 +58,7 @@ func SetupOTel(ctx context.Context) (shutdown func(context.Context) error, err e
 
 	metricExporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		return nil, err
+		return shutdown, err
 	}
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExporter)),
@@ -62,7 +69,7 @@ func SetupOTel(ctx context.Context) (shutdown func(context.Context) error, err e
 
 	logExporter, err := otlploggrpc.New(ctx)
 	if err != nil {
-		return nil, err
+		return shutdown, err
 	}
 	lp := sdklog.NewLoggerProvider(
 		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
@@ -71,11 +78,5 @@ func SetupOTel(ctx context.Context) (shutdown func(context.Context) error, err e
 	global.SetLoggerProvider(lp)
 	shutdowns = append(shutdowns, lp.Shutdown)
 
-	return func(ctx context.Context) error {
-		var errs []error
-		for i := len(shutdowns) - 1; i >= 0; i-- {
-			errs = append(errs, shutdowns[i](ctx))
-		}
-		return errors.Join(errs...)
-	}, nil
+	return shutdown, nil
 }
