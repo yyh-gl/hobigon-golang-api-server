@@ -6,7 +6,7 @@ import (
 
 // BlogDTO : ブログ用のDTO
 type BlogDTO struct {
-	Title     string `gorm:"primary_key;not null"`
+	Title     string `gorm:"primaryKey;not null"`
 	Count     int    `gorm:"default:0;not null"`
 	CreatedAt *time.Time
 	UpdatedAt *time.Time

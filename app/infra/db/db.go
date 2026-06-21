@@ -5,10 +5,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/mattn/go-sqlite3"
+	mysqld "github.com/go-sql-driver/mysql"
+	"github.com/glebarez/sqlite"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/plugin/opentelemetry/tracing"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
 )
@@ -33,7 +36,7 @@ func newMySQLConnect() *DB {
 		panic(err.Error())
 	}
 
-	conf := mysql.Config{
+	conf := mysqld.Config{
 		Net:       "tcp",
 		Addr:      os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT"),
 		DBName:    os.Getenv("MYSQL_DATABASE"),
@@ -46,7 +49,9 @@ func newMySQLConnect() *DB {
 
 CONNECT:
 
-	db, err := gorm.Open("mysql", conf.FormatDSN())
+	db, err := gorm.Open(mysql.Open(conf.FormatDSN()), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		if app.IsDev() {
 			if strings.Contains(err.Error(), "connection refused") {
@@ -58,6 +63,10 @@ CONNECT:
 		panic(err.Error())
 	}
 
+	if err := db.Use(tracing.NewPlugin()); err != nil {
+		panic(err.Error())
+	}
+
 	migrate(db)
 
 	return db
@@ -65,7 +74,9 @@ CONNECT:
 
 // newSQLiteConnect : DB（SQLite）コネクションを生成
 func newSQLiteConnect() *DB {
-	db, err := gorm.Open("sqlite3", ":memory:")
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -77,5 +88,7 @@ func newSQLiteConnect() *DB {
 
 // migrate : マイグレーション実施
 func migrate(db *DB) {
-	db.AutoMigrate(&dto.BlogDTO{})
+	if err := db.AutoMigrate(&dto.BlogDTO{}); err != nil {
+		panic(err.Error())
+	}
 }

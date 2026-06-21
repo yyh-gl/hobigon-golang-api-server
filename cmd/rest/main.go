@@ -10,20 +10,30 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest/middleware"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
+	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/telemetry"
 )
 
 func main() {
 	ctx := context.Background()
 
-	log.NewLogger()
+	shutdown, err := telemetry.SetupOTel(ctx)
+	if err != nil {
+		log.Error(ctx, fmt.Errorf("failed to setup OpenTelemetry: %w", err))
+		os.Exit(1)
+	}
+	defer func() { _ = shutdown(ctx) }()
 
 	diContainer := initApp()
-	defer func() { _ = diContainer.DB.Close() }()
+	defer func() {
+		sqlDB, err := diContainer.DB.DB()
+		if err == nil {
+			_ = sqlDB.Close()
+		}
+	}()
 
 	router := newRouter(diContainer)
 
@@ -131,8 +141,6 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 			"pokemon_events_notification_send",
 		),
 	).Methods(http.MethodPost)
-
-	r.Handle("/metrics", promhttp.Handler())
 
 	return r
 }

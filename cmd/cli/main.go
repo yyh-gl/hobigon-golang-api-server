@@ -10,10 +10,13 @@ import (
 )
 
 func main() {
-	log.NewLogger()
-
 	diContainer := initApp()
-	defer func() { _ = diContainer.DB.Close() }()
+	defer func() {
+		sqlDB, err := diContainer.DB.DB()
+		if err == nil {
+			_ = sqlDB.Close()
+		}
+	}()
 
 	cliApp := cli.NewApp()
 

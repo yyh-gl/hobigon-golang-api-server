@@ -6,29 +6,19 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
+
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
-var logger *slog.Logger
-
-func NewLogger() {
-	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-}
+var logger = otelslog.NewLogger("hobigon-rest")
 
 func Info(ctx context.Context, msg string) {
-	traceID := ctx.Value(app.ContextKeyTraceId)
-	// The only time traceID is nil is in the server start log.
-	if traceID == nil {
-		traceID = ""
-	}
-
 	logger.InfoContext(
 		ctx,
 		msg,
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", traceID.(string)),
 	)
 }
 
@@ -43,7 +33,6 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 		ctx,
 		"request and response log",
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", ctx.Value(app.ContextKeyTraceId).(string)),
 		slog.Group("request",
 			slog.String("method", req.Method),
 			slog.String("host", req.Host),
@@ -65,5 +54,5 @@ func Error(ctx context.Context, err error) {
 		ctx,
 		err.Error(),
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", ctx.Value(app.ContextKeyTraceId).(string)))
+	)
 }
