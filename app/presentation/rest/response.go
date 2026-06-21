@@ -14,6 +14,9 @@ import (
 func DoResponse(ctx context.Context, w http.ResponseWriter, resp any, status int) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(status)
+	if status == http.StatusNoContent {
+		return
+	}
 	err := json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		log.Error(ctx, fmt.Errorf("failed to json.NewEncoder().Encode(): %w", err))

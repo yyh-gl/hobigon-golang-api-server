@@ -163,7 +163,7 @@ func TestBlogHandler_Like(t *testing.T) {
 		{ // 正常系：存在しないブログ
 			title: "sample-blog-title2",
 			want: want{
-				body:       "null",
+				body:       "",
 				statusCode: http.StatusNoContent,
 			},
 		},
