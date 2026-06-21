@@ -1,21 +1,16 @@
 package db
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
 
 	mysqld "github.com/go-sql-driver/mysql"
 	"github.com/glebarez/sqlite"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
-	"go.opentelemetry.io/otel/trace"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/plugin/opentelemetry/tracing"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto"
@@ -68,7 +63,10 @@ CONNECT:
 		panic(err.Error())
 	}
 
-	registerOTelCallbacks(db)
+	if err := db.Use(tracing.NewPlugin()); err != nil {
+		panic(err.Error())
+	}
+
 	migrate(db)
 
 	return db
@@ -93,62 +91,4 @@ func migrate(db *DB) {
 	if err := db.AutoMigrate(&dto.BlogDTO{}); err != nil {
 		panic(err.Error())
 	}
-}
-
-const otelSpanKey = "otel:span"
-
-func registerOTelCallbacks(db *DB) {
-	tracer := otel.Tracer("hobigon-gorm")
-
-	beforeFn := func(opName string) func(*gorm.DB) {
-		return func(tx *gorm.DB) {
-			if tx.Statement == nil || tx.Statement.Context == nil {
-				return
-			}
-			ctx, span := tracer.Start(tx.Statement.Context, fmt.Sprintf("gorm:%s", opName),
-				trace.WithAttributes(
-					attribute.String(string(semconv.DBSystemKey), "mysql"),
-				),
-			)
-			tx.Statement.Context = ctx
-			tx.Statement.InstanceSet(otelSpanKey, span)
-		}
-	}
-
-	endSpan := func(tx *gorm.DB) {
-		if tx.Statement == nil {
-			return
-		}
-		val, ok := tx.Statement.InstanceGet(otelSpanKey)
-		if !ok {
-			return
-		}
-		span, ok := val.(trace.Span)
-		if !ok {
-			return
-		}
-		defer span.End()
-		if tx.Error != nil {
-			span.RecordError(tx.Error)
-			span.SetStatus(codes.Error, tx.Error.Error())
-		}
-	}
-
-	db.Callback().Create().Before("gorm:create").Register("otel:before_create", beforeFn("create"))
-	db.Callback().Create().After("gorm:create").Register("otel:after_create", endSpan)
-
-	db.Callback().Query().Before("gorm:query").Register("otel:before_query", beforeFn("query"))
-	db.Callback().Query().After("gorm:query").Register("otel:after_query", endSpan)
-
-	db.Callback().Update().Before("gorm:update").Register("otel:before_update", beforeFn("update"))
-	db.Callback().Update().After("gorm:update").Register("otel:after_update", endSpan)
-
-	db.Callback().Delete().Before("gorm:delete").Register("otel:before_delete", beforeFn("delete"))
-	db.Callback().Delete().After("gorm:delete").Register("otel:after_delete", endSpan)
-
-	db.Callback().Row().Before("gorm:row").Register("otel:before_row", beforeFn("row"))
-	db.Callback().Row().After("gorm:row").Register("otel:after_row", endSpan)
-
-	db.Callback().Raw().Before("gorm:raw").Register("otel:before_raw", beforeFn("raw"))
-	db.Callback().Raw().After("gorm:raw").Register("otel:after_raw", endSpan)
 }
