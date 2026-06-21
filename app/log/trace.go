@@ -3,14 +3,11 @@ package log
 import (
 	"context"
 
-	"github.com/rs/xid"
-	"github.com/yyh-gl/hobigon-golang-api-server/app"
+	"go.opentelemetry.io/otel"
 )
 
-func NewTraceID() string {
-	return xid.New().String()
-}
-
 func SetTraceIDToContext(ctx context.Context) context.Context {
-	return context.WithValue(ctx, app.ContextKeyTraceId, NewTraceID())
+	ctx, span := otel.Tracer("hobigon").Start(ctx, "request")
+	_ = span
+	return ctx
 }

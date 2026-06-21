@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 
+	"go.opentelemetry.io/otel/trace"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 )
 
@@ -17,18 +19,20 @@ func NewLogger() {
 	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 }
 
-func Info(ctx context.Context, msg string) {
-	traceID := ctx.Value(app.ContextKeyTraceId)
-	// The only time traceID is nil is in the server start log.
-	if traceID == nil {
-		traceID = ""
+func traceIDFromContext(ctx context.Context) string {
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		return span.SpanContext().TraceID().String()
 	}
+	return ""
+}
 
+func Info(ctx context.Context, msg string) {
 	logger.InfoContext(
 		ctx,
 		msg,
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", traceID.(string)),
+		slog.String("trace_id", traceIDFromContext(ctx)),
 	)
 }
 
@@ -43,7 +47,7 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 		ctx,
 		"request and response log",
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", ctx.Value(app.ContextKeyTraceId).(string)),
+		slog.String("trace_id", traceIDFromContext(ctx)),
 		slog.Group("request",
 			slog.String("method", req.Method),
 			slog.String("host", req.Host),
@@ -65,5 +69,5 @@ func Error(ctx context.Context, err error) {
 		ctx,
 		err.Error(),
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", ctx.Value(app.ContextKeyTraceId).(string)))
+		slog.String("trace_id", traceIDFromContext(ctx)))
 }

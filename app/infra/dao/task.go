@@ -10,6 +10,8 @@ import (
 	"os"
 	"time"
 
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	model "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dto/notion"
@@ -17,7 +19,10 @@ import (
 
 const defaultPageSize = 100
 
-var notionHTTPClient = &http.Client{Timeout: 10 * time.Second}
+var notionHTTPClient = &http.Client{
+	Timeout:   10 * time.Second,
+	Transport: otelhttp.NewTransport(http.DefaultTransport),
+}
 
 type task struct {
 	NotionAPIToken   string

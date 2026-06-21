@@ -12,9 +12,6 @@ type contextKey int
 const (
 	// ContextKeyCLI : cli.Contextをcontext.Contextにセットするさいのキー
 	ContextKeyCLI contextKey = iota
-
-	// ContextKeyTraceId is context key for trace id
-	ContextKeyTraceId
 )
 
 // IsDev : 実行環境がDevelopmentかどうかを確認
