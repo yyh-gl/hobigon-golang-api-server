@@ -61,9 +61,14 @@ func InfoRequestAndResponse(ctx context.Context, req http.Request, resp Response
 }
 
 func Error(ctx context.Context, err error) {
+	traceID := ctx.Value(app.ContextKeyTraceId)
+	if traceID == nil {
+		traceID = ""
+	}
+
 	logger.ErrorContext(
 		ctx,
 		err.Error(),
 		slog.String("version", app.GetVersion()),
-		slog.String("trace_id", ctx.Value(app.ContextKeyTraceId).(string)))
+		slog.String("trace_id", traceID.(string)))
 }
