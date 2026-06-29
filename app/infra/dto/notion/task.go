@@ -120,7 +120,7 @@ func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
 			Title:         r.Properties.Name.Title[0].PlainText,
 			Description:   "",
 			Due:           deadline,
-			Board:         r.Properties.Status.Select.Name,
+			Status:        task.Status(r.Properties.Status.Select.Name),
 			List:          "All",
 			ShortURL:      r.URL,
 			OriginalModel: nil,
