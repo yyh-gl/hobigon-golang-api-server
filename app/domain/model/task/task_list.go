@@ -5,8 +5,7 @@ import "time"
 // List : タスクリストを表すドメインモデル
 type List []Task
 
-// FilterByStatus : ステータスが一致するタスクを抽出
-func (l List) FilterByStatus(s Status) List {
+func (l List) filterByStatus(s Status) List {
 	var result List
 	for _, t := range l {
 		if t.Status == s {
@@ -14,6 +13,16 @@ func (l List) FilterByStatus(s Status) List {
 		}
 	}
 	return result
+}
+
+// GetToDoTasks : To Doステータスのタスクを抽出
+func (l List) GetToDoTasks() List {
+	return l.filterByStatus(StatusToDo)
+}
+
+// GetDoingTasks : Doingステータスのタスクを抽出
+func (l List) GetDoingTasks() List {
+	return l.filterByStatus(StatusDoing)
 }
 
 // GetDeadlineApproachingTasks : 期限が近づいているタスクを抽出（今日 ≤ Due ≤ 今日+7日）

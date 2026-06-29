@@ -1,13 +1,19 @@
 // =============================================================================
 // テストリスト（Canon TDD Step 1）
-// 対象: List メソッド（FilterByStatus, GetDeadlineApproachingTasks, GetDueOverTasks）
+// 対象: List メソッド（GetToDoTasks, GetDoingTasks, GetDeadlineApproachingTasks, GetDueOverTasks）
 //
-// [List.FilterByStatus(s Status)] — 新設
+// [List.GetToDoTasks()] — ステータス別取得
 //   正常系:
-//   - StatusToDo のみのリストから StatusToDo を指定すると全件返す
-//   - StatusDoing のみのリストから StatusDoing を指定すると全件返す
-//   - StatusToDo と StatusDoing 混在リストから StatusToDo を指定すると StatusToDo のみ返す
-//   - StatusToDo と StatusDoing 混在リストから StatusDoing を指定すると StatusDoing のみ返す
+//   - StatusToDo のみのリストから全件返す
+//   - StatusToDo と StatusDoing 混在リストから StatusToDo のみ返す
+//   境界値/特殊ケース:
+//   - 空リストを渡すと空（len=0）を返す
+//   - 一致するステータスがないリストを渡すと空（len=0）を返す
+//
+// [List.GetDoingTasks()] — ステータス別取得
+//   正常系:
+//   - StatusDoing のみのリストから全件返す
+//   - StatusToDo と StatusDoing 混在リストから StatusDoing のみ返す
 //   境界値/特殊ケース:
 //   - 空リストを渡すと空（len=0）を返す
 //   - 一致するステータスがないリストを渡すと空（len=0）を返す
@@ -51,11 +57,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 )
 
-func TestList_FilterByStatus(t *testing.T) {
-	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
-	now := time.Date(2024, 6, 15, 10, 0, 0, 0, jst)
-	_ = now
-
+func TestList_GetToDoTasks(t *testing.T) {
 	todoOnly := task.List{
 		{Title: "todo1", Status: task.StatusToDo},
 		{Title: "todo2", Status: task.StatusToDo},
@@ -68,40 +70,66 @@ func TestList_FilterByStatus(t *testing.T) {
 		{Title: "doing", Status: task.StatusDoing},
 	}
 
-	t.Run("ToDoのみリストからToDo指定で全件返す", func(t *testing.T) {
-		got := todoOnly.FilterByStatus(task.StatusToDo)
+	t.Run("ToDoのみリストで全件返す", func(t *testing.T) {
+		got := todoOnly.GetToDoTasks()
 		if len(got) != 2 {
-			t.Errorf("FilterByStatus(ToDo) len = %d, want 2", len(got))
+			t.Errorf("GetToDoTasks() len = %d, want 2", len(got))
 		}
 	})
-	t.Run("Doingのみリストからとoing指定で全件返す", func(t *testing.T) {
-		got := doingOnly.FilterByStatus(task.StatusDoing)
-		if len(got) != 1 {
-			t.Errorf("FilterByStatus(Doing) len = %d, want 1", len(got))
-		}
-	})
-	t.Run("混在リストからToDo指定でToDoのみ返す", func(t *testing.T) {
-		got := mixed.FilterByStatus(task.StatusToDo)
+	t.Run("混在リストからToDoのみ返す", func(t *testing.T) {
+		got := mixed.GetToDoTasks()
 		if len(got) != 1 || got[0].Title != "todo" {
-			t.Errorf("FilterByStatus(ToDo) = %v, want [{todo}]", got)
-		}
-	})
-	t.Run("混在リストからDoing指定でDoingのみ返す", func(t *testing.T) {
-		got := mixed.FilterByStatus(task.StatusDoing)
-		if len(got) != 1 || got[0].Title != "doing" {
-			t.Errorf("FilterByStatus(Doing) = %v, want [{doing}]", got)
+			t.Errorf("GetToDoTasks() = %v, want [{todo}]", got)
 		}
 	})
 	t.Run("空リストで空を返す", func(t *testing.T) {
-		got := task.List{}.FilterByStatus(task.StatusToDo)
+		got := task.List{}.GetToDoTasks()
 		if len(got) != 0 {
-			t.Errorf("FilterByStatus(empty) len = %d, want 0", len(got))
+			t.Errorf("GetToDoTasks(empty) len = %d, want 0", len(got))
 		}
 	})
 	t.Run("一致なしで空を返す", func(t *testing.T) {
-		got := doingOnly.FilterByStatus(task.StatusToDo)
+		got := doingOnly.GetToDoTasks()
 		if len(got) != 0 {
-			t.Errorf("FilterByStatus(no match) len = %d, want 0", len(got))
+			t.Errorf("GetToDoTasks(no match) len = %d, want 0", len(got))
+		}
+	})
+}
+
+func TestList_GetDoingTasks(t *testing.T) {
+	todoOnly := task.List{
+		{Title: "todo1", Status: task.StatusToDo},
+	}
+	doingOnly := task.List{
+		{Title: "doing1", Status: task.StatusDoing},
+	}
+	mixed := task.List{
+		{Title: "todo", Status: task.StatusToDo},
+		{Title: "doing", Status: task.StatusDoing},
+	}
+
+	t.Run("Doingのみリストで全件返す", func(t *testing.T) {
+		got := doingOnly.GetDoingTasks()
+		if len(got) != 1 {
+			t.Errorf("GetDoingTasks() len = %d, want 1", len(got))
+		}
+	})
+	t.Run("混在リストからDoingのみ返す", func(t *testing.T) {
+		got := mixed.GetDoingTasks()
+		if len(got) != 1 || got[0].Title != "doing" {
+			t.Errorf("GetDoingTasks() = %v, want [{doing}]", got)
+		}
+	})
+	t.Run("空リストで空を返す", func(t *testing.T) {
+		got := task.List{}.GetDoingTasks()
+		if len(got) != 0 {
+			t.Errorf("GetDoingTasks(empty) len = %d, want 0", len(got))
+		}
+	})
+	t.Run("一致なしで空を返す", func(t *testing.T) {
+		got := todoOnly.GetDoingTasks()
+		if len(got) != 0 {
+			t.Errorf("GetDoingTasks(no match) len = %d, want 0", len(got))
 		}
 	})
 }

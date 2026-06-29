@@ -46,7 +46,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		return 0, fmt.Errorf("taskGateway.FetchActiveTasks()内でのエラー: %w", err)
 	}
 
-	toDoTasks := activeTasks.FilterByStatus(task.StatusToDo)
+	toDoTasks := activeTasks.GetToDoTasks()
 
 	var updatedTasks task.List
 	for _, t := range toDoTasks.GetDeadlineApproachingTasks(now) {
@@ -57,7 +57,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		updatedTasks = append(updatedTasks, t)
 	}
 
-	keyTasks := append(activeTasks.FilterByStatus(task.StatusDoing), updatedTasks...)
+	keyTasks := append(activeTasks.GetDoingTasks(), updatedTasks...)
 	deadTasks := toDoTasks.GetDueOverTasks(now)
 
 	if err := n.sg.SendTasks(ctx, keyTasks, deadTasks); err != nil {
