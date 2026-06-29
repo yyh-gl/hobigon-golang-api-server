@@ -116,6 +116,7 @@ func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
 		}
 
 		tasks = append(tasks, task.Task{
+			ID:            r.ID,
 			Title:         r.Properties.Name.Title[0].PlainText,
 			Description:   "",
 			Due:           deadline,

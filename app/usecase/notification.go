@@ -9,6 +9,8 @@ import (
 	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 // Notification : Notification用ユースケースのインターフェース
@@ -38,9 +40,19 @@ func NewNotification(
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 // FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	cautionAndToDoTasks, err := n.tg.FetchCautionAndToDoTasks(ctx)
+	approachingTasks, err := n.tg.FetchDeadlineApproachingToDoTasks(ctx)
 	if err != nil {
-		return 0, fmt.Errorf("taskGateway.FetchCautionTasks()内でのエラー: %w", err)
+		return 0, fmt.Errorf("taskGateway.FetchDeadlineApproachingToDoTasks()内でのエラー: %w", err)
+	}
+	for _, t := range approachingTasks {
+		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
+			log.Error(ctx, err)
+		}
+	}
+
+	doingTasks, err := n.tg.FetchDoingTasks(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("taskGateway.FetchDoingTasks()内でのエラー: %w", err)
 	}
 
 	deadTasks, err := n.tg.FetchDeadTasks(ctx)
@@ -48,11 +60,11 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		return 0, fmt.Errorf("taskGateway.FetchDeadTasks()内でのエラー: %w", err)
 	}
 
-	if err := n.sg.SendTasks(ctx, cautionAndToDoTasks, deadTasks); err != nil {
+	if err := n.sg.SendTasks(ctx, doingTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
 	}
 
-	notifiedNum := len(cautionAndToDoTasks) + len(deadTasks)
+	notifiedNum := len(doingTasks) + len(deadTasks)
 	return notifiedNum, nil
 }
 

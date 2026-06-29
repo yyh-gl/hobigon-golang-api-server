@@ -67,38 +67,13 @@ func (t task) fetchTasks(ctx context.Context, body notion.FetchTasksRequestBody)
 	return taskDTO.ToTaskListDomainModel(), nil
 }
 
-// FetchCautionAndToDoTasks : 今後1週間以内に期限が迫っているタスクと『To Do』レーンにあるタスクを取得
-// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
-func (t task) FetchCautionAndToDoTasks(ctx context.Context) (model.List, error) {
+// FetchDoingTasks : 『Doing』ステータスのタスクをすべて取得
+func (t task) FetchDoingTasks(ctx context.Context) (model.List, error) {
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
-		Filter: notion.OrFilter{
-			Or: []any{
-				notion.SingleFilter{
-					Property: "Status",
-					Select:   &notion.Select{Equals: "Doing"},
-				},
-				notion.AndFilter{
-					And: []notion.SingleFilter{
-						{
-							Property: "Status",
-							Select:   &notion.Select{Equals: "To Do"},
-						},
-						{
-							Property: "Deadline",
-							Date: &notion.Date{
-								OnOrAfter: time.Now().Format("2006-01-02"),
-							},
-						},
-						{
-							Property: "Deadline",
-							Date: &notion.Date{
-								OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
-							},
-						},
-					},
-				},
-			},
+		Filter: notion.SingleFilter{
+			Property: "Status",
+			Select:   &notion.Select{Equals: model.StatusDoing.String()},
 		},
 		Sorts: []notion.Sort{
 			{Property: "Deadline", Direction: "ascending"},
@@ -108,6 +83,71 @@ func (t task) FetchCautionAndToDoTasks(ctx context.Context) (model.List, error) 
 	return t.fetchTasks(ctx, body)
 }
 
+// FetchDeadlineApproachingToDoTasks : 今後1週間以内に期限が迫っている『To Do』タスクを取得
+func (t task) FetchDeadlineApproachingToDoTasks(ctx context.Context) (model.List, error) {
+	body := notion.FetchTasksRequestBody{
+		PageSize: defaultPageSize,
+		Filter: notion.AndFilter{
+			And: []notion.SingleFilter{
+				{
+					Property: "Status",
+					Select:   &notion.Select{Equals: model.StatusToDo.String()},
+				},
+				{
+					Property: "Deadline",
+					Date: &notion.Date{
+						OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
+					},
+				},
+			},
+		},
+		Sorts: []notion.Sort{
+			{Property: "Deadline", Direction: "ascending"},
+		},
+	}
+	return t.fetchTasks(ctx, body)
+}
+
+// UpdateTaskStatus : 指定したタスクのステータスを更新
+func (t task) UpdateTaskStatus(ctx context.Context, tsk model.Task, status model.Status) error {
+	url := fmt.Sprintf("https://api.notion.com/v1/pages/%s", tsk.ID)
+
+	body := map[string]any{
+		"properties": map[string]any{
+			"Status": map[string]any{
+				"select": map[string]any{"name": status.String()},
+			},
+		},
+	}
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPatch, url, bytes.NewReader(bodyBytes))
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", t.NotionAPIToken))
+	req.Header.Add("Notion-Version", "2022-06-28")
+
+	res, err := notionHTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, res.Body)
+		_ = res.Body.Close()
+	}()
+	if res.StatusCode >= 400 {
+		body, _ := io.ReadAll(res.Body)
+		return fmt.Errorf("notion API returned status %d: %s", res.StatusCode, body)
+	}
+	return nil
+}
+
 func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
@@ -115,7 +155,7 @@ func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
 			And: []notion.SingleFilter{
 				{
 					Property: "Status",
-					Select:   &notion.Select{Equals: "To Do"},
+					Select:   &notion.Select{Equals: model.StatusToDo.String()},
 				},
 				{
 					Property: "Deadline",

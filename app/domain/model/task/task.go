@@ -4,9 +4,21 @@ import (
 	"time"
 )
 
+type Status string
+
+const (
+	StatusToDo  Status = "To Do"
+	StatusDoing Status = "Doing"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
 // Task : タスクを表すドメインモデル
 // TODO: ドメインモデル貧血症を治す
 type Task struct {
+	ID            string     `json:"-"`
 	Title         string     `json:"title"`
 	Description   string     `json:"description"`
 	Due           *time.Time `json:"due"`
