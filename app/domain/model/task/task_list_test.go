@@ -184,6 +184,9 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 		if len(got) != 2 {
 			t.Errorf("GetDeadlineApproachingTasks(mixed) len = %d, want 2", len(got))
 		}
+		if got[0].Title != "今日" || got[1].Title != "7日後" {
+			t.Errorf("GetDeadlineApproachingTasks(mixed) titles = [%q, %q], want [\"今日\", \"7日後\"]", got[0].Title, got[1].Title)
+		}
 	})
 }
 

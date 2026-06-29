@@ -90,6 +90,7 @@ func TestIsDeadlineApproaching(t *testing.T) {
 	now := time.Date(2024, 6, 15, 10, 0, 0, 0, jst)
 
 	todayStart := time.Date(2024, 6, 15, 0, 0, 0, 0, jst)
+	todayMid := time.Date(2024, 6, 15, 12, 0, 0, 0, jst)
 	todayEnd := time.Date(2024, 6, 15, 23, 59, 59, 0, jst)
 	in7Days := time.Date(2024, 6, 22, 12, 0, 0, 0, jst)
 	in7DaysEnd := time.Date(2024, 6, 22, 23, 59, 59, 0, jst)
@@ -102,7 +103,7 @@ func TestIsDeadlineApproaching(t *testing.T) {
 		due  *time.Time
 		want bool
 	}{
-		{"今日の日付内", &todayEnd, true},
+		{"今日の日付内", &todayMid, true},
 		{"7日後の日付内", &in7Days, true},
 		{"今日の0時（下限）", &todayStart, true},
 		{"今日の23:59:59", &todayEnd, true},
