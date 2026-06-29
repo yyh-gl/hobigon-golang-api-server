@@ -67,42 +67,25 @@ func (t task) fetchTasks(ctx context.Context, body notion.FetchTasksRequestBody)
 	return taskDTO.ToTaskListDomainModel(), nil
 }
 
-// FetchDoingTasks : 『Doing』ステータスのタスクをすべて取得
-func (t task) FetchDoingTasks(ctx context.Context) (model.List, error) {
+// FetchActiveTasks : 『To Do』および『Doing』ステータスのタスクをすべて取得
+func (t task) FetchActiveTasks(ctx context.Context) (model.List, error) {
 	body := notion.FetchTasksRequestBody{
 		PageSize: defaultPageSize,
-		Filter: notion.SingleFilter{
-			Property: "Status",
-			Select:   &notion.Select{Equals: model.StatusDoing.String()},
-		},
-		Sorts: []notion.Sort{
-			{Property: "Deadline", Direction: "ascending"},
-			{Property: "Date Created", Direction: "ascending"},
-		},
-	}
-	return t.fetchTasks(ctx, body)
-}
-
-// FetchDeadlineApproachingToDoTasks : 今後1週間以内に期限が迫っている『To Do』タスクを取得
-func (t task) FetchDeadlineApproachingToDoTasks(ctx context.Context) (model.List, error) {
-	body := notion.FetchTasksRequestBody{
-		PageSize: defaultPageSize,
-		Filter: notion.AndFilter{
-			And: []notion.SingleFilter{
+		Filter: notion.OrFilter{
+			Or: []notion.SingleFilter{
 				{
 					Property: "Status",
 					Select:   &notion.Select{Equals: model.StatusToDo.String()},
 				},
 				{
-					Property: "Deadline",
-					Date: &notion.Date{
-						OnOrBefore: time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
-					},
+					Property: "Status",
+					Select:   &notion.Select{Equals: model.StatusDoing.String()},
 				},
 			},
 		},
 		Sorts: []notion.Sort{
 			{Property: "Deadline", Direction: "ascending"},
+			{Property: "Date Created", Direction: "ascending"},
 		},
 	}
 	return t.fetchTasks(ctx, body)
@@ -148,27 +131,3 @@ func (t task) UpdateTaskStatus(ctx context.Context, tsk model.Task, status model
 	return nil
 }
 
-func (t task) FetchDeadTasks(ctx context.Context) (model.List, error) {
-	body := notion.FetchTasksRequestBody{
-		PageSize: defaultPageSize,
-		Filter: notion.AndFilter{
-			And: []notion.SingleFilter{
-				{
-					Property: "Status",
-					Select:   &notion.Select{Equals: model.StatusToDo.String()},
-				},
-				{
-					Property: "Deadline",
-					Date: &notion.Date{
-						OnOrBefore: time.Now().Add(-1 * 24 * time.Hour).Format("2006-01-02"),
-					},
-				},
-			},
-		},
-		Sorts: []notion.Sort{
-			{Property: "Deadline", Direction: "ascending"},
-			{Property: "Date Created", Direction: "ascending"},
-		},
-	}
-	return t.fetchTasks(ctx, body)
-}

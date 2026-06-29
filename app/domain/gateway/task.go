@@ -7,10 +7,7 @@ import (
 )
 
 // Task : Task用ゲートウェイのインターフェース
-// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 type Task interface {
-	FetchDoingTasks(context.Context) (task.List, error)
-	FetchDeadTasks(context.Context) (task.List, error)
-	FetchDeadlineApproachingToDoTasks(context.Context) (task.List, error)
+	FetchActiveTasks(context.Context) (task.List, error)
 	UpdateTaskStatus(context.Context, task.Task, task.Status) error
 }
