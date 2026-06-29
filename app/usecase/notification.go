@@ -38,34 +38,33 @@ func NewNotification(
 // TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
-// FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	approachingTasks, err := n.tg.FetchDeadlineApproachingToDoTasks(ctx)
+	now := time.Now()
+
+	activeTasks, err := n.tg.FetchActiveTasks(ctx)
 	if err != nil {
-		return 0, fmt.Errorf("taskGateway.FetchDeadlineApproachingToDoTasks()内でのエラー: %w", err)
+		return 0, fmt.Errorf("taskGateway.FetchActiveTasks()内でのエラー: %w", err)
 	}
-	for _, t := range approachingTasks {
+
+	toDoTasks := activeTasks.FilterByStatus(task.StatusToDo)
+
+	var updatedTasks task.List
+	for _, t := range toDoTasks.GetDeadlineApproachingTasks(now) {
 		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
 			log.Error(ctx, err)
+			continue
 		}
+		updatedTasks = append(updatedTasks, t)
 	}
 
-	doingTasks, err := n.tg.FetchDoingTasks(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("taskGateway.FetchDoingTasks()内でのエラー: %w", err)
-	}
+	keyTasks := append(activeTasks.FilterByStatus(task.StatusDoing), updatedTasks...)
+	deadTasks := toDoTasks.GetDueOverTasks(now)
 
-	deadTasks, err := n.tg.FetchDeadTasks(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("taskGateway.FetchDeadTasks()内でのエラー: %w", err)
-	}
-
-	if err := n.sg.SendTasks(ctx, doingTasks, deadTasks); err != nil {
+	if err := n.sg.SendTasks(ctx, keyTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
 	}
 
-	notifiedNum := len(doingTasks) + len(deadTasks)
-	return notifiedNum, nil
+	return len(keyTasks) + len(deadTasks), nil
 }
 
 // NotifyPokemonEvent : Notify event notifications about Pokemon card to Slack.
