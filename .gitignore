@@ -85,7 +85,7 @@ fabric.properties
 
 docker/mysql
 dist
-.secret_env
+.env**
 tmp
 cmd/**/bin/*
 !cmd/**/bin/.keep

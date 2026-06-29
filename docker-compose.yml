@@ -12,14 +12,8 @@ services:
     command: [ "sh", "-c", "air -c .air.rest.toml" ]
     environment:
       APP_ENV: "develop"
-      MYSQL_HOST: "db"
-      MYSQL_PORT: "3306"
-      MYSQL_DATABASE: "hobigon"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: "mysql"
-      LOG_PATH: "./logs"
     env_file:
-      - .secret_env
+      - .env.local
     depends_on:
       - db
 
@@ -36,14 +30,8 @@ services:
     command: [ "sh", "-c", "air -c .air.graphql.toml" ]
     environment:
       APP_ENV: "develop"
-      MYSQL_HOST: "db"
-      MYSQL_PORT: "3306"
-      MYSQL_DATABASE: "hobigon"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: "mysql"
-      LOG_PATH: "./logs"
     env_file:
-      - .secret_env
+      - .env.local
     depends_on:
       - db
   
