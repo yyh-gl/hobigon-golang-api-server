@@ -130,4 +130,3 @@ func (t task) UpdateTaskStatus(ctx context.Context, tsk model.Task, status model
 	}
 	return nil
 }
-
