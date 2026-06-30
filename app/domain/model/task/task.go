@@ -21,7 +21,7 @@ type Task struct {
 	ID            string     `json:"-"`
 	Title         string     `json:"title"`
 	Description   string     `json:"description"`
-	Due           *time.Time `json:"due"`
+	Deadline      *time.Time `json:"deadline"`
 	Status        Status     `json:"status"`
 	List          string     `json:"list"`
 	ShortURL      string     `json:"short_url"`
@@ -35,24 +35,24 @@ func (t Task) GetJSTDue(utcDue *time.Time) *time.Time {
 	return &jstDue
 }
 
-// IsDueOver : 期限切れかどうか判定
-func (t Task) IsDueOver(now time.Time) (isDueOver bool) {
-	if t.Due == nil {
+// IsDead : 期限切れかどうか判定
+func (t Task) IsDead(now time.Time) (isDueOver bool) {
+	if t.Deadline == nil {
 		return false
 	}
 	jst := getJSTNow()
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, jst)
-	return !t.Due.Equal(todayStart) && t.Due.Before(todayStart)
+	return !t.Deadline.Equal(todayStart) && t.Deadline.Before(todayStart)
 }
 
-// IsDeadlineApproaching : 期限が近づいているかどうか判定（今日 ≤ Due ≤ 今日+7日）
+// IsDeadlineApproaching : 期限が近づいているかどうか判定（今日 ≤ Deadline ≤ 今日+7日）
 func (t Task) IsDeadlineApproaching(now time.Time) bool {
-	if t.Due == nil {
+	if t.Deadline == nil {
 		return false
 	}
 	jst := getJSTNow()
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, jst)
-	return !t.Due.Before(todayStart) && t.Due.Before(todayStart.AddDate(0, 0, 8))
+	return !t.Deadline.Before(todayStart) && t.Deadline.Before(todayStart.AddDate(0, 0, 8))
 }
 
 // IsTodayTask : 今日のタスクかどうか判定
@@ -60,7 +60,7 @@ func (t Task) IsTodayTask(now time.Time) (isTodayTask bool) {
 	jst := getJSTNow()
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, jst)
 	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, jst)
-	if t.Due != nil && t.Due.After(todayStart) && t.Due.Before(todayEnd) {
+	if t.Deadline != nil && t.Deadline.After(todayStart) && t.Deadline.Before(todayEnd) {
 		return true
 	}
 	return false

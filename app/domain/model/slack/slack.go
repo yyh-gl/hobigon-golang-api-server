@@ -35,8 +35,8 @@ func (s Slack) CreateTaskMessage(cautionTasks []task.Task, deadTasks []task.Task
 	message := ":mario2: Key Tasks :mario2:\n"
 	for i, t := range cautionTasks {
 		due := "なるはや"
-		if t.Due != nil {
-			due = t.Due.Format("2006-01-02")
+		if t.Deadline != nil {
+			due = t.Deadline.Format("2006-01-02")
 		}
 		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, due)
 	}
@@ -44,8 +44,8 @@ func (s Slack) CreateTaskMessage(cautionTasks []task.Task, deadTasks []task.Task
 	message += "\n\n:space_invader: Dead Tasks :space_invader:\n"
 	for i, t := range deadTasks {
 		due := "なるはや"
-		if t.Due != nil {
-			due = t.Due.Format("2006-01-02")
+		if t.Deadline != nil {
+			due = t.Deadline.Format("2006-01-02")
 		}
 		message += fmt.Sprintf("%d: <%s|%s> :alarm_clock:`%s`\n", i+1, t.ShortURL, t.Title, due)
 	}

@@ -145,8 +145,8 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 
 	t.Run("期限間近のみのリストから全件返す", func(t *testing.T) {
 		list := task.List{
-			{Title: "今日", Due: &todayDue},
-			{Title: "7日後", Due: &in7Days},
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "7日後", Deadline: &in7Days},
 		}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 2 {
@@ -155,8 +155,8 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 	})
 	t.Run("期限切れと期限間近の混在から期限間近のみ返す", func(t *testing.T) {
 		list := task.List{
-			{Title: "昨日", Due: &yesterdayDue},
-			{Title: "今日", Due: &todayDue},
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "今日", Deadline: &todayDue},
 		}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 1 || got[0].Title != "今日" {
@@ -165,8 +165,8 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 	})
 	t.Run("Due nilのタスクは含まない", func(t *testing.T) {
 		list := task.List{
-			{Title: "nilDue", Due: nil},
-			{Title: "今日", Due: &todayDue},
+			{Title: "nilDue", Deadline: nil},
+			{Title: "今日", Deadline: &todayDue},
 		}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 1 || got[0].Title != "今日" {
@@ -180,21 +180,21 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 		}
 	})
 	t.Run("期限切れのみで空を返す", func(t *testing.T) {
-		list := task.List{{Title: "昨日", Due: &yesterdayDue}}
+		list := task.List{{Title: "昨日", Deadline: &yesterdayDue}}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDeadlineApproachingTasks(overdue only) len = %d, want 0", len(got))
 		}
 	})
 	t.Run("8日後以降のみで空を返す", func(t *testing.T) {
-		list := task.List{{Title: "8日後", Due: &in8Days}}
+		list := task.List{{Title: "8日後", Deadline: &in8Days}}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDeadlineApproachingTasks(far future) len = %d, want 0", len(got))
 		}
 	})
 	t.Run("Due nilのみで空を返す", func(t *testing.T) {
-		list := task.List{{Title: "nilDue", Due: nil}}
+		list := task.List{{Title: "nilDue", Deadline: nil}}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDeadlineApproachingTasks(nil only) len = %d, want 0", len(got))
@@ -202,11 +202,11 @@ func TestList_GetDeadlineApproachingTasks(t *testing.T) {
 	})
 	t.Run("混在リストから今日と7日後のみ返す", func(t *testing.T) {
 		list := task.List{
-			{Title: "今日", Due: &todayDue},
-			{Title: "7日後", Due: &in7Days},
-			{Title: "8日後", Due: &in8Days},
-			{Title: "昨日", Due: &yesterdayDue},
-			{Title: "nilDue", Due: nil},
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "7日後", Deadline: &in7Days},
+			{Title: "8日後", Deadline: &in8Days},
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "nilDue", Deadline: nil},
 		}
 		got := list.GetDeadlineApproachingTasks(now)
 		if len(got) != 2 {
@@ -228,50 +228,50 @@ func TestList_GetDueOverTasks(t *testing.T) {
 
 	t.Run("期限切れのみのリストから全件返す", func(t *testing.T) {
 		list := task.List{
-			{Title: "昨日", Due: &yesterdayDue},
-			{Title: "2日前", Due: &twoDaysAgo},
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "2日前", Deadline: &twoDaysAgo},
 		}
-		got := list.GetDueOverTasks(now)
+		got := list.GetDeadTasks(now)
 		if len(got) != 2 {
 			t.Errorf("GetDueOverTasks() len = %d, want 2", len(got))
 		}
 	})
 	t.Run("期限切れと期限間近の混在から期限切れのみ返す", func(t *testing.T) {
 		list := task.List{
-			{Title: "昨日", Due: &yesterdayDue},
-			{Title: "今日", Due: &todayDue},
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "今日", Deadline: &todayDue},
 		}
-		got := list.GetDueOverTasks(now)
+		got := list.GetDeadTasks(now)
 		if len(got) != 1 || got[0].Title != "昨日" {
 			t.Errorf("GetDueOverTasks() = %v, want [昨日]", got)
 		}
 	})
 	t.Run("Due nilのタスクは含まない", func(t *testing.T) {
 		list := task.List{
-			{Title: "nilDue", Due: nil},
-			{Title: "昨日", Due: &yesterdayDue},
+			{Title: "nilDue", Deadline: nil},
+			{Title: "昨日", Deadline: &yesterdayDue},
 		}
-		got := list.GetDueOverTasks(now)
+		got := list.GetDeadTasks(now)
 		if len(got) != 1 || got[0].Title != "昨日" {
 			t.Errorf("GetDueOverTasks() = %v, want [昨日]", got)
 		}
 	})
 	t.Run("空リストで空を返す", func(t *testing.T) {
-		got := task.List{}.GetDueOverTasks(now)
+		got := task.List{}.GetDeadTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDueOverTasks(empty) len = %d, want 0", len(got))
 		}
 	})
 	t.Run("期限間近のみで空を返す", func(t *testing.T) {
-		list := task.List{{Title: "今日", Due: &todayDue}}
-		got := list.GetDueOverTasks(now)
+		list := task.List{{Title: "今日", Deadline: &todayDue}}
+		got := list.GetDeadTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDueOverTasks(approaching only) len = %d, want 0", len(got))
 		}
 	})
 	t.Run("Due nilのみで空を返す", func(t *testing.T) {
-		list := task.List{{Title: "nilDue", Due: nil}}
-		got := list.GetDueOverTasks(now)
+		list := task.List{{Title: "nilDue", Deadline: nil}}
+		got := list.GetDeadTasks(now)
 		if len(got) != 0 {
 			t.Errorf("GetDueOverTasks(nil only) len = %d, want 0", len(got))
 		}
@@ -286,12 +286,12 @@ func TestList_GetDeadlineApproachingAndGetDueOverExclusive(t *testing.T) {
 	todayDue := time.Date(2024, 6, 15, 12, 0, 0, 0, jst)
 
 	list := task.List{
-		{Title: "昨日", Due: &yesterdayDue},
-		{Title: "今日", Due: &todayDue},
+		{Title: "昨日", Deadline: &yesterdayDue},
+		{Title: "今日", Deadline: &todayDue},
 	}
 
 	t.Run("昨日DueはGetDueOverTasksに出現しGetDeadlineApproachingTasksに不出現", func(t *testing.T) {
-		dueOver := list.GetDueOverTasks(now)
+		dueOver := list.GetDeadTasks(now)
 		approaching := list.GetDeadlineApproachingTasks(now)
 
 		foundInDueOver := false
@@ -314,7 +314,7 @@ func TestList_GetDeadlineApproachingAndGetDueOverExclusive(t *testing.T) {
 		}
 	})
 	t.Run("今日DueはGetDeadlineApproachingTasksに出現しGetDueOverTasksに不出現", func(t *testing.T) {
-		dueOver := list.GetDueOverTasks(now)
+		dueOver := list.GetDeadTasks(now)
 		approaching := list.GetDeadlineApproachingTasks(now)
 
 		foundInDueOver := false
@@ -347,10 +347,10 @@ func TestList_GetTodayTasks(t *testing.T) {
 	tomorrowDue := time.Date(2024, 6, 16, 12, 0, 0, 0, jst)
 
 	list := task.List{
-		{Title: "今日のタスク", Due: &todayDue},
-		{Title: "昨日のタスク", Due: &yesterdayDue},
-		{Title: "明日のタスク", Due: &tomorrowDue},
-		{Title: "Dueなし", Due: nil},
+		{Title: "今日のタスク", Deadline: &todayDue},
+		{Title: "昨日のタスク", Deadline: &yesterdayDue},
+		{Title: "明日のタスク", Deadline: &tomorrowDue},
+		{Title: "Dueなし", Deadline: nil},
 	}
 
 	got := list.GetTodayTasks(now)

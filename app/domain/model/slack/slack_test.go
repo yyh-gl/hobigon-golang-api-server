@@ -38,11 +38,11 @@ func TestCreateTaskMessage(t *testing.T) {
 	due := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	cautionTasks := []task.Task{
-		{Title: "タスクA", ShortURL: "https://short.url/a", Due: &due},
-		{Title: "タスクB", ShortURL: "https://short.url/b", Due: nil},
+		{Title: "タスクA", ShortURL: "https://short.url/a", Deadline: &due},
+		{Title: "タスクB", ShortURL: "https://short.url/b", Deadline: nil},
 	}
 	deadTasks := []task.Task{
-		{Title: "タスクC", ShortURL: "https://short.url/c", Due: &due},
+		{Title: "タスクC", ShortURL: "https://short.url/c", Deadline: &due},
 	}
 
 	s := slack.Slack{Channel: "00_today_tasks"}

@@ -36,11 +36,11 @@ func (l List) GetDeadlineApproachingTasks(now time.Time) List {
 	return result
 }
 
-// GetDueOverTasks : 期限切れのタスクを抽出
-func (l List) GetDueOverTasks(now time.Time) List {
+// GetDeadTasks : 期限切れのタスクを抽出
+func (l List) GetDeadTasks(now time.Time) List {
 	var result List
 	for _, t := range l {
-		if t.IsDueOver(now) {
+		if t.IsDead(now) {
 			result = append(result, t)
 		}
 	}

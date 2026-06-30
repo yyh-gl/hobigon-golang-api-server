@@ -44,7 +44,7 @@ func jst() *time.Location {
 
 func TestGetJSTDue(t *testing.T) {
 	utc := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
-	tsk := task.Task{Due: &utc}
+	tsk := task.Task{Deadline: &utc}
 	got := tsk.GetJSTDue(&utc)
 	wantHour := 9
 	if got.Hour() != wantHour {
@@ -77,8 +77,8 @@ func TestIsDueOver(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tsk := task.Task{Due: tt.due}
-			if got := tsk.IsDueOver(now); got != tt.want {
+			tsk := task.Task{Deadline: tt.due}
+			if got := tsk.IsDead(now); got != tt.want {
 				t.Errorf("IsDueOver() = %v, want %v", got, tt.want)
 			}
 		})
@@ -115,7 +115,7 @@ func TestIsDeadlineApproaching(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tsk := task.Task{Due: tt.due}
+			tsk := task.Task{Deadline: tt.due}
 			if got := tsk.IsDeadlineApproaching(now); got != tt.want {
 				t.Errorf("IsDeadlineApproaching() = %v, want %v", got, tt.want)
 			}
@@ -130,8 +130,8 @@ func TestIsDeadlineApproachingAndIsDueOverExclusive(t *testing.T) {
 	today := time.Date(2024, 6, 15, 12, 0, 0, 0, jst)
 
 	t.Run("昨日DueはIsDueOver=trueかつIsDeadlineApproaching=false", func(t *testing.T) {
-		tsk := task.Task{Due: &yesterday}
-		if !tsk.IsDueOver(now) {
+		tsk := task.Task{Deadline: &yesterday}
+		if !tsk.IsDead(now) {
 			t.Error("IsDueOver() = false, want true")
 		}
 		if tsk.IsDeadlineApproaching(now) {
@@ -139,8 +139,8 @@ func TestIsDeadlineApproachingAndIsDueOverExclusive(t *testing.T) {
 		}
 	})
 	t.Run("今日DueはIsDueOver=falseかつIsDeadlineApproaching=true", func(t *testing.T) {
-		tsk := task.Task{Due: &today}
-		if tsk.IsDueOver(now) {
+		tsk := task.Task{Deadline: &today}
+		if tsk.IsDead(now) {
 			t.Error("IsDueOver() = true, want false")
 		}
 		if !tsk.IsDeadlineApproaching(now) {
@@ -169,7 +169,7 @@ func TestIsTodayTask(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tsk := task.Task{Due: tt.due}
+			tsk := task.Task{Deadline: tt.due}
 			if got := tsk.IsTodayTask(now); got != tt.want {
 				t.Errorf("IsTodayTask() = %v, want %v", got, tt.want)
 			}
