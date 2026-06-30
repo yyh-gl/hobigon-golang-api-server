@@ -57,8 +57,15 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		updatedTasks = append(updatedTasks, t)
 	}
 
+	var deadTasks task.List
+	for _, t := range toDoTasks.GetDeadTasks(now) {
+		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
+			log.Error(ctx, err)
+		}
+		deadTasks = append(deadTasks, t)
+	}
+
 	keyTasks := append(activeTasks.GetDoingTasks(), updatedTasks...)
-	deadTasks := toDoTasks.GetDueOverTasks(now)
 
 	if err := n.sg.SendTasks(ctx, keyTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
