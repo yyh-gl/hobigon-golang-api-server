@@ -1,36 +1,21 @@
-# Git
 .git
 .github
 .gitignore
-
-# Documentation
 *.md
 docs
-
-# IDE / editor
 .idea
 .junie
 .vscode
 .DS_Store
-
-# Local env / secrets
 .env*
 .secret_env
 k8s/secret.yml
-
-# Build artifacts
 cmd/**/bin
 dist
 tmp
 backup
-
-# Test binaries / coverage
 *.test
 *.out
-
-# Docker / compose files (not needed inside build context)
 docker-compose.yml
 docker/mysql
-
-# Claude / tooling configs
 .claude
