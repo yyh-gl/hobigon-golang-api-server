@@ -17,7 +17,6 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
 	github.com/vektah/gqlparser/v2 v2.5.35
-	golang.org/x/net v0.56.0
 )
 
 require (
@@ -62,6 +61,7 @@ require (
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
