@@ -32,6 +32,10 @@ func (s Slack) GetWebHookURL() (webHookURL string) {
 // CreateTaskMessage : タスク通知用のメッセージを作成
 // FIXME: Trello -> Notion への移行を突貫工事で作ったのでリファクタ推奨
 func (s Slack) CreateTaskMessage(cautionTasks []task.Task, deadTasks []task.Task) string {
+	if len(cautionTasks) == 0 && len(deadTasks) == 0 {
+		return ":tada: 今日のタスクは全て片付いています！お疲れ様でした :tada:"
+	}
+
 	message := ":mario2: Key Tasks :mario2:\n"
 	for i, t := range cautionTasks {
 		due := "なるはや"

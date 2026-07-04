@@ -66,3 +66,18 @@ func TestCreateTaskMessage(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateTaskMessage_ZeroTasks(t *testing.T) {
+	s := slack.Slack{Channel: "00_today_tasks"}
+	msg := s.CreateTaskMessage([]task.Task{}, []task.Task{})
+
+	if !strings.Contains(msg, "今日のタスクは全て片付いています") {
+		t.Errorf("CreateTaskMessage() = %q, want praise message", msg)
+	}
+	if strings.Contains(msg, "Key Tasks") {
+		t.Errorf("CreateTaskMessage() = %q, should not contain %q", msg, "Key Tasks")
+	}
+	if strings.Contains(msg, "Dead Tasks") {
+		t.Errorf("CreateTaskMessage() = %q, should not contain %q", msg, "Dead Tasks")
+	}
+}
