@@ -25,7 +25,7 @@ func NewDB() (db *DB) {
 	//	db = newMySQLConnect()
 	//}
 	//return db
-	return newSQLiteConnect()
+	return nil
 }
 
 // newMySQLConnect : DB（MySQL）コネクションを生成
