@@ -13,7 +13,6 @@ func main() {
 	log.NewLogger()
 
 	diContainer := initApp()
-	defer func() { _ = diContainer.DB.Close() }()
 
 	cliApp := cli.NewApp()
 

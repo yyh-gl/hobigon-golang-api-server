@@ -10,7 +10,6 @@ import (
 	"github.com/google/wire"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
-	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/line"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
@@ -25,10 +24,8 @@ func initApp() *di.ContainerCLI {
 	gatewayLine := line.NewLine()
 	notification := usecase.NewNotification(task, slack, gatewayLine)
 	cliNotification := cli.NewNotification(notification)
-	gormDB := db.NewDB()
 	containerCLI := &di.ContainerCLI{
 		HandlerNotification: cliNotification,
-		DB:                  gormDB,
 	}
 	return containerCLI
 }

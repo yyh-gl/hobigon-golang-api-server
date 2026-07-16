@@ -18,7 +18,6 @@ var APISet = wire.NewSet(
 
 // CLISet : infra層のWireSet（CLI用）
 var CLISet = wire.NewSet(
-	db.NewDB,
 	dao.NewSlack,
 	dao.NewTask,
 	line.NewLine,

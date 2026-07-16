@@ -17,6 +17,4 @@ type ContainerAPI struct {
 // ContainerCLI : CLI用DIコンテナ
 type ContainerCLI struct {
 	HandlerNotification cli.Notification
-
-	DB *db.DB
 }
