@@ -12,6 +12,7 @@ import (
 // Notification : Notification用CLIサービスのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(c *cli.Context) error
+	NotifyPokemonEventToSlack(c *cli.Context) error
 }
 
 type notification struct {
@@ -31,6 +32,18 @@ func (n notification) NotifyTodayTasksToSlack(c *cli.Context) error {
 	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
 
 	if _, err := n.u.NotifyTodayTasksToSlack(ctx); err != nil {
+		log.Error(ctx, err)
+		return err
+	}
+	return nil
+}
+
+// NotifyPokemonEventToSlack : ポケモンカードのイベント情報をSlackに通知
+func (n notification) NotifyPokemonEventToSlack(c *cli.Context) error {
+	ctx := context.TODO()
+	ctx = context.WithValue(ctx, app.ContextKeyCLI, c)
+
+	if _, err := n.u.NotifyPokemonEvent(ctx); err != nil {
 		log.Error(ctx, err)
 		return err
 	}

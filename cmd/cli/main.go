@@ -29,6 +29,12 @@ func main() {
 			Usage:   "Notify the today's tasks to Slack",
 			Action:  diContainer.HandlerNotification.NotifyTodayTasksToSlack,
 		},
+		{
+			Name:    "notify-pokemon-event",
+			Aliases: []string{"npe"},
+			Usage:   "Notify the Pokémon card event to Slack",
+			Action:  diContainer.HandlerNotification.NotifyPokemonEventToSlack,
+		},
 	}
 
 	if err := cliApp.Run(os.Args); err != nil {
