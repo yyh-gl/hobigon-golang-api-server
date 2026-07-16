@@ -15,18 +15,16 @@ import (
 
 type line struct {
 	channelAccessToken string
-	toUserID           string
 }
 
 // NewLine : LINE用のゲートウェイを取得
 func NewLine() gateway.Line {
 	return &line{
 		channelAccessToken: os.Getenv("LINE_CHANNEL_ACCESS_TOKEN"),
-		toUserID:           os.Getenv("LINE_TO_USER_ID"),
 	}
 }
 
-// SendMessage : LINEにメッセージを送信
+// SendMessage : LINEにメッセージをブロードキャスト配信（LINE公式アカウントの友だち全員に送信）
 func (l line) SendMessage(ctx context.Context, msg modelL.Line) error {
 	bot, err := messaging_api.NewMessagingApiAPI(l.channelAccessToken)
 	if err != nil {
@@ -36,14 +34,13 @@ func (l line) SendMessage(ctx context.Context, msg modelL.Line) error {
 		return fmt.Errorf("failed to create LINE messaging api client: %w", err)
 	}
 
-	_, err = bot.PushMessage(&messaging_api.PushMessageRequest{
-		To: l.toUserID,
+	_, err = bot.Broadcast(&messaging_api.BroadcastRequest{
 		Messages: []messaging_api.MessageInterface{
 			&messaging_api.TextMessage{Text: msg.Text},
 		},
 	}, "")
 	if err != nil && !app.IsTest() {
-		return errors.New("failed to send LINE push message: " + err.Error())
+		return errors.New("failed to send LINE broadcast message: " + err.Error())
 	}
 	return nil
 }
