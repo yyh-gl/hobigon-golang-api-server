@@ -35,6 +35,18 @@ func main() {
 			Usage:   "Notify the Pokémon card event to Slack",
 			Action:  diContainer.HandlerNotification.NotifyPokemonEventToSlack,
 		},
+		{
+			Name:    "notify-coop-payment-reminder",
+			Aliases: []string{"ncpr"},
+			Usage:   "Notify the coop payment reminder to LINE",
+			Action:  diContainer.HandlerNotification.NotifyCoopPaymentReminderToLine,
+		},
+		{
+			Name:    "notify-seisenkan-payment-reminder",
+			Aliases: []string{"nspr"},
+			Usage:   "Notify the Seisenkan payment reminder to LINE",
+			Action:  diContainer.HandlerNotification.NotifySeisenkanPaymentReminderToLine,
+		},
 	}
 
 	if err := cliApp.Run(os.Args); err != nil {

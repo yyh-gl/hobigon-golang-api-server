@@ -132,6 +132,22 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 		),
 	).Methods(http.MethodPost)
 
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerNotification.NotifyCoopPaymentReminderToLine,
+			"/api/v1/notifications/line/reminders/coop-payment",
+			"coop_payment_reminder_notification_send",
+		),
+	).Methods(http.MethodPost)
+
+	r.HandleFunc(
+		middleware.CreateHandlerFuncWithMiddleware(
+			diContainer.HandlerNotification.NotifySeisenkanPaymentReminderToLine,
+			"/api/v1/notifications/line/reminders/seisenkan-payment",
+			"seisenkan_payment_reminder_notification_send",
+		),
+	).Methods(http.MethodPost)
+
 	r.Handle("/metrics", promhttp.Handler())
 
 	return r

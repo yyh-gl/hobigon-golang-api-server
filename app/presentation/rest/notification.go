@@ -12,6 +12,8 @@ import (
 type Notification interface {
 	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.Request)
+	NotifyCoopPaymentReminderToLine(w http.ResponseWriter, r *http.Request)
+	NotifySeisenkanPaymentReminderToLine(w http.ResponseWriter, r *http.Request)
 }
 
 type notification struct {
@@ -60,4 +62,26 @@ func (n notification) NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.R
 	resp.NotifiedNum = notifiedNum
 
 	DoResponse(ctx, w, resp, http.StatusOK)
+}
+
+// NotifyCoopPaymentReminderToLine : 生協の入金リマインドをLINEに通知
+func (n notification) NotifyCoopPaymentReminderToLine(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if err := n.u.NotifyCoopPaymentReminderToLine(ctx); err != nil {
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyCoopPaymentReminderToLine(): %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+		return
+	}
+	DoResponse(ctx, w, struct{}{}, http.StatusOK)
+}
+
+// NotifySeisenkanPaymentReminderToLine : 生鮮館の入金リマインドをLINEに通知
+func (n notification) NotifySeisenkanPaymentReminderToLine(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if err := n.u.NotifySeisenkanPaymentReminderToLine(ctx); err != nil {
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifySeisenkanPaymentReminderToLine(): %w", err))
+		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+		return
+	}
+	DoResponse(ctx, w, struct{}{}, http.StatusOK)
 }

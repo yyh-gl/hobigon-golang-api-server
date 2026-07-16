@@ -11,6 +11,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/line"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/cli"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
@@ -21,7 +22,8 @@ import (
 func initApp() *di.ContainerCLI {
 	task := dao.NewTask()
 	slack := dao.NewSlack()
-	notification := usecase.NewNotification(task, slack)
+	gatewayLine := line.NewLine()
+	notification := usecase.NewNotification(task, slack, gatewayLine)
 	cliNotification := cli.NewNotification(notification)
 	gormDB := db.NewDB()
 	containerCLI := &di.ContainerCLI{

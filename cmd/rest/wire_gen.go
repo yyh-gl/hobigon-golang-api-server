@@ -11,6 +11,7 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/dao"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/db"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/infra/line"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/presentation/rest"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 	"github.com/yyh-gl/hobigon-golang-api-server/cmd/rest/di"
@@ -25,7 +26,8 @@ func initApp() *di.ContainerAPI {
 	usecaseBlog := usecase.NewBlog(blog, slack)
 	restBlog := rest.NewBlog(usecaseBlog)
 	task := dao.NewTask()
-	notification := usecase.NewNotification(task, slack)
+	gatewayLine := line.NewLine()
+	notification := usecase.NewNotification(task, slack, gatewayLine)
 	restNotification := rest.NewNotification(notification)
 	containerAPI := &di.ContainerAPI{
 		HandlerBlog:         restBlog,

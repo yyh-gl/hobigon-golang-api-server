@@ -11,6 +11,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
+	github.com/line/line-bot-sdk-go/v8 v8.22.0
 	github.com/mattn/go-sqlite3 v1.14.47
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/prometheus/client_golang v1.23.2
