@@ -121,32 +121,3 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: set image -n hobigon deployment/hobigon-api-deployment hobigon-api=${{ env.TAG }}
-
-  success_notification:
-    name: Success notification
-    needs: [ publish_container_image_latest_version, deploy_to_k8s ]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - uses: technote-space/workflow-conclusion-action@v3
-      - uses: rtCamp/action-slack-notify@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: "[hobigon-golang-api-server] CD Success"
-        if: env.WORKFLOW_CONCLUSION == 'success'
-
-  failure_notification:
-    name: Failure notification
-    needs: [ publish_container_image_latest_version, deploy_to_k8s ]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - uses: technote-space/workflow-conclusion-action@v3
-      - uses: rtCamp/action-slack-notify@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: "[hobigon-golang-api-server] CD Failure"
-          SLACK_COLOR: danger
-        if: env.WORKFLOW_CONCLUSION == 'failure'
