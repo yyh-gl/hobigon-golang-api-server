@@ -19,12 +19,9 @@ type DB = gorm.DB
 // NewDB : DBコネクションを生成
 func NewDB() (db *DB) {
 	// DBを使う機能を今は使用していないのでMySQLへの接続をなくす
-	//if app.IsTest() {
-	//	db = newSQLiteConnect()
-	//} else {
-	//	db = newMySQLConnect()
-	//}
-	//return db
+	if app.IsTest() {
+		return newSQLiteConnect()
+	}
 	return nil
 }
 

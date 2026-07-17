@@ -50,32 +50,3 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           args: --timeout 5m0s
-
-  success_notification:
-    name: Success notification
-    needs: [ test, lint ]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - uses: technote-space/workflow-conclusion-action@v3
-      - uses: rtCamp/action-slack-notify@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: "[hobigon-golang-api-server] CI Success"
-        if: env.WORKFLOW_CONCLUSION == 'success'
-
-  failure_notification:
-    name: Failure notification
-    needs: [ test, lint ]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - uses: technote-space/workflow-conclusion-action@v3
-      - uses: rtCamp/action-slack-notify@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_50 }}
-          SLACK_TITLE: "[hobigon-golang-api-server] CI Failure"
-          SLACK_COLOR: danger
-        if: env.WORKFLOW_CONCLUSION == 'failure'

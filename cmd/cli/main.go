@@ -13,7 +13,6 @@ func main() {
 	log.NewLogger()
 
 	diContainer := initApp()
-	defer func() { _ = diContainer.DB.Close() }()
 
 	cliApp := cli.NewApp()
 
@@ -28,6 +27,24 @@ func main() {
 			Aliases: []string{"ntt"},
 			Usage:   "Notify the today's tasks to Slack",
 			Action:  diContainer.HandlerNotification.NotifyTodayTasksToSlack,
+		},
+		{
+			Name:    "notify-pokemon-event",
+			Aliases: []string{"npe"},
+			Usage:   "Notify the Pokémon card event to Slack",
+			Action:  diContainer.HandlerNotification.NotifyPokemonEventToSlack,
+		},
+		{
+			Name:    "notify-coop-payment-reminder",
+			Aliases: []string{"ncpr"},
+			Usage:   "Notify the coop payment reminder to LINE",
+			Action:  diContainer.HandlerNotification.NotifyCoopPaymentReminderToLine,
+		},
+		{
+			Name:    "notify-seisenkan-payment-reminder",
+			Aliases: []string{"nspr"},
+			Usage:   "Notify the Seisenkan payment reminder to LINE",
+			Action:  diContainer.HandlerNotification.NotifySeisenkanPaymentReminderToLine,
 		},
 	}
 

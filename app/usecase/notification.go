@@ -8,30 +8,41 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/line"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/pokemon"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
+)
+
+const (
+	coopPaymentReminderMessage      = "今日は生協に入金する日"
+	seisenkanPaymentReminderMessage = "今日は生鮮館に入金する日"
 )
 
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
 	NotifyPokemonEvent(ctx context.Context) (int, error)
+	NotifyCoopPaymentReminderToLine(ctx context.Context) error
+	NotifySeisenkanPaymentReminderToLine(ctx context.Context) error
 }
 
 type notification struct {
 	tg gateway.Task
 	sg gateway.Slack
+	lg gateway.Line
 }
 
 // NewNotification : Notification用ユースケースを取得
 func NewNotification(
 	tg gateway.Task,
 	sg gateway.Slack,
+	lg gateway.Line,
 ) Notification {
 	return &notification{
 		tg: tg,
 		sg: sg,
+		lg: lg,
 	}
 }
 
@@ -87,6 +98,16 @@ func (n notification) NotifyPokemonEvent(ctx context.Context) (int, error) {
 	}
 
 	return len(events), nil
+}
+
+// NotifyCoopPaymentReminderToLine : 生協の入金リマインドをLINEに通知
+func (n notification) NotifyCoopPaymentReminderToLine(ctx context.Context) error {
+	return n.lg.SendMessage(ctx, line.Line{Text: coopPaymentReminderMessage})
+}
+
+// NotifySeisenkanPaymentReminderToLine : 生鮮館の入金リマインドをLINEに通知
+func (n notification) NotifySeisenkanPaymentReminderToLine(ctx context.Context) error {
+	return n.lg.SendMessage(ctx, line.Line{Text: seisenkanPaymentReminderMessage})
 }
 
 func crawlNotifications() ([]pokemon.Notification, error) {
