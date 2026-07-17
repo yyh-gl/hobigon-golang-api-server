@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish_rest_container_image_specified_version:
-    name: Publish container image (specified version)
+    name: Publish API container image (specified version)
     runs-on: ubuntu-latest
     needs: create_release_note
     steps:
@@ -61,7 +61,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
   
   publish_rest_container_image_latest_version:
-    name: Publish container image (latest version)
+    name: Publish API container image (latest version)
     runs-on: ubuntu-latest
     needs: create_release_note
     steps:
