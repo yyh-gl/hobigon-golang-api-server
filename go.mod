@@ -18,6 +18,7 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
 	github.com/vektah/gqlparser/v2 v2.5.35
+	go.yaml.in/yaml/v3 v3.0.4
 )
 
 require (
