@@ -35,16 +35,22 @@ func main() {
 			Action:  diContainer.HandlerNotification.NotifyPokemonEventToSlack,
 		},
 		{
-			Name:    "notify-coop-payment-reminder",
-			Aliases: []string{"ncpr"},
-			Usage:   "Notify the coop payment reminder to LINE",
-			Action:  diContainer.HandlerNotification.NotifyCoopPaymentReminderToLine,
-		},
-		{
-			Name:    "notify-seisenkan-payment-reminder",
-			Aliases: []string{"nspr"},
-			Usage:   "Notify the Seisenkan payment reminder to LINE",
-			Action:  diContainer.HandlerNotification.NotifySeisenkanPaymentReminderToLine,
+			Name:    "notify-to-line",
+			Aliases: []string{"ntl"},
+			Usage:   "Notify a message to a LINE bot, selected by --bot-key and --message-key",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:     "bot-key",
+					Usage:    "target LINE bot key (e.g. son)",
+					Required: true,
+				},
+				cli.StringFlag{
+					Name:     "message-key",
+					Usage:    "message key defined in config/line_messages.yaml (e.g. coop, seisenkan)",
+					Required: true,
+				},
+			},
+			Action: diContainer.HandlerNotification.NotifyToLINE,
 		},
 	}
 

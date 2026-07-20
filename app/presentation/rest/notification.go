@@ -1,9 +1,13 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
+	modelLine "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/line"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/usecase"
 )
@@ -12,8 +16,7 @@ import (
 type Notification interface {
 	NotifyTodayTasksToSlack(w http.ResponseWriter, r *http.Request)
 	NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.Request)
-	NotifyCoopPaymentReminderToLine(w http.ResponseWriter, r *http.Request)
-	NotifySeisenkanPaymentReminderToLine(w http.ResponseWriter, r *http.Request)
+	NotifyToLINE(w http.ResponseWriter, r *http.Request)
 }
 
 type notification struct {
@@ -64,22 +67,27 @@ func (n notification) NotifyPokemonEventToSlack(w http.ResponseWriter, r *http.R
 	DoResponse(ctx, w, resp, http.StatusOK)
 }
 
-// NotifyCoopPaymentReminderToLine : 生協の入金リマインドをLINEに通知
-func (n notification) NotifyCoopPaymentReminderToLine(w http.ResponseWriter, r *http.Request) {
+// NotifyToLINE : 指定されたBot・メッセージキーでLINEに通知
+func (n notification) NotifyToLINE(w http.ResponseWriter, r *http.Request) {
+	type request struct {
+		BotKey     string `mapstructure:"bot_key" validate:"required"`
+		MessageKey string `mapstructure:"message_key" validate:"required"`
+	}
+
 	ctx := r.Context()
-	if err := n.u.NotifyCoopPaymentReminderToLine(ctx); err != nil {
-		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyCoopPaymentReminderToLine(): %w", err))
-		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
+
+	var req request
+	if err := bindReqWithValidate(ctx, mux.Vars(r), &req); err != nil {
+		DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
 		return
 	}
-	DoResponse(ctx, w, struct{}{}, http.StatusOK)
-}
 
-// NotifySeisenkanPaymentReminderToLine : 生鮮館の入金リマインドをLINEに通知
-func (n notification) NotifySeisenkanPaymentReminderToLine(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	if err := n.u.NotifySeisenkanPaymentReminderToLine(ctx); err != nil {
-		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifySeisenkanPaymentReminderToLine(): %w", err))
+	if err := n.u.NotifyToLINE(ctx, req.BotKey, req.MessageKey); err != nil {
+		if errors.Is(err, modelLine.ErrLINEMessageKeyNotFound) || errors.Is(err, gateway.ErrLINEBotKeyNotFound) {
+			DoResponse(ctx, w, errBadRequest, http.StatusBadRequest)
+			return
+		}
+		log.Error(ctx, fmt.Errorf("failed to notificationUseCase.NotifyToLINE(): %w", err))
 		DoResponse(ctx, w, errInterServerError, http.StatusInternalServerError)
 		return
 	}
