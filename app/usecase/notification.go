@@ -14,35 +14,32 @@ import (
 	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
-const (
-	coopPaymentReminderMessage      = "今日は生協に入金する日"
-	seisenkanPaymentReminderMessage = "今日は生鮮館に入金する日"
-)
-
 // Notification : Notification用ユースケースのインターフェース
 type Notification interface {
 	NotifyTodayTasksToSlack(ctx context.Context) (int, error)
 	NotifyPokemonEvent(ctx context.Context) (int, error)
-	NotifyCoopPaymentReminderToLine(ctx context.Context) error
-	NotifySeisenkanPaymentReminderToLine(ctx context.Context) error
+	NotifyToLINE(ctx context.Context, botKey, messageKey string) error
 }
 
 type notification struct {
-	tg gateway.Task
-	sg gateway.Slack
-	lg gateway.Line
+	tg  gateway.Task
+	sg  gateway.Slack
+	lg  gateway.LINE
+	lmc gateway.LINEMessageConfig
 }
 
 // NewNotification : Notification用ユースケースを取得
 func NewNotification(
 	tg gateway.Task,
 	sg gateway.Slack,
-	lg gateway.Line,
+	lg gateway.LINE,
+	lmc gateway.LINEMessageConfig,
 ) Notification {
 	return &notification{
-		tg: tg,
-		sg: sg,
-		lg: lg,
+		tg:  tg,
+		sg:  sg,
+		lg:  lg,
+		lmc: lmc,
 	}
 }
 
@@ -100,14 +97,13 @@ func (n notification) NotifyPokemonEvent(ctx context.Context) (int, error) {
 	return len(events), nil
 }
 
-// NotifyCoopPaymentReminderToLine : 生協の入金リマインドをLINEに通知
-func (n notification) NotifyCoopPaymentReminderToLine(ctx context.Context) error {
-	return n.lg.SendMessage(ctx, line.Line{Text: coopPaymentReminderMessage})
-}
-
-// NotifySeisenkanPaymentReminderToLine : 生鮮館の入金リマインドをLINEに通知
-func (n notification) NotifySeisenkanPaymentReminderToLine(ctx context.Context) error {
-	return n.lg.SendMessage(ctx, line.Line{Text: seisenkanPaymentReminderMessage})
+// NotifyToLINE : 指定されたBot・メッセージキーでLINEに通知
+func (n notification) NotifyToLINE(ctx context.Context, botKey, messageKey string) error {
+	msg, err := n.lmc.GetMessage(ctx, messageKey)
+	if err != nil {
+		return fmt.Errorf("lineMessageConfigGateway.GetMessage(): %w", err)
+	}
+	return n.lg.SendMessage(ctx, botKey, line.LINE{Text: msg})
 }
 
 func crawlNotifications() ([]pokemon.Notification, error) {

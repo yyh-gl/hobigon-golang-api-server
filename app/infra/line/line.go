@@ -10,23 +10,30 @@ import (
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app"
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
-	modelL "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/line"
+	modelLine "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/line"
 )
 
-type line struct {
-	channelAccessToken string
+// botChannelAccessTokenEnvVars : bot-key -> Channel Access Tokenの環境変数名のホワイトリスト
+// 値（トークン自体）は含まないため非機密情報。将来Botを追加する場合はここに1行追加する。
+var botChannelAccessTokenEnvVars = map[string]string{
+	"son": "SON_LINE_BOT_CHANNEL_ACCESS_TOKEN",
 }
 
-// NewLine : LINE用のゲートウェイを取得
-func NewLine() gateway.Line {
-	return &line{
-		channelAccessToken: os.Getenv("LINE_CHANNEL_ACCESS_TOKEN"),
+type line struct{}
+
+// NewLINE : LINE通知用ゲートウェイを取得
+func NewLINE() gateway.LINE {
+	return &line{}
+}
+
+// SendMessage : 指定されたBotキーに紐づくLINE公式アカウントの友だち全員にメッセージをブロードキャスト配信
+func (l line) SendMessage(ctx context.Context, botKey string, msg modelLine.LINE) error {
+	envVar, ok := botChannelAccessTokenEnvVars[botKey]
+	if !ok {
+		return gateway.ErrLINEBotKeyNotFound
 	}
-}
 
-// SendMessage : LINEにメッセージをブロードキャスト配信（LINE公式アカウントの友だち全員に送信）
-func (l line) SendMessage(ctx context.Context, msg modelL.Line) error {
-	bot, err := messaging_api.NewMessagingApiAPI(l.channelAccessToken)
+	bot, err := messaging_api.NewMessagingApiAPI(os.Getenv(envVar))
 	if err != nil {
 		if app.IsTest() {
 			return nil

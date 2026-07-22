@@ -26,8 +26,9 @@ func InitTestApp() *di.ContainerAPI {
 	usecaseBlog := usecase.NewBlog(blog, slack)
 	restBlog := rest.NewBlog(usecaseBlog)
 	task := dao.NewTask()
-	gatewayLine := line.NewLine()
-	notification := usecase.NewNotification(task, slack, gatewayLine)
+	gatewayLINE := line.NewLINE()
+	lineMessageConfig := line.NewLINEMessageConfig()
+	notification := usecase.NewNotification(task, slack, gatewayLINE, lineMessageConfig)
 	restNotification := rest.NewNotification(notification)
 	containerAPI := &di.ContainerAPI{
 		HandlerBlog:         restBlog,

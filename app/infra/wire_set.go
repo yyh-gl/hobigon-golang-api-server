@@ -13,12 +13,14 @@ var APISet = wire.NewSet(
 	dao.NewBlog,
 	dao.NewSlack,
 	dao.NewTask,
-	line.NewLine,
+	line.NewLINE,
+	line.NewLINEMessageConfig,
 )
 
 // CLISet : infra層のWireSet（CLI用）
 var CLISet = wire.NewSet(
 	dao.NewSlack,
 	dao.NewTask,
-	line.NewLine,
+	line.NewLINE,
+	line.NewLINEMessageConfig,
 )

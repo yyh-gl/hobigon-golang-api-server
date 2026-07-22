@@ -21,8 +21,9 @@ import (
 func initApp() *di.ContainerCLI {
 	task := dao.NewTask()
 	slack := dao.NewSlack()
-	gatewayLine := line.NewLine()
-	notification := usecase.NewNotification(task, slack, gatewayLine)
+	gatewayLINE := line.NewLINE()
+	lineMessageConfig := line.NewLINEMessageConfig()
+	notification := usecase.NewNotification(task, slack, gatewayLINE, lineMessageConfig)
 	cliNotification := cli.NewNotification(notification)
 	containerCLI := &di.ContainerCLI{
 		HandlerNotification: cliNotification,

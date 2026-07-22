@@ -134,17 +134,9 @@ func newRouter(diContainer *di.ContainerAPI) *mux.Router {
 
 	r.HandleFunc(
 		middleware.CreateHandlerFuncWithMiddleware(
-			diContainer.HandlerNotification.NotifyCoopPaymentReminderToLine,
-			"/api/v1/notifications/line/reminders/coop-payment",
-			"coop_payment_reminder_notification_send",
-		),
-	).Methods(http.MethodPost)
-
-	r.HandleFunc(
-		middleware.CreateHandlerFuncWithMiddleware(
-			diContainer.HandlerNotification.NotifySeisenkanPaymentReminderToLine,
-			"/api/v1/notifications/line/reminders/seisenkan-payment",
-			"seisenkan_payment_reminder_notification_send",
+			diContainer.HandlerNotification.NotifyToLINE,
+			"/api/v1/notifications/line/{bot_key}/messages/{message_key}",
+			"line_notification_send",
 		),
 	).Methods(http.MethodPost)
 
