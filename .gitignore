@@ -97,3 +97,5 @@ backup
 
 app/presentation/rest/img/output/*
 !app/presentation/rest/img/output/.keep
+
+.dev-team
