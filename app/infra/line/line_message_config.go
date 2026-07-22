@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	yaml "go.yaml.in/yaml/v3"
+	"github.com/goccy/go-yaml"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/gateway"
 	modelLine "github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/line"

@@ -7,6 +7,7 @@ require (
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/go-sql-driver/mysql v1.10.0
+	github.com/goccy/go-yaml v1.19.2
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/wire v0.7.0
 	github.com/gorilla/mux v1.8.1
@@ -18,7 +19,6 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
 	github.com/vektah/gqlparser/v2 v2.5.35
-	go.yaml.in/yaml/v3 v3.0.4
 )
 
 require (
