@@ -3,7 +3,7 @@ module github.com/yyh-gl/hobigon-golang-api-server
 go 1.25.0
 
 require (
-	github.com/99designs/gqlgen v0.17.90
+	github.com/99designs/gqlgen v0.17.94
 	github.com/ashwanthkumar/slack-go-webhook v0.0.0-20200209025033-430dd4e66960
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/go-sql-driver/mysql v1.10.0
@@ -18,7 +18,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli v1.22.17
-	github.com/vektah/gqlparser/v2 v2.5.35
+	github.com/vektah/gqlparser/v2 v2.5.36
 )
 
 require (
@@ -32,6 +32,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.24.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/coder/websocket v1.8.15 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/elazarl/goproxy v0.0.0-20230731152917-f99041a5c027 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
@@ -62,11 +63,11 @@ require (
 	github.com/sosodev/duration v1.4.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/text v0.38.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
