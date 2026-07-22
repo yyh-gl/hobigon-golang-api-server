@@ -32,5 +32,5 @@ func (c lineMessageConfig) GetMessage(_ context.Context, messageKey string) (str
 		return "", fmt.Errorf("failed to yaml.Unmarshal(): %w", err)
 	}
 
-	return messages.MessageFor(messageKey)
+	return messages.FindMessageFor(messageKey)
 }
