@@ -1,9 +1,12 @@
 package notion
 
 import (
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/yyh-gl/hobigon-golang-api-server/app/domain/model/task"
+	"github.com/yyh-gl/hobigon-golang-api-server/app/log"
 )
 
 // NotionTaskDTO : Notionで管理しているタスク用のDTO
@@ -98,7 +101,19 @@ type NotionTaskDTO struct {
 	} `json:"page"`
 }
 
-func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
+// parseNotionDate : Notionの日付プロパティ（日付のみ or 時刻付き）をパース
+func parseNotionDate(s string) (time.Time, error) {
+	if t, err := time.Parse("2006-01-02", s); err == nil {
+		return t, nil
+	}
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return t, nil
+}
+
+func (dto NotionTaskDTO) ToTaskListDomainModel(ctx context.Context) task.List {
 	tasks := make(task.List, 0, len(dto.Results))
 	for _, r := range dto.Results {
 		// タイトルが空のページはスキップ（panic 防止）
@@ -108,11 +123,12 @@ func (dto NotionTaskDTO) ToTaskListDomainModel() task.List {
 
 		var deadline *time.Time
 		if r.Properties.Deadline.Date.Start != "" {
-			t, err := time.Parse("2006-01-02", r.Properties.Deadline.Date.Start)
+			t, err := parseNotionDate(r.Properties.Deadline.Date.Start)
 			if err != nil {
-				continue
+				log.Error(ctx, fmt.Errorf("Notion Deadlineのパースに失敗: id=%s start=%q: %w", r.ID, r.Properties.Deadline.Date.Start, err))
+			} else {
+				deadline = &t
 			}
-			deadline = &t
 		}
 
 		tasks = append(tasks, task.Task{

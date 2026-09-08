@@ -64,7 +64,7 @@ func (t task) fetchTasks(ctx context.Context, body notion.FetchTasksRequestBody)
 	if err := json.Unmarshal(resp, &taskDTO); err != nil {
 		return nil, err
 	}
-	return taskDTO.ToTaskListDomainModel(), nil
+	return taskDTO.ToTaskListDomainModel(ctx), nil
 }
 
 // FetchActiveTasks : 『To Do』および『Doing』ステータスのタスクをすべて取得
