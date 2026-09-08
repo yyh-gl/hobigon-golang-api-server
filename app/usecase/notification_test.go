@@ -2,11 +2,7 @@
 // テストリスト（Canon TDD Step 3）
 // 対象: notification.NotifyTodayTasksToSlack — Dead Tasks抽出元をactiveTasksに変更
 //
-// TZ境界の正確な判定（JST 0時の前後1秒等）はドメイン層（task.IsDead等）で
-// 独立して検証済みのため、本ファイルのDeadlineはtime.Now()からの相対値（境界から
-// 十分離れたマージン）で組み立て、時計を固定するための仕組みは導入しない。
-//
-// 正常系・振り分けロジック（Deadlineをtime.Now()からの相対値で構築）:
+// 正常系・振り分けロジック（nowFuncが2024-06-14 22:00 UTC＝06-15 07:00JSTを返す）:
 //   - Doing・Deadline昨日 → Dead Tasksに含まれ、Key Tasksに含まれず、UpdateTaskStatusは呼ばれない
 //   - To Do・Deadline昨日 → Dead Tasksに含まれ、Key Tasksに含まれず、UpdateTaskStatus(Doing)が1回呼ばれる
 //   - To Do・Deadline今日 → Key Tasksに含まれ、UpdateTaskStatus(Doing)が1回呼ばれる
@@ -97,6 +93,12 @@ func (f *fakeSlackGateway) SendPokemonEvents(context.Context, []pokemon.Notifica
 	return nil
 }
 
+func setNowFunc(t *testing.T, now time.Time) {
+	t.Helper()
+	nowFunc = func() time.Time { return now }
+	t.Cleanup(func() { nowFunc = time.Now })
+}
+
 func containsTaskID(tasks []task.Task, id string) bool {
 	for _, t := range tasks {
 		if t.ID == id {
@@ -117,7 +119,8 @@ func countUpdatesForID(updates []taskUpdate, id string) int {
 }
 
 func TestNotifyTodayTasksToSlack_DoingOverdueTask(t *testing.T) {
-	yesterday := time.Now().AddDate(0, 0, -2)
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	yesterday := time.Date(2024, 6, 14, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "doing-overdue", Status: task.StatusDoing, Deadline: &yesterday},
@@ -141,7 +144,8 @@ func TestNotifyTodayTasksToSlack_DoingOverdueTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoOverdueTask(t *testing.T) {
-	yesterday := time.Now().AddDate(0, 0, -2)
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	yesterday := time.Date(2024, 6, 14, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "todo-overdue", Status: task.StatusToDo, Deadline: &yesterday},
@@ -165,7 +169,8 @@ func TestNotifyTodayTasksToSlack_ToDoOverdueTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoTodayTask(t *testing.T) {
-	today := time.Now()
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	today := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "todo-today", Status: task.StatusToDo, Deadline: &today},
@@ -186,10 +191,11 @@ func TestNotifyTodayTasksToSlack_ToDoTodayTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoFarFutureTask(t *testing.T) {
-	farFuture := time.Now().AddDate(0, 0, 30)
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	in8Days := time.Date(2024, 6, 23, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
-		{ID: "todo-far", Status: task.StatusToDo, Deadline: &farFuture},
+		{ID: "todo-far", Status: task.StatusToDo, Deadline: &in8Days},
 	}}
 	sg := &fakeSlackGateway{}
 	n := NewNotification(tg, sg, nil, nil)
@@ -207,6 +213,8 @@ func TestNotifyTodayTasksToSlack_ToDoFarFutureTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoNoDeadlineTask(t *testing.T) {
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "todo-nil", Status: task.StatusToDo, Deadline: nil},
 	}}
@@ -226,6 +234,8 @@ func TestNotifyTodayTasksToSlack_ToDoNoDeadlineTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_DoingNoDeadlineTask(t *testing.T) {
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "doing-nil", Status: task.StatusDoing, Deadline: nil},
 	}}
@@ -242,7 +252,8 @@ func TestNotifyTodayTasksToSlack_DoingNoDeadlineTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_DoingTodayTask(t *testing.T) {
-	today := time.Now()
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	today := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "doing-today", Status: task.StatusDoing, Deadline: &today},
@@ -263,8 +274,9 @@ func TestNotifyTodayTasksToSlack_DoingTodayTask(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ReturnValueMatchesTotalCount(t *testing.T) {
-	yesterday := time.Now().AddDate(0, 0, -2)
-	today := time.Now()
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	yesterday := time.Date(2024, 6, 14, 0, 0, 0, 0, time.UTC)
+	today := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "doing-overdue", Status: task.StatusDoing, Deadline: &yesterday},
@@ -284,8 +296,9 @@ func TestNotifyTodayTasksToSlack_ReturnValueMatchesTotalCount(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_MixedList(t *testing.T) {
-	yesterday := time.Now().AddDate(0, 0, -2)
-	today := time.Now()
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	yesterday := time.Date(2024, 6, 14, 0, 0, 0, 0, time.UTC)
+	today := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{tasks: task.List{
 		{ID: "doing-overdue", Status: task.StatusDoing, Deadline: &yesterday},
@@ -321,6 +334,8 @@ func TestNotifyTodayTasksToSlack_MixedList(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_EmptyActiveTasks(t *testing.T) {
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+
 	tg := &fakeTaskGateway{tasks: task.List{}}
 	sg := &fakeSlackGateway{}
 	n := NewNotification(tg, sg, nil, nil)
@@ -341,6 +356,7 @@ func TestNotifyTodayTasksToSlack_EmptyActiveTasks(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_FetchActiveTasksError(t *testing.T) {
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
 	fetchErr := errors.New("fetch failed")
 
 	tg := &fakeTaskGateway{fetchErr: fetchErr}
@@ -360,6 +376,8 @@ func TestNotifyTodayTasksToSlack_FetchActiveTasksError(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_SendTasksError(t *testing.T) {
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+
 	tg := &fakeTaskGateway{tasks: task.List{}}
 	sg := &fakeSlackGateway{sendErr: errors.New("send failed")}
 	n := NewNotification(tg, sg, nil, nil)
@@ -374,7 +392,8 @@ func TestNotifyTodayTasksToSlack_SendTasksError(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoOverdueUpdateFails(t *testing.T) {
-	yesterday := time.Now().AddDate(0, 0, -2)
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	yesterday := time.Date(2024, 6, 14, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{
 		tasks: task.List{
@@ -395,7 +414,8 @@ func TestNotifyTodayTasksToSlack_ToDoOverdueUpdateFails(t *testing.T) {
 }
 
 func TestNotifyTodayTasksToSlack_ToDoApproachingUpdateFails(t *testing.T) {
-	today := time.Now()
+	setNowFunc(t, time.Date(2024, 6, 14, 22, 0, 0, 0, time.UTC))
+	today := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
 
 	tg := &fakeTaskGateway{
 		tasks: task.List{

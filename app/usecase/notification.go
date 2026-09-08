@@ -43,11 +43,13 @@ func NewNotification(
 	}
 }
 
+var nowFunc = time.Now
+
 // TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	now := time.Now()
+	now := nowFunc()
 
 	activeTasks, err := n.tg.FetchActiveTasks(ctx)
 	if err != nil {
