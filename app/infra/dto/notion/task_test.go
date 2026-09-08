@@ -9,6 +9,7 @@
 //   - Deadline.Date.Start = "2024-06-15T10:00:00+09:00"（小数秒なし）のときも同様
 //   - Deadline.Date.Start = "2024-06-15T01:00:00.000Z"（Z表記・UTC）のときも同様
 //   - Deadline.Date.Start = ""（未設定）のとき、Deadlineはnil
+//   - Deadlineプロパティ自体がnull（Notionが未設定の日付プロパティに実際に返す形）のとき、Deadlineはnil
 //   - タイトルが空のページはスキップされる（既存挙動の回帰確認）
 //   - Resultsが空のとき、返るtask.Listの長さは0
 //   - 正常系1件について、ID・Title・Status・ShortURLが入力の値を正しく転写している
@@ -137,6 +138,31 @@ func TestToTaskListDomainModel_DateTimeDeadlineUTCZ(t *testing.T) {
 
 func TestToTaskListDomainModel_NoDeadline(t *testing.T) {
 	dto := buildDTO(t, resultJSON("task-1", "Task 1", "", "To Do", "https://notion.so/task-1"))
+
+	got := dto.ToTaskListDomainModel(context.Background())
+
+	if len(got) != 1 {
+		t.Fatalf("len(got) = %d, want 1", len(got))
+	}
+	if got[0].Deadline != nil {
+		t.Errorf("Deadline = %v, want nil", got[0].Deadline)
+	}
+}
+
+func TestToTaskListDomainModel_NullDeadlineProperty(t *testing.T) {
+	body := `{"results": [{
+		"id": "task-1",
+		"properties": {
+			"Deadline": {"date": null},
+			"Status": {"select": {"name": "To Do"}},
+			"Name": {"title": [{"plain_text": "Task 1"}]}
+		},
+		"url": "https://notion.so/task-1"
+	}]}`
+	var dto notion.NotionTaskDTO
+	if err := json.Unmarshal([]byte(body), &dto); err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
+	}
 
 	got := dto.ToTaskListDomainModel(context.Background())
 
