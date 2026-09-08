@@ -47,6 +47,17 @@ func (l List) GetDeadTasks(now time.Time) List {
 	return result
 }
 
+// ExcludeDeadTasks : 期限切れのタスクを除外
+func (l List) ExcludeDeadTasks(now time.Time) List {
+	var result List
+	for _, t := range l {
+		if !t.IsDead(now) {
+			result = append(result, t)
+		}
+	}
+	return result
+}
+
 // GetTodayTasks : タスクリストから今日のタスクを取得
 func (l List) GetTodayTasks(now time.Time) (todayTasks []Task) {
 	for _, task := range l {

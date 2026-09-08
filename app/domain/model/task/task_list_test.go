@@ -47,6 +47,24 @@
 //     （今日 Due タスク: GetDeadlineApproachingTasks に出現, GetDueOverTasks に不出現）
 //
 // =============================================================================
+//
+// テストリスト（Canon TDD Step 2）
+// 対象: List.ExcludeDeadTasks(now) — 新設
+//
+// 正常系:
+//   - 期限切れタスクを含むリストから、期限切れタスクを除いた残りを返す
+//   - Deadlineがnilのタスクは除外されず残る
+//   - 今日以降（期限間近・今日Deadline・8日後以降）のタスクは除外されず残る
+// 境界値・特殊ケース:
+//   - 空リストに対しては空を返す
+//   - 全件が期限切れのリストに対しては空を返す
+//   - 期限切れタスクが1件も無いリストに対しては全件をそのまま返す（恒等）
+//   - 元リストの順序を維持したまま返す
+// 排他性・分割性:
+//   - GetDeadTasks(now)とExcludeDeadTasks(now)の結果を合わせた件数が元のリストの件数と一致する
+//   - 各タスクがGetDeadTasks(now)とExcludeDeadTasks(now)のどちらか一方にのみ現れる
+//
+// =============================================================================
 
 package task_test
 
@@ -360,4 +378,111 @@ func TestList_GetTodayTasks(t *testing.T) {
 	if got[0].Title != "今日のタスク" {
 		t.Errorf("GetTodayTasks()[0].Title = %q, want \"今日のタスク\"", got[0].Title)
 	}
+}
+
+func TestList_ExcludeDeadTasks(t *testing.T) {
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	now := time.Date(2024, 6, 15, 10, 0, 0, 0, jst)
+
+	todayDue := time.Date(2024, 6, 15, 12, 0, 0, 0, jst)
+	in8Days := time.Date(2024, 6, 23, 12, 0, 0, 0, jst)
+	yesterdayDue := time.Date(2024, 6, 14, 12, 0, 0, 0, jst)
+	twoDaysAgo := time.Date(2024, 6, 13, 12, 0, 0, 0, jst)
+
+	t.Run("期限切れタスクを除いた残りを返す", func(t *testing.T) {
+		list := task.List{
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "今日", Deadline: &todayDue},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 1 || got[0].Title != "今日" {
+			t.Errorf("ExcludeDeadTasks() = %v, want [今日]", got)
+		}
+	})
+	t.Run("Deadlineがnilのタスクは残る", func(t *testing.T) {
+		list := task.List{
+			{Title: "nilDue", Deadline: nil},
+			{Title: "昨日", Deadline: &yesterdayDue},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 1 || got[0].Title != "nilDue" {
+			t.Errorf("ExcludeDeadTasks() = %v, want [nilDue]", got)
+		}
+	})
+	t.Run("今日以降のタスクは残る", func(t *testing.T) {
+		list := task.List{
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "8日後", Deadline: &in8Days},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 2 {
+			t.Errorf("ExcludeDeadTasks() len = %d, want 2", len(got))
+		}
+	})
+	t.Run("空リストで空を返す", func(t *testing.T) {
+		got := task.List{}.ExcludeDeadTasks(now)
+		if len(got) != 0 {
+			t.Errorf("ExcludeDeadTasks(empty) len = %d, want 0", len(got))
+		}
+	})
+	t.Run("全件期限切れで空を返す", func(t *testing.T) {
+		list := task.List{
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "2日前", Deadline: &twoDaysAgo},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 0 {
+			t.Errorf("ExcludeDeadTasks(all dead) len = %d, want 0", len(got))
+		}
+	})
+	t.Run("期限切れなしで全件をそのまま返す", func(t *testing.T) {
+		list := task.List{
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "nilDue", Deadline: nil},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 2 {
+			t.Errorf("ExcludeDeadTasks(no dead) len = %d, want 2", len(got))
+		}
+	})
+	t.Run("元リストの順序を維持する", func(t *testing.T) {
+		list := task.List{
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "8日後", Deadline: &in8Days},
+			{Title: "nilDue", Deadline: nil},
+		}
+		got := list.ExcludeDeadTasks(now)
+		if len(got) != 3 {
+			t.Fatalf("ExcludeDeadTasks() len = %d, want 3", len(got))
+		}
+		if got[0].Title != "今日" || got[1].Title != "8日後" || got[2].Title != "nilDue" {
+			t.Errorf("ExcludeDeadTasks() order = %v, want [今日, 8日後, nilDue]", got)
+		}
+	})
+	t.Run("GetDeadTasksとの和集合が元のリストと一致する", func(t *testing.T) {
+		list := task.List{
+			{Title: "昨日", Deadline: &yesterdayDue},
+			{Title: "今日", Deadline: &todayDue},
+			{Title: "8日後", Deadline: &in8Days},
+			{Title: "nilDue", Deadline: nil},
+		}
+		dead := list.GetDeadTasks(now)
+		alive := list.ExcludeDeadTasks(now)
+		if len(dead)+len(alive) != len(list) {
+			t.Errorf("len(dead)+len(alive) = %d, want %d", len(dead)+len(alive), len(list))
+		}
+
+		seen := make(map[string]int)
+		for _, tsk := range dead {
+			seen[tsk.Title]++
+		}
+		for _, tsk := range alive {
+			seen[tsk.Title]++
+		}
+		for _, tsk := range list {
+			if seen[tsk.Title] != 1 {
+				t.Errorf("%q appears %d times across dead/alive, want exactly 1", tsk.Title, seen[tsk.Title])
+			}
+		}
+	})
 }
