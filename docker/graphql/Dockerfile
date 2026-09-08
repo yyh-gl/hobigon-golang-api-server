@@ -22,6 +22,8 @@ RUN make build target=graphql version=$VERSION
 
 FROM gcr.io/distroless/base
 
+ENV TZ="Asia/Tokyo"
+
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /go/src/github.com/yyh-gl/hobigon-golang-api-server/cmd/graphql/bin/graphql-server /app/graphql-server
 COPY --from=builder /tmp /tmp

@@ -21,6 +21,8 @@ RUN make build target=cli version=$VERSION
 
 FROM gcr.io/distroless/base
 
+ENV TZ="Asia/Tokyo"
+
 WORKDIR /app
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
