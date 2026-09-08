@@ -43,21 +43,28 @@ func NewNotification(
 	}
 }
 
+var nowFunc = time.Now
+
 // TODO: 通知内容のコンテンツ数を返すようにする（ex. タスク一覧通知の場合はタスクの数）
 
 // NotifyTodayTasksToSlack : 今日のタスク一覧をSlackに通知
 func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) {
-	now := time.Now()
+	now := nowFunc()
 
 	activeTasks, err := n.tg.FetchActiveTasks(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("taskGateway.FetchActiveTasks()内でのエラー: %w", err)
 	}
 
-	toDoTasks := activeTasks.GetToDoTasks()
+	deadTasks := activeTasks.GetDeadTasks(now)
+	for _, t := range deadTasks.GetToDoTasks() {
+		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
+			log.Error(ctx, err)
+		}
+	}
 
 	var updatedTasks task.List
-	for _, t := range toDoTasks.GetDeadlineApproachingTasks(now) {
+	for _, t := range activeTasks.GetToDoTasks().GetDeadlineApproachingTasks(now) {
 		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
 			log.Error(ctx, err)
 			continue
@@ -65,15 +72,7 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		updatedTasks = append(updatedTasks, t)
 	}
 
-	var deadTasks task.List
-	for _, t := range toDoTasks.GetDeadTasks(now) {
-		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
-			log.Error(ctx, err)
-		}
-		deadTasks = append(deadTasks, t)
-	}
-
-	keyTasks := append(activeTasks.GetDoingTasks(), updatedTasks...)
+	keyTasks := append(activeTasks.GetDoingTasks().ExcludeDeadTasks(now), updatedTasks...)
 
 	if err := n.sg.SendTasks(ctx, keyTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
