@@ -24,7 +24,7 @@
 //   - FetchActiveTasksがエラーを返すとき(0, err)を返しSendTasksは呼ばれない
 //   - SendTasksがエラーを返すとき(0, err)を返す
 //   - To Do期限切れのUpdateTaskStatus失敗時もDead Tasksに掲載され続ける
-//   - To Do期限間近のUpdateTaskStatus失敗時はKey Tasksから脱落する（既存挙動のピン留め）
+//   - To Do期限間近のUpdateTaskStatus失敗時もKey Tasksに掲載され続ける（Dead Tasks側と対称）
 //
 // =============================================================================
 
@@ -410,7 +410,7 @@ func TestNotifyTodayTasksToSlack_ToDoApproachingUpdateFails(t *testing.T) {
 		t.Fatalf("NotifyTodayTasksToSlack() error = %v", err)
 	}
 
-	if containsTaskID(sg.keyTasks, "todo-today") {
-		t.Error("todo-today should be dropped from Key Tasks when UpdateTaskStatus fails (existing behavior)")
+	if !containsTaskID(sg.keyTasks, "todo-today") {
+		t.Error("todo-today should still be listed in Key Tasks even when UpdateTaskStatus fails (symmetric with Dead Tasks)")
 	}
 }

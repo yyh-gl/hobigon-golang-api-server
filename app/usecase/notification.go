@@ -61,16 +61,14 @@ func (n notification) NotifyTodayTasksToSlack(ctx context.Context) (int, error) 
 		}
 	}
 
-	var updatedTasks task.List
-	for _, t := range activeTasks.GetToDoTasks().GetDeadlineApproachingTasks(now) {
+	approachingTasks := activeTasks.GetToDoTasks().GetDeadlineApproachingTasks(now)
+	for _, t := range approachingTasks {
 		if err := n.tg.UpdateTaskStatus(ctx, t, task.StatusDoing); err != nil {
 			log.Error(ctx, err)
-			continue
 		}
-		updatedTasks = append(updatedTasks, t)
 	}
 
-	keyTasks := append(activeTasks.GetDoingTasks().ExcludeDeadTasks(now), updatedTasks...)
+	keyTasks := append(activeTasks.GetDoingTasks().ExcludeDeadTasks(now), approachingTasks...)
 
 	if err := n.sg.SendTasks(ctx, keyTasks, deadTasks); err != nil {
 		return 0, fmt.Errorf("slackGateway.SendTasks()内でのエラー: %w", err)
